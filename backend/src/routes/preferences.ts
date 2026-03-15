@@ -8,7 +8,7 @@ router.use(requireAuth);
 
 router.get('/', async (req, res, next) => {
   try {
-    const rules = await buildRules();
+    const rules = await buildRules(req.userId);
     res.json({ rules });
   } catch (err) {
     next(err);
@@ -17,7 +17,7 @@ router.get('/', async (req, res, next) => {
 
 router.get('/insights', async (req, res, next) => {
   try {
-    const insights = await buildInsights();
+    const insights = await buildInsights(req.userId);
     res.json(insights);
   } catch (err) {
     next(err);
@@ -26,7 +26,7 @@ router.get('/insights', async (req, res, next) => {
 
 router.delete('/reset', async (req, res, next) => {
   try {
-    await truncateOverrideLogs();
+    await truncateOverrideLogs(req.userId);
     res.json({ ok: true });
   } catch (err) {
     next(err);

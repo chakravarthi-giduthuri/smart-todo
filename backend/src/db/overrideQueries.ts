@@ -75,7 +75,7 @@ export async function getOverrideCount(userId?: string): Promise<number> {
   return count ?? 0;
 }
 
-export async function truncateOverrideLogs(): Promise<void> {
-  const { error } = await supabase.from('override_log').delete().neq('id', '00000000-0000-0000-0000-000000000000');
+export async function truncateOverrideLogs(userId: string): Promise<void> {
+  const { error } = await supabase.from('override_log').delete().eq('user_id', userId);
   if (error) throw new Error(`truncateOverrideLogs failed: ${error.message}`);
 }

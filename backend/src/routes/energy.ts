@@ -9,8 +9,11 @@ router.use(requireAuth);
 router.get('/today', async (req, res, next) => {
   try {
     const checkin = await getTodayCheckin(req.userId);
-    if (!checkin) return res.json({ checkin: null });
-    res.json({ checkin });
+    // Return flat shape matching EnergyResponse frontend type
+    res.json({
+      level: checkin?.level ?? null,
+      date: checkin?.date ?? null,
+    });
   } catch (err) {
     next(err);
   }

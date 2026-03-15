@@ -20,7 +20,7 @@ router.patch('/:id/override', validate(patchOverrideSchema), async (req, res, ne
     };
 
     const task = await updateTaskField(id, field_changed, user_value);
-    await insertOverride({ task_id: id, field_changed, ai_value, user_value, reason, task_keywords });
+    await insertOverride({ user_id: req.userId, task_id: id, field_changed, ai_value, user_value, reason, task_keywords });
 
     res.json({ task });
   } catch (err) {

@@ -27,7 +27,7 @@ export interface DashboardStats {
 }
 
 export interface FocusResponse {
-  task: Task;
+  task: Task | null;
   reason: string;
 }
 

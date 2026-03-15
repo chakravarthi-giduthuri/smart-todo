@@ -6,7 +6,7 @@ interface Props { tasks: Task[]; }
 
 export function FocusModeButton({ tasks }: Props) {
   const { data, isLoading, error, fetchFocus, clear } = useFocus();
-  const focusTask = data ? tasks.find((t) => t.id === data.task.id) ?? data.task : null;
+  const focusTask = data?.task ? (tasks.find((t) => t.id === data.task!.id) ?? data.task) : null;
 
   return (
     <div className="mx-4 mb-3">

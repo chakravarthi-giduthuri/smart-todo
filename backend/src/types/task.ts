@@ -68,6 +68,7 @@ export interface InsertSubtaskInput {
 
 export interface OverrideLog {
   id: string;
+  user_id: string;
   task_id: string;
   field_changed: string;
   ai_value: string;
@@ -96,6 +97,7 @@ export interface InsertTaskInput {
 }
 
 export interface InsertOverrideInput {
+  user_id: string;
   task_id: string;
   field_changed: string;
   ai_value: string;
