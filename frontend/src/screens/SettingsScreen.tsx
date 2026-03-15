@@ -2,12 +2,14 @@ import { PageShell } from '../components/layout/PageShell';
 import { NotificationToggle } from '../components/settings/NotificationToggle';
 import { AiLearningJournal } from '../components/settings/AiLearningJournal';
 import { ResetAiButton } from '../components/settings/ResetAiButton';
-import { Settings, Sun, Moon, Globe } from 'lucide-react';
+import { Settings, Sun, Moon, Globe, LogOut } from 'lucide-react';
 import { useThemeContext } from '../contexts/ThemeContext';
 import { getLocalTimezone } from '../utils/dateFormat';
+import { useAuth } from '../contexts/AuthContext';
 
 export function SettingsScreen() {
   const { theme, toggleTheme } = useThemeContext();
+  const { user, signOut } = useAuth();
 
   return (
     <PageShell className="p-4 pt-6">
@@ -57,6 +59,25 @@ export function SettingsScreen() {
         <NotificationToggle />
         <AiLearningJournal />
         <ResetAiButton />
+
+        {/* Account */}
+        <div className="glass rounded-2xl px-4 py-3.5 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-xl bg-indigo-500/10 flex items-center justify-center shrink-0">
+              <LogOut size={15} className="text-indigo-400" />
+            </div>
+            <div>
+              <p className="text-sm font-semibold text-white">Account</p>
+              <p className="text-xs text-white/40 mt-0.5 truncate max-w-[160px]">{user?.email ?? 'Signed in'}</p>
+            </div>
+          </div>
+          <button
+            onClick={signOut}
+            className="text-xs font-semibold text-red-400 bg-red-500/10 px-3 py-1.5 rounded-xl hover:bg-red-500/20 transition-colors cursor-pointer"
+          >
+            Sign out
+          </button>
+        </div>
       </div>
     </PageShell>
   );
