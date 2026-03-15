@@ -26,6 +26,9 @@ export function useCreateTask() {
       qc.invalidateQueries({ queryKey: ['tasks'] });
       qc.invalidateQueries({ queryKey: ['dashboard'] });
     },
+    onError: (err) => {
+      console.error('[createTask error]', err);
+    },
   });
 }
 

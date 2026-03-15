@@ -7,7 +7,7 @@ export function ChatBar() {
   const [input, setInput] = useState('');
   const [isListening, setIsListening] = useState(false);
   const [micError, setMicError] = useState<string | null>(null);
-  const { mutate: createTask, isPending } = useCreateTask();
+  const { mutate: createTask, isPending, error: createError } = useCreateTask();
   const inputRef = useRef<HTMLInputElement>(null);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const recognitionRef = useRef<any>(null);
@@ -90,6 +90,13 @@ export function ChatBar() {
       {isPending && (
         <div className="px-4 pb-1">
           <TypingIndicator />
+        </div>
+      )}
+      {createError && (
+        <div className="px-4 pb-1 animate-fade-in">
+          <p className="text-xs text-rose-400 bg-rose-500/10 rounded-xl px-3 py-2">
+            {createError instanceof Error ? createError.message : 'Failed to create task'}
+          </p>
         </div>
       )}
       {micError && (
