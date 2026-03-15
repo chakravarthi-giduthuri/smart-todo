@@ -3,7 +3,7 @@ import { CATEGORY_COLORS } from '@/constants/categories';
 import { localDateStr } from '@/utils/dateFormat';
 
 interface Props { tasks: Task[]; selectedDate: string; onSelectDate: (d: string) => void; }
-const DAYS = ['S','M','T','W','T','F','S'];
+const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
 
 export function WeekStrip({ tasks, selectedDate, onSelectDate }: Props) {
   const today = new Date();
@@ -22,18 +22,29 @@ export function WeekStrip({ tasks, selectedDate, onSelectDate }: Props) {
   }
 
   return (
-    <div className="flex px-3 py-3 gap-1">
+    <div className="flex px-4 py-4 gap-2 bg-white dark:bg-slate-900 border-b border-slate-100 dark:border-slate-800">
       {days.map((d, i) => {
         const dateStr = localDateStr(d);
         const dayTasks = tasksByDate.get(dateStr) ?? [];
         const isSelected = dateStr === selectedDate;
         const isToday = dateStr === todayStr;
         return (
-          <button key={i} onClick={() => onSelectDate(dateStr)}
-            className={`flex-1 flex flex-col items-center gap-1 py-2 rounded-2xl transition-all duration-200 cursor-pointer active:scale-95 ${isSelected ? 'bg-indigo-500/15' : 'hover:bg-white/5'}`}>
-            <span className={`text-[10px] font-bold tracking-wide ${isToday ? 'text-indigo-400' : 'text-white/25'}`}>{DAYS[i]}</span>
-            <span className={`w-8 h-8 flex items-center justify-center rounded-full text-sm font-bold ${isSelected ? 'bg-indigo-500 text-white' : isToday ? 'text-indigo-400' : 'text-white/70'}`}>{d.getDate()}</span>
-            <div className="flex flex-col gap-0.5">
+          <button
+            key={i}
+            onClick={() => onSelectDate(dateStr)}
+            className={`flex-1 flex flex-col items-center gap-1.5 py-3 rounded-xl transition-all duration-200 cursor-pointer ${
+              isSelected ? 'bg-primary/10' : 'hover:bg-slate-50 dark:hover:bg-slate-800'
+            }`}
+          >
+            <span className={`text-[11px] font-bold tracking-wide ${isToday ? 'text-primary' : 'text-slate-400 dark:text-slate-500'}`}>
+              {DAYS[i]}
+            </span>
+            <span className={`w-8 h-8 flex items-center justify-center rounded-full text-sm font-bold ${
+              isSelected ? 'bg-primary text-white' : isToday ? 'text-primary' : 'text-slate-700 dark:text-slate-300'
+            }`}>
+              {d.getDate()}
+            </span>
+            <div className="flex gap-0.5">
               {dayTasks.slice(0, 3).map((t, j) => (
                 <div key={j} className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: CATEGORY_COLORS[t.category] }} />
               ))}

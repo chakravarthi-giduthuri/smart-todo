@@ -4,6 +4,7 @@ import { ThemeProvider } from './contexts/ThemeContext';
 import { AuthProvider } from './contexts/AuthContext';
 import { ProtectedRoute } from './components/auth/ProtectedRoute';
 import { SideNav } from './components/layout/SideNav';
+import { BottomNav } from './components/layout/BottomNav';
 import { HomeScreen } from './screens/HomeScreen';
 import { CalendarScreen } from './screens/CalendarScreen';
 import { DashboardScreen } from './screens/DashboardScreen';
@@ -36,14 +37,24 @@ function AppRoutes() {
 
   return (
     <div className="flex min-h-screen" style={{ background: 'var(--app-bg)' }}>
-      <SideNav />
-      <div className="ml-64 flex-1 min-w-0">
+      {/* Sidebar — desktop only */}
+      <div className="hidden md:block">
+        <SideNav />
+      </div>
+
+      {/* Main content */}
+      <div className="flex-1 min-w-0 md:ml-64">
         <Routes>
           <Route path="/" element={<ProtectedRoute><HomeScreen /></ProtectedRoute>} />
           <Route path="/calendar" element={<ProtectedRoute><CalendarScreen /></ProtectedRoute>} />
           <Route path="/dashboard" element={<ProtectedRoute><DashboardScreen /></ProtectedRoute>} />
           <Route path="/settings" element={<ProtectedRoute><SettingsScreen /></ProtectedRoute>} />
         </Routes>
+      </div>
+
+      {/* Bottom nav — mobile only */}
+      <div className="md:hidden">
+        <BottomNav />
       </div>
     </div>
   );

@@ -25,5 +25,11 @@ export function useCalendar() {
     });
   }
 
-  return { view, setView, selectedDate, setSelectedDate, displayMonth, prevMonth, nextMonth };
+  function goToToday() {
+    const now = new Date();
+    setSelectedDate(localDateStr(now));
+    setDisplayMonth({ year: now.getFullYear(), month: now.getMonth() });
+  }
+
+  return { view, setView, selectedDate, setSelectedDate, displayMonth, prevMonth, nextMonth, goToToday };
 }

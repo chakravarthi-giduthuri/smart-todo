@@ -19,30 +19,70 @@ export function MonthGrid({ year, month, tasks, selectedDate, onSelectDate }: Pr
   while (cells.length % 7 !== 0) cells.push(null);
 
   return (
-    <div className="px-3 pb-2">
-      <div className="grid grid-cols-7 text-center py-3">
-        {['Su','Mo','Tu','We','Th','Fr','Sa'].map((d, i) => (
-          <div key={i} className="text-[11px] font-bold text-white/25 tracking-wider">{d}</div>
+    <div className="bg-white dark:bg-slate-900 overflow-hidden">
+      {/* Day headers */}
+      <div className="grid grid-cols-7 border-b border-slate-200 dark:border-slate-800">
+        {['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map((d) => (
+          <div key={d} className="py-3 text-center text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-tighter">
+            {d}
+          </div>
         ))}
       </div>
-      <div className="grid grid-cols-7 gap-y-1">
+
+      {/* Day cells */}
+      <div className="grid grid-cols-7" style={{ minHeight: '420px' }}>
         {cells.map((day, i) => {
-          if (!day) return <div key={i} />;
+          if (!day) return (
+            <div key={i} className="border-b border-r border-slate-100 dark:border-slate-800 p-2 opacity-30" />
+          );
           const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
           const dayTasks = tasksByDate.get(dateStr) ?? [];
           const isToday = dateStr === today;
           const isSelected = dateStr === selectedDate;
+          const isLastCol = (i + 1) % 7 === 0;
+          const isLastRow = i >= cells.length - 7;
+
           return (
-            <button key={i} onClick={() => onSelectDate(dateStr)}
-              className={`flex flex-col items-center py-1.5 rounded-2xl transition-all duration-200 cursor-pointer active:scale-95 ${isSelected ? 'bg-indigo-500/20' : 'hover:bg-white/5'}`}>
-              <span className={`w-8 h-8 flex items-center justify-center rounded-full text-sm font-semibold transition-all ${
-                isSelected ? 'bg-indigo-500 text-white shadow-lg shadow-indigo-500/40' :
-                isToday ? 'text-indigo-400' : 'text-white/70'
-              }`}>{day}</span>
-              <div className="flex gap-0.5 mt-0.5 h-1.5">
-                {dayTasks.slice(0,3).map((t, j) => (
-                  <div key={j} className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: CATEGORY_COLORS[t.category] }} />
+            <button
+              key={i}
+              onClick={() => onSelectDate(dateStr)}
+              className={`p-2 text-left transition-all duration-150 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800/50 ${
+                !isLastCol ? 'border-r border-slate-100 dark:border-slate-800' : ''
+              } ${
+                !isLastRow ? 'border-b border-slate-100 dark:border-slate-800' : ''
+              } ${
+                isSelected ? 'bg-primary/5 dark:bg-primary/10' : ''
+              } ${
+                isToday ? 'bg-primary/5 dark:bg-primary/10' : ''
+              }`}
+            >
+              <span className={`w-7 h-7 flex items-center justify-center rounded-full text-sm font-semibold mb-1 ${
+                isSelected
+                  ? 'bg-primary text-white'
+                  : isToday
+                  ? 'text-primary font-bold'
+                  : 'text-slate-700 dark:text-slate-300'
+              }`}>
+                {day}
+              </span>
+              <div className="space-y-0.5">
+                {dayTasks.slice(0, 2).map((t, j) => (
+                  <div
+                    key={j}
+                    className="px-1.5 py-0.5 text-[10px] font-bold rounded truncate"
+                    style={{
+                      backgroundColor: `${CATEGORY_COLORS[t.category]}22`,
+                      color: CATEGORY_COLORS[t.category],
+                    }}
+                  >
+                    {t.title}
+                  </div>
                 ))}
+                {dayTasks.length > 2 && (
+                  <div className="px-1.5 py-0.5 text-[10px] font-bold text-slate-400 dark:text-slate-500">
+                    +{dayTasks.length - 2} more
+                  </div>
+                )}
               </div>
             </button>
           );

@@ -33,10 +33,10 @@ export function EnergyBanner() {
               key={level}
               onClick={() => submit(level)}
               disabled={isPending}
-              className={`bg-white dark:bg-[#18181b] p-6 rounded-2xl border-2 text-left flex flex-col gap-3 soft-shadow group cursor-pointer transition-all duration-200 active:scale-[0.98] disabled:opacity-50 ${
+              className={`bg-white dark:bg-slate-900 p-5 rounded-2xl border-2 text-left flex flex-col gap-3 shadow-sm group cursor-pointer transition-all duration-200 active:scale-[0.98] disabled:opacity-50 ${
                 isActive
-                  ? 'border-blue-500 bg-blue-50 dark:bg-blue-600/10 dark:border-blue-500'
-                  : 'border-transparent dark:border-white/[0.08] hover:border-blue-200 dark:hover:border-blue-500/40'
+                  ? 'border-primary bg-primary/5 dark:bg-primary/10 dark:border-primary'
+                  : 'border-slate-200 dark:border-slate-800 hover:border-primary/40 dark:hover:border-primary/40'
               }`}
             >
               <div className={`w-10 h-10 ${iconBg} rounded-lg flex items-center justify-center text-lg`}>
