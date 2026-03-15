@@ -58,17 +58,17 @@ export function TaskList({ tasks, isLoading, isPending }: Props) {
 
       {isEmpty && (
         <div className="flex flex-col items-center justify-center mt-20 px-8 animate-fade-in">
-          <div className="w-16 h-16 rounded-3xl bg-gradient-accent flex items-center justify-center mb-4 shadow-xl shadow-[#ec5b13]/20">
+          <div className="w-16 h-16 rounded-3xl bg-gradient-accent flex items-center justify-center mb-4 shadow-xl shadow-blue-500/20">
             <Sparkles size={28} className="text-white" />
           </div>
-          <p className="text-lg font-bold text-white mb-1">All clear</p>
-          <p className="text-sm text-white/40 text-center">Type anything below — your AI assistant will organize it</p>
+          <p className="text-lg font-bold text-gray-900 dark:text-white mb-1">All clear</p>
+          <p className="text-sm text-gray-500 dark:text-white/40 text-center">Type anything below — your AI assistant will organize it</p>
         </div>
       )}
 
       {/* Time overload warning */}
       {isOverloaded && (
-        <div className="mx-4 mb-3 px-4 py-3 rounded-2xl border border-amber-500/20 flex items-start gap-3 animate-fade-in" style={{ background: 'rgba(245,158,11,0.08)' }}>
+        <div className="mb-3 px-4 py-3 rounded-2xl border border-amber-500/20 flex items-start gap-3 animate-fade-in" style={{ background: 'rgba(245,158,11,0.08)' }}>
           <AlertTriangle size={16} className="text-amber-400 shrink-0 mt-0.5" />
           <div>
             <p className="text-xs font-bold text-amber-400">Day overloaded</p>
@@ -88,12 +88,12 @@ export function TaskList({ tasks, isLoading, isPending }: Props) {
 
         return (
           <div key={priority} className="mb-1">
-            <div className="flex items-center gap-2 px-5 pt-3 pb-1.5">
+            <div className="flex items-center gap-2 pt-3 pb-1.5">
               <span className={`w-1.5 h-1.5 rounded-full ${dot}`} />
               <span className="text-[11px] font-bold uppercase tracking-widest" style={{ color }}>
                 {label}
               </span>
-              <span className="text-[10px] font-semibold text-white/20">{group.length}</span>
+              <span className="text-[10px] font-semibold text-gray-500 dark:text-white/20">{group.length}</span>
             </div>
             {group.map((task, i) => (
               <TaskCard key={task.id} task={task} delay={i * 40} priorityColor={color} />
@@ -105,19 +105,19 @@ export function TaskList({ tasks, isLoading, isPending }: Props) {
       {/* Doom List — overdue 3+ days */}
       {doomList.length > 0 && (
         <div className="mt-2">
-          <div className="flex items-center gap-2 px-5 pt-3 pb-1.5">
+          <div className="flex items-center gap-2 pt-3 pb-1.5">
             <span className="w-1.5 h-1.5 rounded-full bg-rose-500/70" />
             <span className="text-[11px] font-bold uppercase tracking-widest text-rose-500/70">Doom List</span>
-            <span className="text-[10px] font-semibold text-white/20">{doomList.length}</span>
-            <span className="text-[10px] text-white/20 ml-auto">overdue 3+ days</span>
+            <span className="text-[10px] font-semibold text-gray-500 dark:text-white/20">{doomList.length}</span>
+            <span className="text-[10px] text-gray-400 dark:text-white/20 ml-auto">overdue 3+ days</span>
           </div>
           {doomList.map((task) => (
             <div key={task.id}>
               <TaskCard task={task} priorityColor="#ef4444" />
-              <div className="flex justify-end px-4 -mt-2 mb-2">
+              <div className="flex justify-end -mt-2 mb-2">
                 <button
                   onClick={() => archive(task.id)}
-                  className="flex items-center gap-1 text-[10px] font-bold text-white/30 hover:text-amber-400 bg-white/5 hover:bg-amber-500/10 px-2.5 py-1 rounded-xl transition-all cursor-pointer active:scale-90"
+                  className="flex items-center gap-1 text-[10px] font-bold text-gray-400 dark:text-white/30 hover:text-amber-400 bg-gray-100 dark:bg-white/5 hover:bg-amber-500/10 px-2.5 py-1 rounded-xl transition-all cursor-pointer active:scale-90"
                 >
                   <Archive size={10} />
                   <span>Archive</span>
@@ -131,10 +131,10 @@ export function TaskList({ tasks, isLoading, isPending }: Props) {
       {/* Completed tasks */}
       {completed.length > 0 && (
         <div className="mt-2">
-          <div className="flex items-center gap-2 px-5 pt-3 pb-1.5">
+          <div className="flex items-center gap-2 pt-3 pb-1.5">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-500/50" />
             <span className="text-[11px] font-bold uppercase tracking-widest text-emerald-500/50">Done</span>
-            <span className="text-[10px] font-semibold text-white/20">{completed.length}</span>
+            <span className="text-[10px] font-semibold text-gray-500 dark:text-white/20">{completed.length}</span>
           </div>
           {completed.map((task, i) => (
             <TaskCard key={task.id} task={task} delay={i * 30} priorityColor="#6b7280" />

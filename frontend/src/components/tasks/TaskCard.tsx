@@ -63,13 +63,12 @@ export function TaskCard({ task, delay = 0 }: Props) {
   return (
     <>
       <div
-        className="mx-4 mb-2 animate-slide-up"
+        className="mb-2 animate-slide-up"
         style={{ animationDelay: `${delay}ms` }}
       >
-        {/* Card — exact mockup style: neutral dark, clean border */}
+        {/* Card — white light / dark surface */}
         <div
-          className={`rounded-2xl overflow-hidden transition-all duration-200 active:scale-[0.99] ${task.is_completed ? 'opacity-55' : ''}`}
-          style={{ background: 'var(--surface)', border: '1px solid var(--border)' }}
+          className={`bg-white dark:bg-[#18181b] border border-gray-100 dark:border-white/[0.08] rounded-2xl soft-shadow hover:border-blue-100 dark:hover:border-white/[0.15] overflow-hidden transition-all duration-200 active:scale-[0.99] ${task.is_completed ? 'opacity-55' : ''}`}
         >
           <div className="flex items-start gap-3 px-4 pt-4 pb-3">
 
@@ -87,11 +86,11 @@ export function TaskCard({ task, delay = 0 }: Props) {
                 onClick={() => !task.is_completed && setActiveField('title')}
                 className={`flex items-start gap-1.5 text-left w-full group ${task.is_completed ? 'cursor-default' : 'cursor-pointer'}`}
               >
-                <span className={`text-[15px] font-semibold leading-snug ${task.is_completed ? 'line-through text-white/30' : 'text-white'}`}>
+                <span className={`text-[15px] font-semibold leading-snug ${task.is_completed ? 'line-through text-gray-400 dark:text-white/30' : 'text-gray-900 dark:text-white'}`}>
                   {task.title}
                 </span>
                 {!task.is_completed && (
-                  <Pencil size={11} className="text-white/15 group-hover:text-[#ec5b13]/60 transition-colors mt-1 shrink-0" />
+                  <Pencil size={11} className="text-gray-300 dark:text-white/15 group-hover:text-blue-500/60 transition-colors mt-1 shrink-0" />
                 )}
               </button>
 
@@ -111,7 +110,7 @@ export function TaskCard({ task, delay = 0 }: Props) {
                 {task.scheduled_date ? (
                   <button
                     onClick={() => setActiveField('scheduled_date')}
-                    className="flex items-center gap-1 text-xs text-white/40 hover:text-white/65 transition-colors cursor-pointer"
+                    className="flex items-center gap-1 text-xs text-gray-400 dark:text-white/40 hover:text-gray-600 dark:hover:text-white/65 transition-colors cursor-pointer"
                   >
                     <Calendar size={11} className="shrink-0" />
                     <span>{formatDate(task.scheduled_date)}</span>
@@ -125,7 +124,7 @@ export function TaskCard({ task, delay = 0 }: Props) {
                 ) : (
                   <button
                     onClick={() => setActiveField('scheduled_date')}
-                    className="flex items-center gap-1 text-xs text-white/20 hover:text-[#ec5b13]/60 transition-colors cursor-pointer"
+                    className="flex items-center gap-1 text-xs text-gray-300 dark:text-white/20 hover:text-blue-500/60 transition-colors cursor-pointer"
                   >
                     <Plus size={11} />
                     <span>Add date</span>
@@ -134,7 +133,7 @@ export function TaskCard({ task, delay = 0 }: Props) {
 
                 {/* Duration */}
                 {task.duration_minutes ? (
-                  <span className="flex items-center gap-1 text-xs text-white/35">
+                  <span className="flex items-center gap-1 text-xs text-gray-400 dark:text-white/35">
                     <Timer size={11} className="shrink-0" />
                     {formatDuration(task.duration_minutes)}
                   </span>
@@ -145,12 +144,12 @@ export function TaskCard({ task, delay = 0 }: Props) {
               {(task.context_tags?.length > 0 || task.recurrence || task.note || !task.is_completed) && (
                 <div className="flex flex-wrap items-center gap-x-2 gap-y-1 mt-1.5">
                   {task.context_tags?.map((tag) => (
-                    <span key={tag} className="text-[11px] font-medium text-white/40 bg-white/5 px-2 py-0.5 rounded-full">
+                    <span key={tag} className="text-[11px] font-medium text-gray-400 dark:text-white/40 bg-gray-50 dark:bg-white/5 px-2 py-0.5 rounded-full">
                       {tag}
                     </span>
                   ))}
                   {task.recurrence && (
-                    <span className="flex items-center gap-1 text-[11px] font-medium text-[#ec5b13]/60 bg-[#ec5b13]/8 px-2 py-0.5 rounded-full">
+                    <span className="flex items-center gap-1 text-[11px] font-medium text-blue-500/60 bg-blue-500/8 px-2 py-0.5 rounded-full">
                       <Repeat2 size={9} />
                       {task.recurrence}
                     </span>
@@ -167,7 +166,7 @@ export function TaskCard({ task, delay = 0 }: Props) {
                   {!task.is_completed && (
                     <button
                       onClick={() => setShowSubtasks((v) => !v)}
-                      className="flex items-center gap-1 text-[11px] font-medium text-white/25 hover:text-white/55 transition-colors cursor-pointer"
+                      className="flex items-center gap-1 text-[11px] font-medium text-gray-400 dark:text-white/25 hover:text-gray-600 dark:hover:text-white/55 transition-colors cursor-pointer"
                     >
                       <ChevronDown size={10} className={`transition-transform ${showSubtasks ? 'rotate-180' : ''}`} />
                       <span>subtasks</span>
@@ -179,8 +178,8 @@ export function TaskCard({ task, delay = 0 }: Props) {
               {/* Override indicator */}
               {task._hasOverride && (
                 <div className="flex items-center gap-1 mt-2">
-                  <PenLine size={10} className="text-[#ec5b13]/50" />
-                  <span className="text-[10px] text-[#ec5b13]/50 font-medium">Edited by you</span>
+                  <PenLine size={10} className="text-blue-500/60" />
+                  <span className="text-[10px] text-blue-500/60 font-medium">Edited by you</span>
                 </div>
               )}
 
@@ -208,7 +207,7 @@ export function TaskCard({ task, delay = 0 }: Props) {
                 style={{ background: badgeBg }}
               >
                 <span className={`w-2 h-2 rounded-full shrink-0 ${dotColor}`} />
-                <span className="text-xs font-bold text-white/70">{task.priority}</span>
+                <span className="text-xs font-bold text-gray-600 dark:text-white/70">{task.priority}</span>
               </button>
 
               {/* AI reschedule — overdue only */}
@@ -217,7 +216,7 @@ export function TaskCard({ task, delay = 0 }: Props) {
                   onClick={() => reschedule(task.id)}
                   disabled={isRescheduling}
                   title="AI reschedule"
-                  className="w-7 h-7 flex items-center justify-center rounded-lg text-white/20 hover:text-sky-400 hover:bg-sky-500/10 transition-all cursor-pointer disabled:opacity-40"
+                  className="w-7 h-7 flex items-center justify-center rounded-lg text-gray-300 dark:text-white/20 hover:text-sky-400 hover:bg-sky-500/10 transition-all cursor-pointer disabled:opacity-40"
                 >
                   <RefreshCw size={12} className={isRescheduling ? 'animate-spin' : ''} />
                 </button>
@@ -231,7 +230,7 @@ export function TaskCard({ task, delay = 0 }: Props) {
                 className={`w-7 h-7 flex items-center justify-center rounded-lg transition-all cursor-pointer ${
                   shareLink
                     ? 'text-emerald-400 bg-emerald-500/10'
-                    : 'text-white/20 hover:text-[#ec5b13] hover:bg-[#ec5b13]/10'
+                    : 'text-gray-300 dark:text-white/20 hover:text-blue-500 hover:bg-blue-500/10'
                 }`}
               >
                 {shareLink ? <Link2 size={13} /> : <Share2 size={13} />}
@@ -248,7 +247,7 @@ export function TaskCard({ task, delay = 0 }: Props) {
               ) : (
                 <button
                   onClick={() => { setConfirmDelete(true); setTimeout(() => setConfirmDelete(false), 3000); }}
-                  className="w-7 h-7 flex items-center justify-center rounded-lg text-white/20 hover:text-rose-400 hover:bg-rose-500/10 transition-all cursor-pointer"
+                  className="w-7 h-7 flex items-center justify-center rounded-lg text-gray-300 dark:text-white/20 hover:text-rose-400 hover:bg-rose-500/10 transition-all cursor-pointer"
                 >
                   <Trash2 size={13} />
                 </button>
@@ -259,19 +258,19 @@ export function TaskCard({ task, delay = 0 }: Props) {
           {/* Deadline progress bar */}
           {showBar && (
             <div className="px-4 pb-3 -mt-1">
-              <div className="relative h-[3px] rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.05)' }}>
+              <div className="relative h-[3px] rounded-full overflow-hidden bg-gray-100 dark:bg-white/5">
                 <div
                   className={`absolute left-0 top-0 h-full rounded-full transition-all duration-[60000ms] ease-linear ${barPulseClass}`}
                   style={{
                     width: `${deadline.progressPercent}%`,
                     background:
                       deadline.status === 'overdue'  ? '#ef4444' :
-                      deadline.status === 'critical' ? 'linear-gradient(90deg, #ec5b13, #ef4444)' :
-                      deadline.status === 'soon'     ? 'linear-gradient(90deg, #ec5b13, #eab308)' :
-                                                       'linear-gradient(90deg, #ec5b13, #f97316)',
+                      deadline.status === 'critical' ? 'linear-gradient(90deg, #3b82f6, #ef4444)' :
+                      deadline.status === 'soon'     ? 'linear-gradient(90deg, #3b82f6, #eab308)' :
+                                                       'linear-gradient(90deg, #3b82f6, #6366f1)',
                     boxShadow:
                       deadline.status === 'overdue'  ? '0 0 6px rgba(239,68,68,0.7)'  :
-                      deadline.status === 'critical' ? '0 0 6px rgba(236,91,19,0.6)'  : 'none',
+                      deadline.status === 'critical' ? '0 0 6px rgba(59,130,246,0.6)'  : 'none',
                   }}
                 />
               </div>

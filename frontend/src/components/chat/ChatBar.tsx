@@ -154,7 +154,7 @@ export function ChatBar({ energyLevel, prefill, onPrefillConsumed }: Props) {
   const isWorking = isPending || convLoading;
 
   return (
-    <div className="fixed bottom-[72px] left-0 right-0 z-40 pb-safe animate-slide-up">
+    <div className="fixed bottom-0 left-64 right-0 z-40 pb-safe animate-slide-up">
       {isWorking && !convLoading && (
         <div className="px-4 pb-1"><TypingIndicator /></div>
       )}

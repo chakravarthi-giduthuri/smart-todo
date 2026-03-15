@@ -4,17 +4,17 @@ export type Theme = 'dark' | 'light';
 
 export function useTheme() {
   const [theme, setTheme] = useState<Theme>(() => {
-    return (localStorage.getItem('app-theme') as Theme) ?? 'dark';
+    return (localStorage.getItem('app-theme') as Theme) ?? 'light';
   });
 
   useEffect(() => {
     const root = document.documentElement;
-    if (theme === 'light') {
-      root.classList.add('light');
-      root.classList.remove('dark');
-    } else {
-      root.classList.remove('light');
+    if (theme === 'dark') {
       root.classList.add('dark');
+      root.classList.remove('light');
+    } else {
+      root.classList.remove('dark');
+      root.classList.add('light');
     }
     localStorage.setItem('app-theme', theme);
   }, [theme]);
