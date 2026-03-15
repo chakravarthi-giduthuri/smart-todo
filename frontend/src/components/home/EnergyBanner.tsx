@@ -1,37 +1,49 @@
-import { Zap, Sun, Moon, Check } from 'lucide-react';
 import { useTodayEnergy, useSubmitEnergy } from '../../hooks/useEnergy';
 import type { EnergyLevel } from '../../types/task';
 
-const LEVELS = [
+const LEVELS: {
+  level: EnergyLevel;
+  label: string;
+  sublabel: string;
+  emoji: string;
+  bg: string;
+  border: string;
+  activeBg: string;
+  activeBorder: string;
+  textColor: string;
+}[] = [
   {
-    level: 'high' as EnergyLevel,
+    level: 'high',
     label: 'High',
     sublabel: 'Deep focus',
-    Icon: Zap,
-    bg: 'rgba(16,185,129,0.15)',
-    border: 'rgba(16,185,129,0.35)',
-    iconColor: '#10b981',
-    textColor: '#6ee7b7',
+    emoji: '⚡',
+    bg: 'rgba(5,46,22,0.7)',
+    border: 'rgba(22,163,74,0.35)',
+    activeBg: 'rgba(5,46,22,0.85)',
+    activeBorder: 'rgba(22,163,74,0.5)',
+    textColor: '#86efac',
   },
   {
-    level: 'medium' as EnergyLevel,
+    level: 'medium',
     label: 'Medium',
     sublabel: 'Routine tasks',
-    Icon: Sun,
-    bg: 'rgba(245,158,11,0.15)',
-    border: 'rgba(245,158,11,0.35)',
-    iconColor: '#f59e0b',
-    textColor: '#fcd34d',
+    emoji: '☀️',
+    bg: 'rgba(45,26,3,0.8)',
+    border: 'rgba(161,98,7,0.4)',
+    activeBg: 'rgba(55,32,3,0.9)',
+    activeBorder: 'rgba(161,98,7,0.6)',
+    textColor: '#fde68a',
   },
   {
-    level: 'low' as EnergyLevel,
+    level: 'low',
     label: 'Low',
     sublabel: 'Light work',
-    Icon: Moon,
-    bg: 'rgba(100,116,139,0.12)',
-    border: 'rgba(100,116,139,0.25)',
-    iconColor: '#94a3b8',
-    textColor: '#cbd5e1',
+    emoji: '🌙',
+    bg: 'rgba(17,24,39,0.6)',
+    border: 'rgba(75,85,99,0.35)',
+    activeBg: 'rgba(17,24,39,0.8)',
+    activeBorder: 'rgba(107,114,128,0.45)',
+    textColor: '#d1d5db',
   },
 ];
 
@@ -41,50 +53,42 @@ export function EnergyBanner() {
 
   if (isLoading) return null;
 
+  /* Already selected — compact status row */
   if (data?.level) {
     const info = LEVELS.find((l) => l.level === data.level)!;
-    const { Icon } = info;
     return (
       <div
-        className="mx-4 mb-3 px-4 py-3 rounded-xl flex items-center gap-3 animate-slide-up"
-        style={{ background: info.bg, border: `1px solid ${info.border}` }}
+        className="mx-4 mb-3 px-4 py-3 rounded-2xl flex items-center gap-3 animate-slide-up"
+        style={{ background: info.activeBg, border: `1px solid ${info.activeBorder}` }}
       >
-        <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0"
-          style={{ background: `${info.bg}` }}>
-          <Icon size={16} style={{ color: info.iconColor }} />
+        <span className="text-xl">{info.emoji}</span>
+        <div className="flex-1">
+          <p className="text-sm font-semibold" style={{ color: info.textColor }}>{info.label} energy today</p>
+          <p className="text-[11px] text-white/30 mt-0.5">AI has adjusted your schedule</p>
         </div>
-        <div className="flex-1 min-w-0">
-          <p className="text-xs font-bold" style={{ color: info.textColor }}>{info.label} energy today</p>
-          <p className="text-[10px] text-white/30 mt-0.5">AI scheduling adjusted</p>
-        </div>
-        <Check size={14} style={{ color: info.iconColor }} className="opacity-70 shrink-0" />
       </div>
     );
   }
 
+  /* Picker — outer container card + 3 big emoji cards, exactly like mockup */
   return (
-    <div className="mx-4 mb-3 animate-slide-up">
-      <p className="text-[11px] font-bold text-white/40 uppercase tracking-widest mb-2 px-0.5">
-        How's your energy?
-      </p>
+    <div
+      className="mx-4 mb-3 rounded-2xl p-3 animate-slide-up"
+      style={{ background: '#18181b', border: '1px solid rgba(255,255,255,0.09)' }}
+    >
+      <p className="text-sm font-semibold text-white mb-3">How's your energy today?</p>
       <div className="flex gap-2">
-        {LEVELS.map(({ level, label, sublabel, Icon, bg, border, iconColor, textColor }, i) => (
+        {LEVELS.map(({ level, label, sublabel, emoji, bg, border, textColor }) => (
           <button
             key={level}
             onClick={() => submit(level)}
             disabled={isPending}
-            className="flex-1 flex flex-col items-center gap-2 py-4 rounded-xl transition-all duration-200 active:scale-95 cursor-pointer disabled:opacity-50"
-            style={{
-              background: bg,
-              border: `1px solid ${border}`,
-              animationDelay: `${i * 50}ms`,
-            }}
+            className="flex-1 flex flex-col items-center justify-center gap-1.5 py-4 rounded-xl transition-all duration-200 active:scale-95 cursor-pointer disabled:opacity-50 hover:brightness-110"
+            style={{ background: bg, border: `1px solid ${border}` }}
           >
-            <Icon size={20} style={{ color: iconColor }} />
-            <div className="text-center">
-              <p className="text-xs font-bold leading-none" style={{ color: textColor }}>{label}</p>
-              <p className="text-[9px] text-white/30 mt-0.5">{sublabel}</p>
-            </div>
+            <span className="text-2xl leading-none">{emoji}</span>
+            <span className="text-xs font-bold mt-0.5" style={{ color: textColor }}>{label}</span>
+            <span className="text-[9px] text-white/30">{sublabel}</span>
           </button>
         ))}
       </div>
