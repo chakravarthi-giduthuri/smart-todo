@@ -55,9 +55,14 @@ export function getActiveSubscription() {
 export async function sendPushNotification(task: Task): Promise<void> {
   if (!vapidReady || !activeSubscription) return;
 
+  const reminderMin = task.reminder_minutes_before ?? 15;
+  const bodyText = reminderMin === 0
+    ? `Starting now · ${task.category}`
+    : `Starting in ${reminderMin} min · ${task.category}`;
+
   const payload = JSON.stringify({
     title: `Reminder: ${task.title}`,
-    body: `Starting in 15 minutes · ${task.category}`,
+    body: bodyText,
     data: { taskId: task.id, url: '/' },
   });
 
@@ -75,13 +80,20 @@ export async function sendPushNotification(task: Task): Promise<void> {
 
 export async function runReminderJob(): Promise<void> {
   try {
+    console.log(`[Reminders] Cron tick — vapidReady=${vapidReady} hasSubscription=${!!activeSubscription}`);
     if (!activeSubscription) await loadSubscriptionFromDb();
 
+    if (!activeSubscription) {
+      console.log('[Reminders] No push subscription registered — skipping');
+      return;
+    }
+
     const tasks = await getDueTasks();
+    console.log(`[Reminders] Due tasks: ${tasks.length}`);
     if (tasks.length === 0) return;
 
-    console.log(`[Reminders] Sending ${tasks.length} notification(s)`);
     for (const task of tasks) {
+      console.log(`[Reminders] Notifying task "${task.title}" (reminder=${task.reminder_minutes_before}min)`);
       await sendPushNotification(task);
       await markReminderSent(task.id);
     }

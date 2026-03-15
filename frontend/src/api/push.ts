@@ -6,3 +6,7 @@ export async function subscribePush(subscription: PushSubscription): Promise<voi
     body: JSON.stringify(subscription.toJSON()),
   });
 }
+
+export async function testPush(): Promise<void> {
+  await apiFetch('/api/push/test', { method: 'POST' });
+}
