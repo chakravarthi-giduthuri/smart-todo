@@ -23,3 +23,7 @@ export async function completeTask(id: string): Promise<Task> {
   const res = await apiFetch<{ task: Task }>(`/api/tasks/${id}/complete`, { method: 'PATCH' });
   return res.task;
 }
+
+export async function deleteTask(id: string): Promise<void> {
+  await apiFetch<void>(`/api/tasks/${id}`, { method: 'DELETE' });
+}

@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { listTasks, createTask, completeTask } from '../api/tasks';
+import { listTasks, createTask, completeTask, deleteTask } from '../api/tasks';
 import type { Task } from '../types/task';
 
 export function useTasks(filters?: { category?: string }) {
@@ -28,6 +28,26 @@ export function useCreateTask() {
     },
     onError: (err) => {
       console.error('[createTask error]', err);
+    },
+  });
+}
+
+export function useDeleteTask() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: deleteTask,
+    onMutate: async (id: string) => {
+      await qc.cancelQueries({ queryKey: ['tasks'] });
+      const prev = qc.getQueryData<Task[]>(['tasks', undefined]);
+      qc.setQueryData(['tasks', undefined], (old: Task[] = []) => old.filter((t) => t.id !== id));
+      return { prev };
+    },
+    onError: (_err, _id, ctx) => {
+      if (ctx?.prev) qc.setQueryData(['tasks', undefined], ctx.prev);
+    },
+    onSettled: () => {
+      qc.invalidateQueries({ queryKey: ['tasks'] });
+      qc.invalidateQueries({ queryKey: ['dashboard'] });
     },
   });
 }

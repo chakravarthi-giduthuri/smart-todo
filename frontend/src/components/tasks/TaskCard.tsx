@@ -1,9 +1,9 @@
 import { useState } from 'react';
-import { Calendar, Clock, Timer, PenLine, Plus, Pencil } from 'lucide-react';
+import { Calendar, Clock, Timer, PenLine, Plus, Pencil, Trash2 } from 'lucide-react';
 import type { Task, Priority, Category } from '../../types/task';
 import { CompletionToggle } from './CompletionToggle';
 import { OverrideDrawer, type OverrideField } from './OverrideDrawer';
-import { useCompleteTask } from '../../hooks/useTasks';
+import { useCompleteTask, useDeleteTask } from '../../hooks/useTasks';
 import { useDeadlineStatus } from '../../hooks/useDeadlineStatus';
 import { CATEGORY_COLORS } from '../../constants/categories';
 import { formatDate, formatTime, formatDuration } from '../../utils/dateFormat';
@@ -29,7 +29,9 @@ interface Props { task: Task; delay?: number; priorityColor?: string; }
 
 export function TaskCard({ task, delay = 0, priorityColor }: Props) {
   const [activeField, setActiveField] = useState<OverrideField>(null);
+  const [confirmDelete, setConfirmDelete] = useState(false);
   const { mutate: complete } = useCompleteTask();
+  const { mutate: remove } = useDeleteTask();
   const deadline = useDeadlineStatus(task);
 
   const catColor = CATEGORY_COLORS[task.category as Category];
@@ -118,7 +120,7 @@ export function TaskCard({ task, delay = 0, priorityColor }: Props) {
                 </div>
               </div>
 
-              {/* Right column: priority + deadline pill */}
+              {/* Right column: priority + deadline pill + delete */}
               <div className="flex flex-col items-end gap-1.5 shrink-0">
                 <button onClick={() => setActiveField('priority')}
                   className="flex items-center gap-1.5 glass rounded-xl px-2.5 py-1.5 transition-all duration-200 active:scale-90 cursor-pointer group">
@@ -133,6 +135,24 @@ export function TaskCard({ task, delay = 0, priorityColor }: Props) {
                   >
                     <span>{deadline.label}</span>
                   </div>
+                )}
+
+                {/* Delete */}
+                {confirmDelete ? (
+                  <button
+                    onClick={() => remove(task.id)}
+                    className="flex items-center gap-1 px-2 py-1 rounded-xl bg-red-500/20 text-red-400 text-[10px] font-bold active:scale-90 transition-all duration-150 cursor-pointer animate-fade-in"
+                  >
+                    <Trash2 size={10} />
+                    <span>Delete?</span>
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => { setConfirmDelete(true); setTimeout(() => setConfirmDelete(false), 3000); }}
+                    className="w-6 h-6 flex items-center justify-center rounded-lg text-white/15 hover:text-rose-400 hover:bg-rose-500/10 transition-all duration-200 cursor-pointer"
+                  >
+                    <Trash2 size={12} />
+                  </button>
                 )}
               </div>
             </div>

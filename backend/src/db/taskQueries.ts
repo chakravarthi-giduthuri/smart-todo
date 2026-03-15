@@ -76,6 +76,11 @@ export async function getTasksByDateRange(from: string, to: string): Promise<Tas
   return (data ?? []) as Task[];
 }
 
+export async function deleteTask(id: string): Promise<void> {
+  const { error } = await supabase.from('tasks').delete().eq('id', id);
+  if (error) throw new Error(`deleteTask failed: ${error.message}`);
+}
+
 export async function getDueTasks(): Promise<Task[]> {
   const now = new Date();
   const pad = (n: number) => String(n).padStart(2, '0');

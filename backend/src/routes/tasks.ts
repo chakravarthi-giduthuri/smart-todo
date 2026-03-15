@@ -3,7 +3,7 @@ import { validate } from '../middleware/validate';
 import { createTaskSchema } from '../schemas/taskSchemas';
 import { buildRules } from '../services/preferences';
 import { buildPrompt, callClaude, parseClaudeResponse } from '../services/claude';
-import { insertTask, listTasks, markComplete } from '../db/taskQueries';
+import { insertTask, listTasks, markComplete, deleteTask } from '../db/taskQueries';
 import type { Category } from '../types/task';
 
 const router = Router();
@@ -50,6 +50,15 @@ router.patch('/:id/complete', async (req, res, next) => {
   try {
     const task = await markComplete(req.params.id);
     res.json({ task });
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.delete('/:id', async (req, res, next) => {
+  try {
+    await deleteTask(req.params.id);
+    res.status(204).send();
   } catch (err) {
     next(err);
   }
