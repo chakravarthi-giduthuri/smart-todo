@@ -3,7 +3,7 @@ import { validate } from '../middleware/validate';
 import { createTaskSchema } from '../schemas/taskSchemas';
 import { buildRules } from '../services/preferences';
 import { buildPrompt, callClaude, parseClaudeResponse } from '../services/claude';
-import { insertTask, listTasks, markComplete, deleteTask } from '../db/taskQueries';
+import { insertTask, listTasks, markComplete, deleteTask, archiveTask, spawnNextRecurrence } from '../db/taskQueries';
 import type { Category } from '../types/task';
 
 const router = Router();
@@ -35,6 +35,7 @@ router.post('/', validate(createTaskSchema), async (req, res, next) => {
       ai_reasoning: parsed.reasoning,
       reminder_minutes_before: parsed.reminder_minutes_before,
       timezone_offset_minutes: parseOffsetMinutes(current_date),
+      recurrence: parsed.recurrence,
     });
     res.status(201).json({ task });
   } catch (err) {
@@ -58,6 +59,18 @@ router.get('/', async (req, res, next) => {
 router.patch('/:id/complete', async (req, res, next) => {
   try {
     const task = await markComplete(req.params.id);
+    if (task.recurrence) {
+      spawnNextRecurrence(task).catch((err) => console.error('[Recurrence] spawn failed:', err));
+    }
+    res.json({ task });
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.patch('/:id/archive', async (req, res, next) => {
+  try {
+    const task = await archiveTask(req.params.id);
     res.json({ task });
   } catch (err) {
     next(err);

@@ -2,7 +2,7 @@ import { PageShell } from '../components/layout/PageShell';
 import { StatCard } from '../components/dashboard/StatCard';
 import { WeekBarChart } from '../components/dashboard/WeekBarChart';
 import { useDashboard } from '../hooks/useDashboard';
-import { CheckCircle2, ListTodo, TrendingUp, CalendarDays, Tag, AlertCircle } from 'lucide-react';
+import { CheckCircle2, ListTodo, TrendingUp, CalendarDays, Tag, AlertCircle, Flame } from 'lucide-react';
 
 export function DashboardScreen() {
   const { data: stats, isLoading } = useDashboard();
@@ -29,6 +29,7 @@ export function DashboardScreen() {
         <StatCard label="This Week"        value={stats.tasks_this_week}   icon={<CalendarDays size={18} />} accent="text-sky-400" />
         <StatCard label="Top Category"     value={stats.top_category ?? '–'} icon={<Tag size={18} />}       accent="text-amber-400" />
         <StatCard label="Overdue"          value={stats.overdue_count}     icon={<AlertCircle size={18} />}  accent="text-rose-400" />
+        <StatCard label="Day Streak"       value={`${stats.streak_days}🔥`}  icon={<Flame size={18} />}      accent="text-orange-400" />
       </div>
 
       <WeekBarChart data={stats.week_chart} />

@@ -9,6 +9,7 @@ import overridesRouter from './routes/overrides';
 import pushRouter from './routes/push';
 import dashboardRouter from './routes/dashboard';
 import preferencesRouter from './routes/preferences';
+import subtasksRouter from './routes/subtasks';
 import { startReminderCron } from './cron/reminderJob';
 import { loadSubscriptionFromDb } from './services/reminders';
 
@@ -28,6 +29,7 @@ app.use(express.json());
 
 app.use('/api/tasks', tasksRouter);
 app.use('/api/tasks', overridesRouter);
+app.use('/api/tasks/:taskId/subtasks', subtasksRouter);
 app.use('/api/push', pushRouter);
 app.use('/api/dashboard', dashboardRouter);
 app.use('/api/preferences', preferencesRouter);

@@ -7,6 +7,7 @@ export interface ClaudeResponse {
   priority: number;
   reminder_minutes_before: number;
   reasoning: string;
+  recurrence: string | null;
 }
 
 export class ClaudeParseError extends Error {

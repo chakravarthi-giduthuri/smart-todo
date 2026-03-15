@@ -15,8 +15,11 @@ export async function insertTask(data: InsertTaskInput): Promise<Task> {
       ai_reasoning: data.ai_reasoning,
       reminder_minutes_before: data.reminder_minutes_before,
       timezone_offset_minutes: data.timezone_offset_minutes,
+      recurrence: data.recurrence ?? null,
+      recurrence_parent_id: data.recurrence_parent_id ?? null,
       is_completed: false,
       reminder_sent: false,
+      is_archived: false,
     })
     .select()
     .single();
@@ -26,7 +29,7 @@ export async function insertTask(data: InsertTaskInput): Promise<Task> {
 }
 
 export async function listTasks(filters: TaskFilters = {}): Promise<Task[]> {
-  let query = supabase.from('tasks').select('*').order('priority', { ascending: true }).order('created_at', { ascending: false });
+  let query = supabase.from('tasks').select('*').eq('is_archived', false).order('priority', { ascending: true }).order('created_at', { ascending: false });
 
   if (filters.category) query = query.eq('category', filters.category);
   if (filters.is_completed !== undefined) query = query.eq('is_completed', filters.is_completed);
@@ -77,9 +80,64 @@ export async function getTasksByDateRange(from: string, to: string): Promise<Tas
   return (data ?? []) as Task[];
 }
 
+export async function archiveTask(id: string): Promise<Task> {
+  const { data, error } = await supabase
+    .from('tasks')
+    .update({ is_archived: true })
+    .eq('id', id)
+    .select()
+    .single();
+  if (error) throw new Error(`archiveTask failed: ${error.message}`);
+  return data as Task;
+}
+
 export async function deleteTask(id: string): Promise<void> {
   const { error } = await supabase.from('tasks').delete().eq('id', id);
   if (error) throw new Error(`deleteTask failed: ${error.message}`);
+}
+
+function computeNextDate(task: Task): string | null {
+  if (!task.recurrence || !task.scheduled_date) return null;
+  const base = new Date(task.scheduled_date + 'T12:00:00Z');
+
+  if (task.recurrence === 'daily') {
+    base.setUTCDate(base.getUTCDate() + 1);
+  } else if (task.recurrence === 'weekly') {
+    base.setUTCDate(base.getUTCDate() + 7);
+  } else if (task.recurrence === 'monthly') {
+    base.setUTCMonth(base.getUTCMonth() + 1);
+  } else if (task.recurrence === 'weekdays') {
+    base.setUTCDate(base.getUTCDate() + 1);
+    // Skip weekend
+    while (base.getUTCDay() === 0 || base.getUTCDay() === 6) {
+      base.setUTCDate(base.getUTCDate() + 1);
+    }
+  } else {
+    return null;
+  }
+
+  const pad = (n: number) => String(n).padStart(2, '0');
+  return `${base.getUTCFullYear()}-${pad(base.getUTCMonth() + 1)}-${pad(base.getUTCDate())}`;
+}
+
+export async function spawnNextRecurrence(task: Task): Promise<void> {
+  const nextDate = computeNextDate(task);
+  if (!nextDate) return;
+
+  await insertTask({
+    raw_input: task.raw_input,
+    title: task.title,
+    category: task.category,
+    priority: task.priority,
+    scheduled_date: nextDate,
+    scheduled_time: task.scheduled_time,
+    duration_minutes: task.duration_minutes,
+    ai_reasoning: task.ai_reasoning,
+    reminder_minutes_before: task.reminder_minutes_before,
+    timezone_offset_minutes: task.timezone_offset_minutes,
+    recurrence: task.recurrence,
+    recurrence_parent_id: task.recurrence_parent_id ?? task.id,
+  });
 }
 
 export async function getDueTasks(): Promise<Task[]> {

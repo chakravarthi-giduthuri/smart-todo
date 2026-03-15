@@ -22,8 +22,17 @@ Analyze the user's input and return ONLY a valid JSON object with exactly these 
   "duration_minutes": integer or null,
   "priority": 1 | 2 | 3 | 4 | 5,
   "reminder_minutes_before": integer,
+  "recurrence": "daily" | "weekdays" | "weekly" | "monthly" | null,
   "reasoning": "1-2 sentence explanation"
 }
+
+═══ RECURRENCE — detect repeating patterns ═══
+- "every day" / "daily" → "daily"
+- "every weekday" / "Mon-Fri" / "weekdays" → "weekdays"
+- "every week" / "weekly" / "every Monday" → "weekly"
+- "every month" / "monthly" → "monthly"
+- No recurrence keyword → null
+- Set recurrence only when the user clearly intends a repeating task.
 
 ═══ PRIORITY — assign ruthlessly honestly ═══
 1 = Critical  : Deadlines today, emergencies, "ASAP", health crises, time-sensitive financials.
@@ -104,6 +113,11 @@ export function parseClaudeResponse(text: string): ClaudeResponse {
     ? Math.max(0, Math.round(Number(obj.reminder_minutes_before)))
     : 15;
 
+  const validRecurrences = ['daily', 'weekdays', 'weekly', 'monthly'];
+  const recurrence = validRecurrences.includes(obj.recurrence as string)
+    ? (obj.recurrence as string)
+    : null;
+
   return {
     title: String(obj.title).slice(0, 60),
     category: obj.category as ClaudeResponse['category'],
@@ -113,5 +127,6 @@ export function parseClaudeResponse(text: string): ClaudeResponse {
     priority,
     reminder_minutes_before: isNaN(reminderMinutes) ? 15 : reminderMinutes,
     reasoning: String(obj.reasoning),
+    recurrence,
   };
 }

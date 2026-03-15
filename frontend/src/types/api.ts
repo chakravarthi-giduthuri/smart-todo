@@ -21,5 +21,6 @@ export interface DashboardStats {
   top_category: Category | null;
   tasks_this_week: number;
   overdue_count: number;
+  streak_days: number;
   week_chart: Array<{ date: string; total: number; completed: number }>;
 }

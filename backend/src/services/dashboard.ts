@@ -8,27 +8,40 @@ export interface DashboardStats {
   top_category: Category | null;
   tasks_this_week: number;
   overdue_count: number;
+  streak_days: number;
   week_chart: Array<{ date: string; total: number; completed: number }>;
 }
 
+function localDateStr(d: Date): string {
+  const pad = (n: number) => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+}
+
 export async function aggregateStats(): Promise<DashboardStats> {
-  const today = new Date().toISOString().split('T')[0];
-  const weekStart = new Date();
+  const now = new Date();
+  const today = localDateStr(now);
+  const weekStart = new Date(now);
   weekStart.setDate(weekStart.getDate() - weekStart.getDay());
-  const weekStartStr = weekStart.toISOString().split('T')[0];
+  const weekStartStr = localDateStr(weekStart);
 
-  const sevenDaysAgo = new Date();
+  const sevenDaysAgo = new Date(now);
   sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 6);
-  const sevenDaysAgoStr = sevenDaysAgo.toISOString().split('T')[0];
+  const sevenDaysAgoStr = localDateStr(sevenDaysAgo);
 
-  const [totalResult, completedTodayResult, categoryResult, weekResult, overdueResult, chartResult] =
+  // For streak: look back up to 90 days
+  const ninetyDaysAgo = new Date(now);
+  ninetyDaysAgo.setDate(ninetyDaysAgo.getDate() - 90);
+  const ninetyDaysAgoStr = localDateStr(ninetyDaysAgo);
+
+  const [totalResult, completedTodayResult, categoryResult, weekResult, overdueResult, chartResult, streakResult] =
     await Promise.all([
-      supabase.from('tasks').select('*', { count: 'exact', head: true }),
+      supabase.from('tasks').select('*', { count: 'exact', head: true }).eq('is_archived', false),
       supabase.from('tasks').select('*', { count: 'exact', head: true }).eq('is_completed', true).eq('scheduled_date', today),
-      supabase.from('tasks').select('category'),
-      supabase.from('tasks').select('*', { count: 'exact', head: true }).gte('scheduled_date', weekStartStr),
-      supabase.from('tasks').select('*', { count: 'exact', head: true }).eq('is_completed', false).lt('scheduled_date', today),
+      supabase.from('tasks').select('category').eq('is_archived', false),
+      supabase.from('tasks').select('*', { count: 'exact', head: true }).gte('scheduled_date', weekStartStr).eq('is_archived', false),
+      supabase.from('tasks').select('*', { count: 'exact', head: true }).eq('is_completed', false).eq('is_archived', false).lt('scheduled_date', today),
       supabase.from('tasks').select('scheduled_date, is_completed').gte('scheduled_date', sevenDaysAgoStr).lte('scheduled_date', today),
+      supabase.from('tasks').select('completed_at').eq('is_completed', true).gte('completed_at', ninetyDaysAgoStr + 'T00:00:00Z'),
     ]);
 
   // Top category
@@ -55,6 +68,25 @@ export async function aggregateStats(): Promise<DashboardStats> {
     }
   }
 
+  // Streak: count consecutive days (going backwards) with at least 1 completion
+  const completedDates = new Set(
+    ((streakResult.data ?? []) as { completed_at: string }[])
+      .map(r => r.completed_at?.split('T')[0])
+      .filter(Boolean)
+  );
+  let streak = 0;
+  const check = new Date(now);
+  // Start from today or yesterday depending on whether today has completions
+  if (!completedDates.has(today)) check.setDate(check.getDate() - 1);
+  for (let i = 0; i < 90; i++) {
+    if (completedDates.has(localDateStr(check))) {
+      streak++;
+      check.setDate(check.getDate() - 1);
+    } else {
+      break;
+    }
+  }
+
   const total = totalResult.count ?? 0;
   const completedToday = completedTodayResult.count ?? 0;
   const todayTotal = chartMap.get(today)?.total ?? 0;
@@ -66,6 +98,7 @@ export async function aggregateStats(): Promise<DashboardStats> {
     top_category: topCategory,
     tasks_this_week: weekResult.count ?? 0,
     overdue_count: overdueResult.count ?? 0,
+    streak_days: streak,
     week_chart: Array.from(chartMap.entries()).map(([date, v]) => ({ date, ...v })),
   };
 }

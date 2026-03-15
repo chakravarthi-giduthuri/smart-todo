@@ -16,7 +16,25 @@ export interface Task {
   is_completed: boolean;
   completed_at: string | null;
   reminder_sent: boolean;
+  is_archived: boolean;
+  recurrence: string | null;
+  recurrence_parent_id: string | null;
   created_at: string;
+}
+
+export interface Subtask {
+  id: string;
+  task_id: string;
+  title: string;
+  is_completed: boolean;
+  position: number;
+  created_at: string;
+}
+
+export interface InsertSubtaskInput {
+  task_id: string;
+  title: string;
+  position?: number;
 }
 
 export interface OverrideLog {
@@ -41,6 +59,8 @@ export interface InsertTaskInput {
   ai_reasoning: string;
   reminder_minutes_before: number;
   timezone_offset_minutes: number;
+  recurrence?: string | null;
+  recurrence_parent_id?: string | null;
 }
 
 export interface InsertOverrideInput {

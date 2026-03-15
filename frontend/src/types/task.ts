@@ -15,8 +15,20 @@ export interface Task {
   is_completed: boolean;
   completed_at: string | null;
   reminder_sent: boolean;
+  is_archived: boolean;
+  recurrence: string | null;
+  recurrence_parent_id: string | null;
   created_at: string;
   _hasOverride?: boolean;
+}
+
+export interface Subtask {
+  id: string;
+  task_id: string;
+  title: string;
+  is_completed: boolean;
+  position: number;
+  created_at: string;
 }
 
 export interface OverrideLog {

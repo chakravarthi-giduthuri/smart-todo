@@ -1,8 +1,9 @@
 import { useState } from 'react';
-import { Calendar, Clock, Timer, PenLine, Plus, Pencil, Trash2 } from 'lucide-react';
+import { Calendar, Clock, Timer, PenLine, Plus, Pencil, Trash2, Repeat2, ChevronDown } from 'lucide-react';
 import type { Task, Priority, Category } from '../../types/task';
 import { CompletionToggle } from './CompletionToggle';
 import { OverrideDrawer, type OverrideField } from './OverrideDrawer';
+import { SubtaskList } from './SubtaskList';
 import { useCompleteTask, useDeleteTask } from '../../hooks/useTasks';
 import { useDeadlineStatus } from '../../hooks/useDeadlineStatus';
 import { CATEGORY_COLORS } from '../../constants/categories';
@@ -30,6 +31,7 @@ interface Props { task: Task; delay?: number; priorityColor?: string; }
 export function TaskCard({ task, delay = 0, priorityColor }: Props) {
   const [activeField, setActiveField] = useState<OverrideField>(null);
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const [showSubtasks, setShowSubtasks] = useState(false);
   const { mutate: complete } = useCompleteTask();
   const { mutate: remove } = useDeleteTask();
   const deadline = useDeadlineStatus(task);
@@ -117,6 +119,25 @@ export function TaskCard({ task, delay = 0, priorityColor }: Props) {
                       {formatDuration(task.duration_minutes)}
                     </span>
                   )}
+
+                  {/* Recurrence badge */}
+                  {task.recurrence && (
+                    <span className="flex items-center gap-1 text-[10px] font-semibold text-indigo-400/70 bg-indigo-500/10 px-2 py-0.5 rounded-full">
+                      <Repeat2 size={9} />
+                      {task.recurrence}
+                    </span>
+                  )}
+
+                  {/* Subtasks toggle */}
+                  {!task.is_completed && (
+                    <button
+                      onClick={() => setShowSubtasks((v) => !v)}
+                      className="flex items-center gap-1 text-[10px] font-semibold text-white/25 hover:text-white/60 transition-colors cursor-pointer"
+                    >
+                      <ChevronDown size={10} className={`transition-transform ${showSubtasks ? 'rotate-180' : ''}`} />
+                      <span>subtasks</span>
+                    </button>
+                  )}
                 </div>
               </div>
 
@@ -163,6 +184,11 @@ export function TaskCard({ task, delay = 0, priorityColor }: Props) {
                 <PenLine size={10} className="text-indigo-400/60" />
                 <span className="text-[10px] text-indigo-400/60 font-medium">Edited</span>
               </div>
+            )}
+
+            {/* Subtasks section */}
+            {showSubtasks && !task.is_completed && (
+              <SubtaskList taskId={task.id} />
             )}
           </div>
 
