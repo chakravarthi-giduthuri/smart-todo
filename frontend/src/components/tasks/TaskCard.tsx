@@ -22,7 +22,7 @@ const PILL_STYLE = {
   overdue:  { bg: 'rgba(239,68,68,0.15)',   text: '#f87171' },
   critical: { bg: 'rgba(249,115,22,0.15)',  text: '#fb923c' },
   soon:     { bg: 'rgba(234,179,8,0.12)',   text: '#facc15' },
-  today:    { bg: 'rgba(99,102,241,0.12)',  text: '#818cf8' },
+  today:    { bg: 'rgba(249,115,22,0.12)',  text: '#fb923c' },
   future:   { bg: 'rgba(255,255,255,0.06)', text: 'rgba(255,255,255,0.4)' },
   none:     { bg: 'transparent', text: 'transparent' },
 };
@@ -75,11 +75,19 @@ export function TaskCard({ task, delay = 0, priorityColor }: Props) {
         style={{ animationDelay: `${delay}ms` }}
       >
         <div
-          className={`relative rounded-2xl glass overflow-hidden transition-all duration-300 hover:bg-white/[0.06] active:scale-[0.98] ${task.is_completed ? 'opacity-40' : ''}`}
+          className={`group relative rounded-2xl glass overflow-hidden transition-all duration-200 hover:bg-white/[0.05] hover:shadow-lg hover:shadow-black/20 active:scale-[0.98] ${task.is_completed ? 'opacity-40' : ''}`}
           style={{ backgroundColor: cardTint }}
         >
           {/* Priority accent line */}
           <div className="absolute left-0 top-0 bottom-0 w-[3px] rounded-r-full" style={{ backgroundColor: borderColor }} />
+
+          {/* Left border accent (incomplete tasks only) */}
+          {!task.is_completed && (
+            <div
+              className="absolute left-0 top-0 bottom-0 w-0.5 rounded-l-2xl opacity-60 transition-opacity duration-300 group-hover:opacity-100"
+              style={{ background: borderColor }}
+            />
+          )}
 
           <div className="pl-4 pr-4 pt-4 pb-3">
             <div className="flex items-start gap-3">
@@ -95,7 +103,7 @@ export function TaskCard({ task, delay = 0, priorityColor }: Props) {
                     {task.title}
                   </span>
                   {!task.is_completed && (
-                    <Pencil size={11} className="text-white/20 group-hover:text-indigo-400/70 transition-colors mt-1 shrink-0" />
+                    <Pencil size={11} className="text-white/20 group-hover:text-orange-400/70 transition-colors mt-1 shrink-0" />
                   )}
                 </button>
 
@@ -122,7 +130,7 @@ export function TaskCard({ task, delay = 0, priorityColor }: Props) {
                     </button>
                   ) : (
                     <button onClick={() => setActiveField('scheduled_date')}
-                      className="flex items-center gap-1 text-xs text-white/20 hover:text-indigo-400/60 transition-colors cursor-pointer">
+                      className="flex items-center gap-1 text-xs text-white/20 hover:text-orange-400/60 transition-colors cursor-pointer">
                       <Plus size={11} />
                       <span>Add date</span>
                     </button>
@@ -145,7 +153,7 @@ export function TaskCard({ task, delay = 0, priorityColor }: Props) {
 
                   {/* Recurrence badge */}
                   {task.recurrence && (
-                    <span className="flex items-center gap-1 text-[10px] font-semibold text-indigo-400/70 bg-indigo-500/10 px-2 py-0.5 rounded-full">
+                    <span className="flex items-center gap-1 text-[10px] font-semibold text-orange-400/70 bg-orange-500/10 px-2 py-0.5 rounded-full">
                       <Repeat2 size={9} />
                       {task.recurrence}
                     </span>
@@ -178,7 +186,7 @@ export function TaskCard({ task, delay = 0, priorityColor }: Props) {
               {/* Right column: priority + deadline pill + delete */}
               <div className="flex flex-col items-end gap-1.5 shrink-0">
                 <button onClick={() => setActiveField('priority')}
-                  className="flex items-center gap-1.5 glass rounded-xl px-2.5 py-1.5 transition-all duration-200 active:scale-90 cursor-pointer group">
+                  className="flex items-center gap-1.5 rounded-xl bg-white/5 px-2.5 py-1.5 transition-all duration-200 active:scale-90 cursor-pointer group">
                   <span className={`w-2 h-2 rounded-full ${dotColor}`} />
                   <span className="text-xs font-bold text-white/70 group-hover:text-white transition-colors">{task.priority}</span>
                 </button>
@@ -209,7 +217,7 @@ export function TaskCard({ task, delay = 0, priorityColor }: Props) {
                   onClick={handleShare}
                   disabled={isSharing}
                   title={shareLink ? 'Link copied!' : 'Share task'}
-                  className={`w-6 h-6 flex items-center justify-center rounded-lg transition-all duration-200 cursor-pointer ${shareLink ? 'text-emerald-400 bg-emerald-500/10' : 'text-white/15 hover:text-indigo-400 hover:bg-indigo-500/10'}`}
+                  className={`w-6 h-6 flex items-center justify-center rounded-lg transition-all duration-200 cursor-pointer ${shareLink ? 'text-emerald-400 bg-emerald-500/10' : 'text-white/15 hover:text-orange-400 hover:bg-orange-500/10'}`}
                 >
                   {shareLink ? <Link2 size={11} /> : <Share2 size={11} />}
                 </button>
@@ -237,8 +245,8 @@ export function TaskCard({ task, delay = 0, priorityColor }: Props) {
             {/* Override indicator */}
             {task._hasOverride && (
               <div className="flex items-center gap-1 mt-2 pl-9">
-                <PenLine size={10} className="text-indigo-400/60" />
-                <span className="text-[10px] text-indigo-400/60 font-medium">Edited</span>
+                <PenLine size={10} className="text-orange-400/60" />
+                <span className="text-[10px] text-orange-400/60 font-medium">Edited</span>
               </div>
             )}
 
@@ -271,8 +279,8 @@ export function TaskCard({ task, delay = 0, priorityColor }: Props) {
                       : deadline.status === 'critical'
                       ? 'linear-gradient(90deg, #f97316, #ef4444)'
                       : deadline.status === 'soon'
-                      ? 'linear-gradient(90deg, #6366f1, #eab308)'
-                      : 'linear-gradient(90deg, #6366f1, #818cf8)',
+                      ? 'linear-gradient(90deg, #f97316, #eab308)'
+                      : 'linear-gradient(90deg, #f97316, #fb923c)',
                     boxShadow: deadline.status === 'overdue'  ? '0 0 6px rgba(239,68,68,0.8)'  :
                                deadline.status === 'critical' ? '0 0 6px rgba(249,115,22,0.7)' :
                                deadline.status === 'soon'     ? '0 0 4px rgba(234,179,8,0.5)'  : 'none',

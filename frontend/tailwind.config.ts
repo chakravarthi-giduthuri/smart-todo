@@ -16,8 +16,8 @@ const config: Config = {
         errand:   '#ec4899',
       },
       backgroundImage: {
-        'gradient-accent': 'linear-gradient(135deg, #6366f1, #8b5cf6)',
-        'gradient-card':   'linear-gradient(135deg, rgba(99,102,241,0.15), rgba(139,92,246,0.08))',
+        'gradient-accent': 'linear-gradient(135deg, #f97316, #fb923c)',
+        'gradient-card':   'linear-gradient(135deg, rgba(249,115,22,0.15), rgba(251,146,60,0.08))',
       },
     },
   },

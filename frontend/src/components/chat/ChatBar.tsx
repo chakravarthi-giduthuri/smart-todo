@@ -154,7 +154,7 @@ export function ChatBar({ energyLevel, prefill, onPrefillConsumed }: Props) {
   const isWorking = isPending || convLoading;
 
   return (
-    <div className="fixed bottom-[72px] left-0 right-0 z-40 pb-safe">
+    <div className="fixed bottom-[72px] left-0 right-0 z-40 pb-safe animate-slide-up">
       {isWorking && !convLoading && (
         <div className="px-4 pb-1"><TypingIndicator /></div>
       )}
@@ -176,18 +176,18 @@ export function ChatBar({ energyLevel, prefill, onPrefillConsumed }: Props) {
 
       {/* Conversation question bubble */}
       {convMode && assistantQ && (
-        <div className="mx-3 mb-2 px-4 py-2.5 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 animate-fade-in">
-          <p className="text-xs text-indigo-300">{assistantQ}</p>
+        <div className="mx-3 mb-2 px-4 py-2.5 rounded-2xl bg-orange-500/10 border border-orange-500/20 animate-fade-in">
+          <p className="text-xs text-orange-300">{assistantQ}</p>
         </div>
       )}
 
-      <div className="mx-3 glass-strong rounded-3xl px-3 py-2 flex items-center gap-2 shadow-2xl shadow-black/50">
+      <div className="mx-3 glass-strong rounded-3xl px-3 py-2 flex items-center gap-2 shadow-2xl shadow-black/50 transition-all duration-300 focus-within:border-orange-500/30 focus-within:shadow-orange-500/10">
         {/* Conversation mode toggle */}
         <button
           onClick={() => convMode ? exitConvMode() : setConvMode(true)}
           disabled={isWorking}
           className={`w-11 h-11 rounded-2xl flex items-center justify-center transition-all duration-200 active:scale-90 cursor-pointer shrink-0 ${
-            convMode ? 'bg-indigo-500 text-white shadow-lg shadow-indigo-500/40' : 'text-white/40 hover:text-white hover:bg-white/5'
+            convMode ? 'bg-orange-500 text-white shadow-lg shadow-orange-500/40' : 'text-white/40 hover:text-white hover:bg-white/5'
           }`}
           title={convMode ? 'Exit conversation mode' : 'Conversation mode'}
         >
@@ -223,14 +223,14 @@ export function ChatBar({ energyLevel, prefill, onPrefillConsumed }: Props) {
           }
           disabled={isWorking}
           className={`flex-1 bg-transparent text-white text-[15px] font-medium outline-none py-2 transition-colors duration-200 disabled:opacity-50 ${
-            isListening ? 'placeholder-rose-400/60' : convMode ? 'placeholder-indigo-400/50' : 'placeholder-white/25'
+            isListening ? 'placeholder-rose-400/60' : convMode ? 'placeholder-orange-400/50' : 'placeholder-white/25'
           }`}
         />
 
         <button
           onClick={convMode ? handleConvSubmit : handleDirectSubmit}
           disabled={!input.trim() || isWorking}
-          className="w-11 h-11 rounded-2xl bg-gradient-accent flex items-center justify-center text-white shadow-lg shadow-indigo-500/30 disabled:opacity-30 active:scale-90 transition-all duration-150 cursor-pointer shrink-0"
+          className="w-11 h-11 rounded-2xl bg-gradient-accent flex items-center justify-center text-white shadow-lg shadow-orange-500/30 disabled:opacity-30 active:scale-90 transition-all duration-150 cursor-pointer shrink-0 hover:shadow-xl hover:shadow-orange-500/40 hover:scale-105"
         >
           <ArrowUp size={18} strokeWidth={2.5} />
         </button>

@@ -48,7 +48,7 @@ html.light {
   .pb-safe { padding-bottom: max(env(safe-area-inset-bottom, 0px), 8px); }
   .pt-safe { padding-top: env(safe-area-inset-top, 0px); }
   /* Header height = fixed header content (52px) + Dynamic Island safe area */
-  .pt-below-header { padding-top: calc(52px + env(safe-area-inset-top, 0px)); }
+  /* pt-below-header is defined in the utilities layer below */
 
   .glass {
     background: var(--surface);
@@ -67,11 +67,15 @@ html.light {
   }
 
   .gradient-text {
-    background: linear-gradient(135deg, #818cf8, #a78bfa);
+    background: linear-gradient(135deg, #f97316, #fb923c);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
+
+  .accent-orange { color: #f97316; }
+
+  .pt-below-header { padding-top: calc(64px + env(safe-area-inset-top, 0px)); }
 }
 
 /* ─── Light-mode text overrides ────────────────────── */
@@ -98,14 +102,66 @@ html.light .shimmer-bg {
 
 @layer components {
   .btn-primary {
-    @apply bg-indigo-500 hover:bg-indigo-400 text-white font-semibold rounded-2xl transition-all duration-200 active:scale-95 cursor-pointer;
+    @apply bg-orange-500 hover:bg-orange-400 text-white font-semibold rounded-2xl transition-all duration-200 active:scale-95 cursor-pointer;
   }
+}
+
+@layer utilities {
+  .gradient-accent-bg {
+    background: linear-gradient(135deg, #f97316, #fb923c);
+  }
+  .glow-orange {
+    box-shadow: 0 0 20px rgba(249,115,22,0.25), 0 0 40px rgba(249,115,22,0.10);
+  }
+  .glow-orange-sm {
+    box-shadow: 0 0 12px rgba(249,115,22,0.20);
+  }
+  .text-gradient-orange {
+    background: linear-gradient(135deg, #f97316, #fbbf24);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .card-hover {
+    transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.2s ease;
+  }
+  .card-hover:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+  }
+  .card-hover:active {
+    transform: scale(0.97);
+  }
+  .btn-glow {
+    transition: all 0.2s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  .btn-glow::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.15), transparent);
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    border-radius: inherit;
+  }
+  .btn-glow:hover::after { opacity: 1; }
+  .btn-glow:active { transform: scale(0.95); }
 }
 
 /* Animations */
 @keyframes slideUp {
-  from { transform: translateY(16px); opacity: 0; }
+  from { transform: translateY(20px); opacity: 0; }
   to   { transform: translateY(0);    opacity: 1; }
+}
+@keyframes slideDown {
+  from { transform: translateY(-12px); opacity: 0; }
+  to   { transform: translateY(0);     opacity: 1; }
+}
+@keyframes slideInRight {
+  from { transform: translateX(20px); opacity: 0; }
+  to   { transform: translateX(0);    opacity: 1; }
 }
 @keyframes fadeIn {
   from { opacity: 0; }
@@ -116,12 +172,56 @@ html.light .shimmer-bg {
   100% { background-position:  200% 0; }
 }
 @keyframes scaleIn {
-  from { transform: scale(0.95); opacity: 0; }
+  from { transform: scale(0.92); opacity: 0; }
   to   { transform: scale(1);    opacity: 1; }
+}
+@keyframes scaleInBounce {
+  0%   { transform: scale(0.85); opacity: 0; }
+  70%  { transform: scale(1.03); opacity: 1; }
+  100% { transform: scale(1);    opacity: 1; }
 }
 @keyframes bounce-dot {
   0%, 80%, 100% { transform: translateY(0); }
   40%           { transform: translateY(-6px); }
+}
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-4px); }
+}
+@keyframes glowPulse {
+  0%, 100% { box-shadow: 0 0 12px rgba(249,115,22,0.20); }
+  50%       { box-shadow: 0 0 28px rgba(249,115,22,0.45), 0 0 48px rgba(249,115,22,0.15); }
+}
+@keyframes gradientShift {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+@keyframes ripple {
+  0%   { transform: scale(0); opacity: 0.5; }
+  100% { transform: scale(4); opacity: 0; }
+}
+@keyframes checkmark {
+  0%   { stroke-dashoffset: 30; opacity: 0; }
+  50%  { opacity: 1; }
+  100% { stroke-dashoffset: 0; opacity: 1; }
+}
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+@keyframes ping-once {
+  0%   { transform: scale(1);   opacity: 0.9; }
+  75%  { transform: scale(1.6); opacity: 0; }
+  100% { transform: scale(1.6); opacity: 0; }
+}
+@keyframes slideUpFade {
+  from { transform: translateY(24px) scale(0.97); opacity: 0; }
+  to   { transform: translateY(0)    scale(1);    opacity: 1; }
+}
+@keyframes countUp {
+  from { transform: translateY(8px); opacity: 0; }
+  to   { transform: translateY(0);   opacity: 1; }
 }
 
 /* Deadline bar animations */
@@ -134,22 +234,41 @@ html.light .shimmer-bg {
   100% { background-position: 28px 0; }
 }
 
-.deadline-bar-overdue {
-  animation: deadline-bar-pulse 1.2s ease-in-out infinite;
-}
-.deadline-bar-critical {
-  animation: deadline-bar-pulse 1.8s ease-in-out infinite;
-}
+.deadline-bar-overdue  { animation: deadline-bar-pulse 1.2s ease-in-out infinite; }
+.deadline-bar-critical { animation: deadline-bar-pulse 1.8s ease-in-out infinite; }
 
-.animate-slide-up   { animation: slideUp 0.35s cubic-bezier(0.16,1,0.3,1) both; }
-.animate-fade-in    { animation: fadeIn 0.25s ease-out both; }
-.animate-scale-in   { animation: scaleIn 0.3s cubic-bezier(0.16,1,0.3,1) both; }
-.animate-bounce-dot { animation: bounce-dot 1.2s infinite ease-in-out; }
+/* Animation classes */
+.animate-slide-up        { animation: slideUp 0.35s cubic-bezier(0.16,1,0.3,1) both; }
+.animate-slide-down      { animation: slideDown 0.3s cubic-bezier(0.16,1,0.3,1) both; }
+.animate-slide-in-right  { animation: slideInRight 0.35s cubic-bezier(0.16,1,0.3,1) both; }
+.animate-fade-in         { animation: fadeIn 0.25s ease-out both; }
+.animate-scale-in        { animation: scaleIn 0.3s cubic-bezier(0.16,1,0.3,1) both; }
+.animate-scale-in-bounce { animation: scaleInBounce 0.4s cubic-bezier(0.34,1.56,0.64,1) both; }
+.animate-bounce-dot      { animation: bounce-dot 1.2s infinite ease-in-out; }
+.animate-float           { animation: float 3s ease-in-out infinite; }
+.animate-glow-pulse      { animation: glowPulse 2s ease-in-out infinite; }
+.animate-spin            { animation: spin 1s linear infinite; }
+.animate-ping-once       { animation: ping-once 0.6s ease-out both; }
+.animate-slide-up-fade   { animation: slideUpFade 0.4s cubic-bezier(0.16,1,0.3,1) both; }
+.animate-count-up        { animation: countUp 0.4s cubic-bezier(0.16,1,0.3,1) both; }
 
 .shimmer-bg {
   background: linear-gradient(90deg, rgba(255,255,255,0.03) 25%, rgba(255,255,255,0.07) 50%, rgba(255,255,255,0.03) 75%);
   background-size: 200% 100%;
   animation: shimmer 1.8s infinite;
+}
+
+/* Stagger delays */
+.stagger-1 { animation-delay: 40ms; }
+.stagger-2 { animation-delay: 80ms; }
+.stagger-3 { animation-delay: 120ms; }
+.stagger-4 { animation-delay: 160ms; }
+.stagger-5 { animation-delay: 200ms; }
+
+/* Interactive ring glow for orange focus */
+.ring-glow-orange {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(249,115,22,0.5), 0 0 16px rgba(249,115,22,0.2);
 }
 
 @media (prefers-reduced-motion: reduce) {
