@@ -1,4 +1,4 @@
-const CACHE_NAME = 'smart-todo-v2';
+const CACHE_NAME = 'smart-todo-v3';
 const APP_SHELL = ['/', '/index.html', '/manifest.json', '/icons/icon-192.png', '/icons/icon-512.png'];
 
 // ── Install: cache app shell ─────────────────────────────────────────────────
