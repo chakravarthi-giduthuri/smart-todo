@@ -1,5 +1,6 @@
 export type Category = 'Work' | 'Study' | 'Personal' | 'Health' | 'Errand';
 export type Priority = 1 | 2 | 3 | 4 | 5;
+export type EnergyLevel = 'high' | 'medium' | 'low';
 
 export interface Task {
   id: string;
@@ -19,6 +20,33 @@ export interface Task {
   is_archived: boolean;
   recurrence: string | null;
   recurrence_parent_id: string | null;
+  context_tags: string[];
+  note: string | null;
+  snoozed_until: string | null;
+  created_at: string;
+}
+
+export interface EnergyCheckin {
+  id: string;
+  date: string;
+  level: EnergyLevel;
+  created_at: string;
+}
+
+export interface TaskShare {
+  id: string;
+  task_id: string;
+  token: string;
+  recipient_email: string | null;
+  is_completed: boolean;
+  completed_at: string | null;
+  created_at: string;
+}
+
+export interface TaskDependency {
+  id: string;
+  task_id: string;
+  depends_on_id: string;
   created_at: string;
 }
 
@@ -61,6 +89,8 @@ export interface InsertTaskInput {
   timezone_offset_minutes: number;
   recurrence?: string | null;
   recurrence_parent_id?: string | null;
+  context_tags?: string[];
+  note?: string | null;
 }
 
 export interface InsertOverrideInput {

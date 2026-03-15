@@ -2,9 +2,10 @@ import { Router } from 'express';
 import { validate } from '../middleware/validate';
 import { createTaskSchema } from '../schemas/taskSchemas';
 import { buildRules } from '../services/preferences';
-import { buildPrompt, callClaude, parseClaudeResponse } from '../services/claude';
-import { insertTask, listTasks, markComplete, deleteTask, archiveTask, spawnNextRecurrence } from '../db/taskQueries';
+import { buildPrompt, callClaude, parseClaudeResponse, buildReschedulePrompt } from '../services/claude';
+import { insertTask, listTasks, markComplete, deleteTask, archiveTask, spawnNextRecurrence, updateTaskField, snoozeTask } from '../db/taskQueries';
 import type { Category } from '../types/task';
+import { supabase } from '../db/supabase';
 
 const router = Router();
 
@@ -36,6 +37,8 @@ router.post('/', validate(createTaskSchema), async (req, res, next) => {
       reminder_minutes_before: parsed.reminder_minutes_before,
       timezone_offset_minutes: parseOffsetMinutes(current_date),
       recurrence: parsed.recurrence,
+      context_tags: parsed.context_tags,
+      note: parsed.note,
     });
     res.status(201).json({ task });
   } catch (err) {
@@ -81,6 +84,57 @@ router.delete('/:id', async (req, res, next) => {
   try {
     await deleteTask(req.params.id);
     res.status(204).send();
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.patch('/:id/reschedule', async (req, res, next) => {
+  try {
+    const { current_date } = req.body as { current_date: string };
+    const { data: taskRow, error } = await supabase
+      .from('tasks')
+      .select('*')
+      .eq('id', req.params.id)
+      .single();
+    if (error || !taskRow) return res.status(404).json({ error: 'Task not found' });
+
+    const prompt = buildReschedulePrompt(taskRow as import('../types/task').Task, current_date ?? new Date().toISOString());
+    const rawText = await callClaude(prompt);
+    const cleaned = rawText.replace(/```(?:json)?\n?/g, '').replace(/```$/g, '').trim();
+    const parsed = JSON.parse(cleaned) as { scheduled_date: string; scheduled_time: string };
+
+    const updatedDate = await updateTaskField(req.params.id, 'scheduled_date', parsed.scheduled_date);
+    const task = await updateTaskField(req.params.id, 'scheduled_time', parsed.scheduled_time);
+    void updatedDate;
+    res.json({ task });
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.patch('/:id/snooze', async (req, res, next) => {
+  try {
+    const { minutes } = req.body as { minutes: number };
+    if (typeof minutes !== 'number' || minutes < 1) {
+      return res.status(400).json({ error: 'minutes must be a positive number' });
+    }
+    const snoozedUntil = new Date(Date.now() + minutes * 60_000).toISOString();
+    const task = await snoozeTask(req.params.id, snoozedUntil);
+    res.json({ task });
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.patch('/:id/note', async (req, res, next) => {
+  try {
+    const { note } = req.body as { note: string };
+    if (typeof note !== 'string') {
+      return res.status(400).json({ error: 'note must be a string' });
+    }
+    const task = await updateTaskField(req.params.id, 'note', note);
+    res.json({ task });
   } catch (err) {
     next(err);
   }

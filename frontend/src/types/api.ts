@@ -1,9 +1,10 @@
-import type { Category, Task } from './task';
+import type { Category, Task, EnergyLevel } from './task';
 
 export interface CreateTaskRequest {
   raw_input: string;
   current_date: string;
   timezone?: string;
+  energy_level?: string;
 }
 
 export interface PatchOverrideRequest {
@@ -23,4 +24,31 @@ export interface DashboardStats {
   overdue_count: number;
   streak_days: number;
   week_chart: Array<{ date: string; total: number; completed: number }>;
+}
+
+export interface FocusResponse {
+  task: Task;
+  reason: string;
+}
+
+export interface EnergyResponse {
+  level: EnergyLevel | null;
+  date: string | null;
+}
+
+export interface ConversationMessage {
+  role: 'user' | 'assistant';
+  content: string;
+}
+
+export type ConversationResult =
+  | { type: 'question'; content: string }
+  | { type: 'task'; task: Task };
+
+export interface ShareToken {
+  id: string;
+  task_id: string;
+  token: string;
+  recipient_email: string | null;
+  created_at: string;
 }

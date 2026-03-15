@@ -1,13 +1,30 @@
+import { useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { Sparkles, Sun, Moon } from 'lucide-react';
 import { ChatBar } from '../components/chat/ChatBar';
 import { TaskList } from '../components/tasks/TaskList';
+import { EnergyBanner } from '../components/home/EnergyBanner';
+import { FocusModeButton } from '../components/home/FocusModeButton';
 import { useTasks, useCreateTask } from '../hooks/useTasks';
+import { useTodayEnergy } from '../hooks/useEnergy';
 import { useThemeContext } from '../contexts/ThemeContext';
 
 export function HomeScreen() {
   const { data: tasks = [], isLoading } = useTasks();
   const { isPending } = useCreateTask();
   const { theme, toggleTheme } = useThemeContext();
+  const { data: energy } = useTodayEnergy();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [sharedText, setSharedText] = useState<string | null>(null);
+
+  // Handle PWA Web Share Target
+  useEffect(() => {
+    const shared = searchParams.get('text') ?? searchParams.get('title') ?? searchParams.get('url');
+    if (shared) {
+      setSharedText(shared);
+      setSearchParams({}, { replace: true });
+    }
+  }, []);
 
   const incomplete = tasks.filter((t) => !t.is_completed);
   const completed  = tasks.filter((t) => t.is_completed);
@@ -49,11 +66,15 @@ export function HomeScreen() {
 
       {/* Scrollable task list — padded top (header) and bottom (chat bar + nav) */}
       <div className="flex-1 overflow-y-auto pt-below-header pb-40">
+        <div className="pt-3">
+          <EnergyBanner />
+          <FocusModeButton tasks={tasks} />
+        </div>
         <TaskList tasks={tasks} isLoading={isLoading} isPending={isPending} />
       </div>
 
       {/* Bottom chat input (above nav bar) */}
-      <ChatBar />
+      <ChatBar energyLevel={energy?.level ?? undefined} prefill={sharedText ?? undefined} onPrefillConsumed={() => setSharedText(null)} />
     </div>
   );
 }

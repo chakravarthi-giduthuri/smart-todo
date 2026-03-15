@@ -1,10 +1,11 @@
 import { useState } from 'react';
-import { Calendar, Clock, Timer, PenLine, Plus, Pencil, Trash2, Repeat2, ChevronDown } from 'lucide-react';
+import { Calendar, Clock, Timer, PenLine, Plus, Pencil, Trash2, Repeat2, ChevronDown, RefreshCw, Share2, Link2, StickyNote } from 'lucide-react';
 import type { Task, Priority, Category } from '../../types/task';
 import { CompletionToggle } from './CompletionToggle';
 import { OverrideDrawer, type OverrideField } from './OverrideDrawer';
 import { SubtaskList } from './SubtaskList';
-import { useCompleteTask, useDeleteTask } from '../../hooks/useTasks';
+import { useCompleteTask, useDeleteTask, useRescheduleTask } from '../../hooks/useTasks';
+import { createShare } from '../../api/shares';
 import { useDeadlineStatus } from '../../hooks/useDeadlineStatus';
 import { CATEGORY_COLORS } from '../../constants/categories';
 import { formatDate, formatTime, formatDuration } from '../../utils/dateFormat';
@@ -32,8 +33,23 @@ export function TaskCard({ task, delay = 0, priorityColor }: Props) {
   const [activeField, setActiveField] = useState<OverrideField>(null);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [showSubtasks, setShowSubtasks] = useState(false);
+  const [showNote, setShowNote] = useState(false);
+  const [shareLink, setShareLink] = useState<string | null>(null);
+  const [isSharing, setIsSharing] = useState(false);
   const { mutate: complete } = useCompleteTask();
   const { mutate: remove } = useDeleteTask();
+  const { mutate: reschedule, isPending: isRescheduling } = useRescheduleTask();
+
+  async function handleShare() {
+    if (shareLink) { await navigator.clipboard.writeText(shareLink); return; }
+    setIsSharing(true);
+    try {
+      const share = await createShare(task.id);
+      const link = `${window.location.origin}/share/${share.token}`;
+      setShareLink(link);
+      await navigator.clipboard.writeText(link);
+    } catch { /* ignore */ } finally { setIsSharing(false); }
+  }
   const deadline = useDeadlineStatus(task);
 
   const catColor = CATEGORY_COLORS[task.category as Category];
@@ -120,12 +136,30 @@ export function TaskCard({ task, delay = 0, priorityColor }: Props) {
                     </span>
                   )}
 
+                  {/* Context tags */}
+                  {task.context_tags?.length > 0 && task.context_tags.map((tag) => (
+                    <span key={tag} className="text-[10px] font-semibold text-white/40 bg-white/5 px-2 py-0.5 rounded-full">
+                      {tag}
+                    </span>
+                  ))}
+
                   {/* Recurrence badge */}
                   {task.recurrence && (
                     <span className="flex items-center gap-1 text-[10px] font-semibold text-indigo-400/70 bg-indigo-500/10 px-2 py-0.5 rounded-full">
                       <Repeat2 size={9} />
                       {task.recurrence}
                     </span>
+                  )}
+
+                  {/* Note indicator */}
+                  {task.note && (
+                    <button
+                      onClick={() => setShowNote((v) => !v)}
+                      className="flex items-center gap-1 text-[10px] font-semibold text-amber-400/60 hover:text-amber-400 transition-colors cursor-pointer"
+                    >
+                      <StickyNote size={9} />
+                      <span>note</span>
+                    </button>
                   )}
 
                   {/* Subtasks toggle */}
@@ -158,6 +192,28 @@ export function TaskCard({ task, delay = 0, priorityColor }: Props) {
                   </div>
                 )}
 
+                {/* Reschedule (overdue only) */}
+                {!task.is_completed && task.scheduled_date && task.scheduled_date < new Date().toISOString().split('T')[0] && (
+                  <button
+                    onClick={() => reschedule(task.id)}
+                    disabled={isRescheduling}
+                    title="AI reschedule"
+                    className="w-6 h-6 flex items-center justify-center rounded-lg text-white/15 hover:text-sky-400 hover:bg-sky-500/10 transition-all duration-200 cursor-pointer disabled:opacity-40"
+                  >
+                    <RefreshCw size={11} className={isRescheduling ? 'animate-spin' : ''} />
+                  </button>
+                )}
+
+                {/* Share */}
+                <button
+                  onClick={handleShare}
+                  disabled={isSharing}
+                  title={shareLink ? 'Link copied!' : 'Share task'}
+                  className={`w-6 h-6 flex items-center justify-center rounded-lg transition-all duration-200 cursor-pointer ${shareLink ? 'text-emerald-400 bg-emerald-500/10' : 'text-white/15 hover:text-indigo-400 hover:bg-indigo-500/10'}`}
+                >
+                  {shareLink ? <Link2 size={11} /> : <Share2 size={11} />}
+                </button>
+
                 {/* Delete */}
                 {confirmDelete ? (
                   <button
@@ -183,6 +239,14 @@ export function TaskCard({ task, delay = 0, priorityColor }: Props) {
               <div className="flex items-center gap-1 mt-2 pl-9">
                 <PenLine size={10} className="text-indigo-400/60" />
                 <span className="text-[10px] text-indigo-400/60 font-medium">Edited</span>
+              </div>
+            )}
+
+            {/* Note display */}
+            {showNote && task.note && (
+              <div className="mt-2 pl-9 flex items-start gap-1.5 animate-fade-in">
+                <StickyNote size={10} className="text-amber-400/60 mt-0.5 shrink-0" />
+                <p className="text-xs text-amber-400/70 leading-relaxed">{task.note}</p>
               </div>
             )}
 

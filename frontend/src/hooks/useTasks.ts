@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { listTasks, createTask, completeTask, deleteTask, archiveTask, getSubtasks, addSubtask, completeSubtask, deleteSubtask } from '../api/tasks';
+import { listTasks, createTask, completeTask, deleteTask, archiveTask, getSubtasks, addSubtask, completeSubtask, deleteSubtask, snoozeTask, rescheduleTask, updateTaskNote, getDependencies, addDependency, removeDependency } from '../api/tasks';
 import type { Task, Subtask } from '../types/task';
+import type { DependencyItem } from '../api/tasks';
 
 export function useTasks(filters?: { category?: string }) {
   return useQuery({
@@ -13,14 +14,17 @@ export function useTasks(filters?: { category?: string }) {
 export function useCreateTask() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (rawInput: string) => {
-      const now = new Date();
-      const pad = (n: number) => String(n).padStart(2, '0');
-      const local = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}T${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
-      const off = -now.getTimezoneOffset();
-      const tz = `${off >= 0 ? '+' : '-'}${pad(Math.floor(Math.abs(off)/60))}:${pad(Math.abs(off)%60)}`;
-      const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-      return createTask({ raw_input: rawInput, current_date: `${local}${tz}`, timezone });
+    mutationFn: (params: string | { raw_input: string; current_date: string; timezone?: string; energy_level?: string }) => {
+      if (typeof params === 'string') {
+        const now = new Date();
+        const pad = (n: number) => String(n).padStart(2, '0');
+        const local = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}T${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+        const off = -now.getTimezoneOffset();
+        const tz = `${off >= 0 ? '+' : '-'}${pad(Math.floor(Math.abs(off)/60))}:${pad(Math.abs(off)%60)}`;
+        const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        return createTask({ raw_input: params, current_date: `${local}${tz}`, timezone });
+      }
+      return createTask(params);
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['tasks'] });
@@ -121,6 +125,65 @@ export function useDeleteSubtask(taskId: string) {
       if (ctx?.prev) qc.setQueryData(['subtasks', taskId], ctx.prev);
     },
     onSettled: () => qc.invalidateQueries({ queryKey: ['subtasks', taskId] }),
+  });
+}
+
+export function useSnoozeTask() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, minutes }: { id: string; minutes: number }) => snoozeTask(id, minutes),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['tasks'] }),
+  });
+}
+
+export function useRescheduleTask() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => rescheduleTask(id),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['tasks'] });
+      qc.invalidateQueries({ queryKey: ['dashboard'] });
+    },
+  });
+}
+
+export function useUpdateNote() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, note }: { id: string; note: string }) => updateTaskNote(id, note),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['tasks'] }),
+  });
+}
+
+export function useDependencies(taskId: string) {
+  return useQuery({
+    queryKey: ['dependencies', taskId],
+    queryFn: () => getDependencies(taskId),
+    staleTime: 60_000,
+  });
+}
+
+export function useAddDependency(taskId: string) {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (dependsOnId: string) => addDependency(taskId, dependsOnId),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['dependencies', taskId] }),
+  });
+}
+
+export function useRemoveDependency(taskId: string) {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (depId: string) => removeDependency(taskId, depId),
+    onMutate: async (depId: string) => {
+      const prev = qc.getQueryData<DependencyItem[]>(['dependencies', taskId]);
+      qc.setQueryData(['dependencies', taskId], (old: DependencyItem[] = []) => old.filter((d) => d.id !== depId));
+      return { prev };
+    },
+    onError: (_err, _id, ctx) => {
+      if (ctx?.prev) qc.setQueryData(['dependencies', taskId], ctx.prev);
+    },
+    onSettled: () => qc.invalidateQueries({ queryKey: ['dependencies', taskId] }),
   });
 }
 

@@ -1,18 +1,29 @@
 import Anthropic from '@anthropic-ai/sdk';
 import type { ClaudeResponse } from '../types/claude';
 import { ClaudeParseError } from '../types/claude';
+import type { Task } from '../types/task';
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
-export function buildPrompt(rawInput: string, rules: string[], currentDate: string, timezone?: string): string {
+export function buildPrompt(
+  rawInput: string,
+  rules: string[],
+  currentDate: string,
+  timezone?: string,
+  energyLevel?: string,
+): string {
   const prefsBlock = rules.length > 0
     ? `\n--- Learned User Preferences ---\n${rules.map((r, i) => `${i + 1}. ${r}`).join('\n')}\n--- End Preferences ---\n`
+    : '';
+
+  const energyBlock = energyLevel
+    ? `\nUser's current energy level is ${energyLevel.toUpperCase()} — prefer lighter tasks for morning if LOW, ambitious tasks if HIGH.\n`
     : '';
 
   return `You are a world-class personal assistant with 20+ years of experience managing tasks, schedules, and priorities for busy professionals. You have an exceptional instinct for what truly matters, when things should happen, and how long they take.
 
 Current date and time: ${currentDate}${timezone ? ` (${timezone})` : ''}
-${prefsBlock}
+${prefsBlock}${energyBlock}
 Analyze the user's input and return ONLY a valid JSON object with exactly these fields:
 {
   "title": "concise action-oriented task title (max 60 chars)",
@@ -23,6 +34,8 @@ Analyze the user's input and return ONLY a valid JSON object with exactly these 
   "priority": 1 | 2 | 3 | 4 | 5,
   "reminder_minutes_before": integer,
   "recurrence": "daily" | "weekdays" | "weekly" | "monthly" | null,
+  "context_tags": ["@home","@work","@phone","@5min","@errands"] (subset, may be empty),
+  "note": "1-sentence helpful reminder or null",
   "reasoning": "1-2 sentence explanation"
 }
 
@@ -68,6 +81,19 @@ Analyze the task type and current time, then pick the most realistic slot:
 - "notify at start" / "remind when it starts" → reminder_minutes_before = 0.
 - Always an integer >= 0. Never omit.
 
+═══ CONTEXT TAGS ═══
+Choose any subset of: ["@home","@work","@phone","@5min","@errands"]
+- @home: task done at home
+- @work: task done at work/office
+- @phone: requires a phone call
+- @5min: can be done in 5 minutes or less
+- @errands: requires going out/running errands
+- Return an empty array [] if none apply.
+
+═══ NOTE ═══
+- Provide a brief, helpful 1-sentence reminder note (e.g., "Remember to bring your ID" or "Check the traffic before leaving").
+- Return null if no useful reminder note applies.
+
 Do not include markdown, code fences, or any text outside the JSON object.
 
 User task: ${rawInput}`;
@@ -76,7 +102,7 @@ User task: ${rawInput}`;
 export async function callClaude(prompt: string): Promise<string> {
   const message = await anthropic.messages.create({
     model: 'claude-haiku-4-5-20251001',
-    max_tokens: 400,
+    max_tokens: 500,
     messages: [{ role: 'user', content: prompt }],
   });
 
@@ -118,6 +144,13 @@ export function parseClaudeResponse(text: string): ClaudeResponse {
     ? (obj.recurrence as string)
     : null;
 
+  const validTags = ['@home', '@work', '@phone', '@5min', '@errands'];
+  const rawTags = Array.isArray(obj.context_tags) ? obj.context_tags : [];
+  const context_tags = (rawTags as unknown[])
+    .filter((t): t is string => typeof t === 'string' && validTags.includes(t));
+
+  const note = obj.note && typeof obj.note === 'string' ? obj.note : null;
+
   return {
     title: String(obj.title).slice(0, 60),
     category: obj.category as ClaudeResponse['category'],
@@ -128,5 +161,147 @@ export function parseClaudeResponse(text: string): ClaudeResponse {
     reminder_minutes_before: isNaN(reminderMinutes) ? 15 : reminderMinutes,
     reasoning: String(obj.reasoning),
     recurrence,
+    context_tags,
+    note,
   };
+}
+
+export function buildReschedulePrompt(task: Task, currentDate: string): string {
+  return `You are a smart scheduling assistant. An overdue task needs to be rescheduled.
+
+Current date and time: ${currentDate}
+
+Overdue task:
+- Title: ${task.title}
+- Category: ${task.category}
+- Originally scheduled: ${task.scheduled_date ?? 'unset'} at ${task.scheduled_time ?? 'unset'}
+- Duration: ${task.duration_minutes ?? 'unknown'} minutes
+- Priority: ${task.priority}
+
+Return ONLY a valid JSON object with exactly these two fields:
+{
+  "scheduled_date": "YYYY-MM-DD",
+  "scheduled_time": "HH:MM"
+}
+
+Rules:
+- Pick a realistic future date and time based on the task type and priority.
+- High priority (1-2): schedule as soon as possible, today or tomorrow.
+- Medium priority (3): schedule within the next 2-3 days.
+- Low priority (4-5): schedule within the next week.
+- Follow the same time-of-day logic as normal scheduling (health → morning, deep work → 09:00-11:30, etc.).
+- Never pick a time in the past.
+
+Do not include markdown, code fences, or any text outside the JSON object.`;
+}
+
+export function buildFocusPrompt(tasks: Task[], currentDate: string): string {
+  const taskList = tasks
+    .slice(0, 20)
+    .map((t, i) => `${i + 1}. [${t.id}] ${t.title} (priority=${t.priority}, category=${t.category}, scheduled=${t.scheduled_date ?? 'none'} ${t.scheduled_time ?? ''}, duration=${t.duration_minutes ?? '?'}min)`)
+    .join('\n');
+
+  return `You are a focus coach. Given the user's current tasks, pick the single best task to work on RIGHT NOW.
+
+Current date and time: ${currentDate}
+
+Incomplete tasks:
+${taskList}
+
+Return ONLY a valid JSON object:
+{
+  "task_id": "the UUID of the best task to focus on",
+  "reason": "1-2 sentence explanation of why this task is the best choice right now"
+}
+
+Selection criteria:
+- Prioritize overdue tasks or tasks due today/soon.
+- Prefer higher priority (lower number = higher priority).
+- Consider task duration — if little time is available, prefer shorter tasks.
+- Avoid tasks with future scheduled dates unless everything else is fine.
+
+Do not include markdown, code fences, or any text outside the JSON object.`;
+}
+
+export interface ConversationMessage {
+  role: 'user' | 'assistant';
+  content: string;
+}
+
+export function buildConversationPrompt(
+  messages: ConversationMessage[],
+  currentDate: string,
+  timezone?: string,
+): string {
+  const history = messages.map(m => `${m.role === 'user' ? 'User' : 'Assistant'}: ${m.content}`).join('\n');
+
+  return `You are a conversational task creation assistant. Your goal is to understand the user's task and create it — but ask clarifying questions if essential details are missing.
+
+Current date and time: ${currentDate}${timezone ? ` (${timezone})` : ''}
+
+Conversation so far:
+${history}
+
+Decide: do you have enough information to create the task, or do you need one more clarification?
+
+If you need clarification, return ONLY:
+{
+  "type": "question",
+  "content": "Your clarifying question here (1 sentence)"
+}
+
+If you have enough information, return ONLY:
+{
+  "type": "task",
+  "title": "concise action-oriented task title (max 60 chars)",
+  "category": "Work" | "Study" | "Personal" | "Health" | "Errand",
+  "scheduled_date": "YYYY-MM-DD or null",
+  "scheduled_time": "HH:MM (24h) or null",
+  "duration_minutes": integer or null,
+  "priority": 1 | 2 | 3 | 4 | 5,
+  "reminder_minutes_before": integer,
+  "recurrence": "daily" | "weekdays" | "weekly" | "monthly" | null,
+  "context_tags": ["@home","@work","@phone","@5min","@errands"] subset,
+  "note": "1-sentence helpful note or null",
+  "reasoning": "1-2 sentence explanation"
+}
+
+Do not include markdown, code fences, or any text outside the JSON object.`;
+}
+
+export function buildMorningPlanPrompt(tasks: Task[], currentDate: string): string {
+  const taskList = tasks
+    .slice(0, 15)
+    .map(t => `- ${t.title} (${t.category}, priority=${t.priority}, time=${t.scheduled_time ?? 'flexible'}, duration=${t.duration_minutes ?? '?'}min)`)
+    .join('\n');
+
+  return `You are a morning briefing assistant. Generate a brief, motivating morning briefing for the user.
+
+Date: ${currentDate}
+
+Today's tasks:
+${taskList || '(no tasks scheduled for today)'}
+
+Return ONLY a valid JSON object:
+{
+  "briefing": "A friendly 2-3 sentence morning briefing covering highlights, priorities, and a motivating note. Keep it under 200 characters for a push notification."
+}
+
+Do not include markdown, code fences, or any text outside the JSON object.`;
+}
+
+export function buildWeeklyReviewPrompt(stats: Record<string, unknown>, currentDate: string): string {
+  return `You are a weekly review assistant. Generate a brief weekly review for the user.
+
+Date: ${currentDate}
+
+Weekly stats:
+${JSON.stringify(stats, null, 2)}
+
+Return ONLY a valid JSON object:
+{
+  "review": "A friendly 2-3 sentence weekly review highlighting achievements, completion rate, and encouragement for next week. Keep it under 250 characters for a push notification."
+}
+
+Do not include markdown, code fences, or any text outside the JSON object.`;
 }

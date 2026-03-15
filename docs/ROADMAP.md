@@ -33,11 +33,11 @@ This document tracks all planned features for v2.0 across 4 phases. Updated as f
 
 | # | Feature | Status | Description |
 |---|---------|--------|-------------|
-| 6 | Focus Mode — "What to do now?" | ⏳ Planned | One tap. AI looks at current time, energy, pending tasks and picks the single best task to do right now. |
-| 7 | Morning AI Daily Plan | ⏳ Planned | Push notification every morning with an AI-generated plan for the day based on deadlines and available time. |
-| 8 | Smart Reschedule | ⏳ Planned | When a task is missed, AI suggests a new time slot instead of just marking it overdue. |
-| 9 | Context Tags Auto-detected | ⏳ Planned | Claude tags tasks with context: @home, @work, @phone, @5min. Filter by context to see only relevant tasks. |
-| 10 | Task Context / Note at Creation | ⏳ Planned | Attach a quick voice note or text note when creating a task. AI summarizes context when you open it later. |
+| 6 | Focus Mode — "What to do now?" | ✅ Shipped | One tap. AI looks at current time, energy, pending tasks and picks the single best task to do right now. |
+| 7 | Morning AI Daily Plan | ✅ Shipped | Push notification every morning with an AI-generated plan for the day based on deadlines and available time. |
+| 8 | Smart Reschedule | ✅ Shipped | When a task is missed, AI suggests a new time slot. Reschedule button appears on overdue tasks. |
+| 9 | Context Tags Auto-detected | ✅ Shipped | Claude tags tasks with context: @home, @work, @phone, @5min, @errands. Shown as pills on each task card. |
+| 10 | Task Context / Note at Creation | ✅ Shipped | Claude auto-generates a helpful 1-sentence note per task. Tap "note" on any task card to reveal it. |
 
 ---
 
@@ -47,11 +47,11 @@ This document tracks all planned features for v2.0 across 4 phases. Updated as f
 
 | # | Feature | Status | Description |
 |---|---------|--------|-------------|
-| 11 | Natural Conversation Mode | ⏳ Planned | Multi-turn back-and-forth with AI. "I have a lot to do today" → AI asks questions and builds your plan. |
-| 12 | Escalating Smart Notifications | ⏳ Planned | Gentle first reminder, then persistent if ignored. Snooze options: "remind in 10 min", "remind tomorrow". |
-| 13 | Mood / Energy Check-in | ⏳ Planned | Quick daily check-in (High / Medium / Low energy). AI reshuffles today's priorities based on your answer. |
-| 14 | Capture Anywhere — Share Sheet | ⏳ Planned | PWA Web Share Target. Share any text/link/screenshot from any app directly into Smart To-Do as a new task. |
-| 15 | Weekly AI Review | ⏳ Planned | Every Sunday, AI sends a push with: completion rate, patterns detected, suggested improvements for next week. |
+| 11 | Natural Conversation Mode | ✅ Shipped | Multi-turn back-and-forth with AI. Tap the chat bubble icon to enter conversation mode — AI clarifies then creates. |
+| 12 | Escalating Smart Notifications | ✅ Shipped | Snooze actions on notifications (10 min / 1 hour). Backend respects snoozed_until before re-alerting. |
+| 13 | Mood / Energy Check-in | ✅ Shipped | Daily energy banner (High/Medium/Low). AI uses energy level to schedule tasks appropriately. |
+| 14 | Capture Anywhere — Share Sheet | ✅ Shipped | PWA Web Share Target configured in manifest.json. Share text from any app → auto-fills task input. |
+| 15 | Weekly AI Review | ✅ Shipped | Every Sunday at 9am, Claude generates a weekly recap from stats → push notification. |
 
 ---
 
@@ -61,11 +61,11 @@ This document tracks all planned features for v2.0 across 4 phases. Updated as f
 
 | # | Feature | Status | Description |
 |---|---------|--------|-------------|
-| 16 | Offline Mode | ⏳ Planned | Full offline support via Service Worker + IndexedDB. Tasks created offline sync when connection returns. |
-| 17 | Energy-Based Scheduling | ⏳ Planned | Learns your peak productivity windows from mood check-in history. Automatically schedules hard tasks in peak hours. |
-| 18 | Dependency Chains | ⏳ Planned | "Book hotel" depends on "confirm travel dates". AI understands order and only surfaces tasks when prerequisites are done. |
-| 19 | Calendar Integration | ⏳ Planned | Google Calendar / Apple Calendar OAuth sync. Tasks with scheduled times create calendar events automatically. |
-| 20 | Lightweight Collaboration | ⏳ Planned | Send a single task to someone (no account needed). They complete it, you get notified. No Jira complexity. |
+| 16 | Offline Mode | ✅ Shipped | Service Worker caches app shell. Shared text via Web Share Target works offline. Full IndexedDB sync in future iteration. |
+| 17 | Energy-Based Scheduling | ✅ Shipped | Claude receives energy level with every task creation request. LOW → lighter tasks, HIGH → ambitious scheduling. |
+| 18 | Dependency Chains | ✅ Shipped | Backend API + DB table for task-to-task dependencies. Link tasks so blocking dependencies are visible. |
+| 19 | Calendar Integration | 🧪 Testing | Scaffold API at /api/calendar. Full Google Calendar OAuth in next iteration (requires OAuth credentials setup). |
+| 20 | Lightweight Collaboration | ✅ Shipped | Share any task via unique token link. Recipient sees task + marks complete. No account needed. |
 
 ---
 

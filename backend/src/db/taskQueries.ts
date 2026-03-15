@@ -17,6 +17,8 @@ export async function insertTask(data: InsertTaskInput): Promise<Task> {
       timezone_offset_minutes: data.timezone_offset_minutes,
       recurrence: data.recurrence ?? null,
       recurrence_parent_id: data.recurrence_parent_id ?? null,
+      context_tags: data.context_tags ?? [],
+      note: data.note ?? null,
       is_completed: false,
       reminder_sent: false,
       is_archived: false,
@@ -140,19 +142,32 @@ export async function spawnNextRecurrence(task: Task): Promise<void> {
   });
 }
 
+export async function snoozeTask(id: string, snoozedUntilISO: string): Promise<Task> {
+  const { data, error } = await supabase
+    .from('tasks')
+    .update({ snoozed_until: snoozedUntilISO })
+    .eq('id', id)
+    .select()
+    .single();
+  if (error) throw new Error(`snoozeTask failed: ${error.message}`);
+  return data as Task;
+}
+
 export async function getDueTasks(): Promise<Task[]> {
   const nowUtc = new Date();
+  const nowIso = nowUtc.toISOString();
   const pad = (n: number) => String(n).padStart(2, '0');
 
   // Fetch all unnotified incomplete tasks that have a scheduled time.
-  // We filter by date in Node because each task may have a different timezone offset.
+  // Exclude tasks that are currently snoozed (snoozed_until > now).
   const { data, error } = await supabase
     .from('tasks')
     .select('*')
     .eq('is_completed', false)
     .eq('reminder_sent', false)
     .not('scheduled_date', 'is', null)
-    .not('scheduled_time', 'is', null);
+    .not('scheduled_time', 'is', null)
+    .or(`snoozed_until.is.null,snoozed_until.lt.${nowIso}`);
 
   if (error) throw new Error(`getDueTasks failed: ${error.message}`);
   const tasks = (data ?? []) as Task[];

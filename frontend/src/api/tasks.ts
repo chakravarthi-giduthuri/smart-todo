@@ -54,3 +54,43 @@ export async function completeSubtask(taskId: string, subtaskId: string): Promis
 export async function deleteSubtask(taskId: string, subtaskId: string): Promise<void> {
   await apiFetch<void>(`/api/tasks/${taskId}/subtasks/${subtaskId}`, { method: 'DELETE' });
 }
+
+export async function snoozeTask(id: string, minutes: number): Promise<Task> {
+  const res = await apiFetch<{ task: Task }>(`/api/tasks/${id}/snooze`, {
+    method: 'PATCH',
+    body: JSON.stringify({ minutes }),
+  });
+  return res.task;
+}
+
+export async function rescheduleTask(id: string): Promise<Task> {
+  const res = await apiFetch<{ task: Task }>(`/api/tasks/${id}/reschedule`, { method: 'PATCH' });
+  return res.task;
+}
+
+export async function updateTaskNote(id: string, note: string): Promise<Task> {
+  const res = await apiFetch<{ task: Task }>(`/api/tasks/${id}/note`, {
+    method: 'PATCH',
+    body: JSON.stringify({ note }),
+  });
+  return res.task;
+}
+
+export interface DependencyItem { id: string; depends_on_id: string; depends_on_title?: string; }
+
+export async function getDependencies(taskId: string): Promise<DependencyItem[]> {
+  const res = await apiFetch<{ dependencies: DependencyItem[] }>(`/api/tasks/${taskId}/dependencies`);
+  return res.dependencies;
+}
+
+export async function addDependency(taskId: string, dependsOnId: string): Promise<DependencyItem> {
+  const res = await apiFetch<{ dependency: DependencyItem }>(`/api/tasks/${taskId}/dependencies`, {
+    method: 'POST',
+    body: JSON.stringify({ depends_on_id: dependsOnId }),
+  });
+  return res.dependency;
+}
+
+export async function removeDependency(taskId: string, depId: string): Promise<void> {
+  await apiFetch<void>(`/api/tasks/${taskId}/dependencies/${depId}`, { method: 'DELETE' });
+}

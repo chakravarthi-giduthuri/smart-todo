@@ -8,6 +8,8 @@ export interface ClaudeResponse {
   reminder_minutes_before: number;
   reasoning: string;
   recurrence: string | null;
+  context_tags: string[];
+  note: string | null;
 }
 
 export class ClaudeParseError extends Error {

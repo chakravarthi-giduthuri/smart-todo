@@ -18,6 +18,9 @@ export interface Task {
   is_archived: boolean;
   recurrence: string | null;
   recurrence_parent_id: string | null;
+  context_tags: string[];
+  note: string | null;
+  snoozed_until: string | null;
   created_at: string;
   _hasOverride?: boolean;
 }
@@ -28,6 +31,23 @@ export interface Subtask {
   title: string;
   is_completed: boolean;
   position: number;
+  created_at: string;
+}
+
+export interface TaskDependency {
+  id: string;
+  task_id: string;
+  depends_on_id: string;
+  depends_on_title?: string;
+  created_at: string;
+}
+
+export type EnergyLevel = 'high' | 'medium' | 'low';
+
+export interface EnergyCheckin {
+  id: string;
+  date: string;
+  level: EnergyLevel;
   created_at: string;
 }
 
