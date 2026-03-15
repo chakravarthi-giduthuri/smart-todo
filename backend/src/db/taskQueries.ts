@@ -14,6 +14,7 @@ export async function insertTask(data: InsertTaskInput): Promise<Task> {
       duration_minutes: data.duration_minutes,
       ai_reasoning: data.ai_reasoning,
       reminder_minutes_before: data.reminder_minutes_before,
+      timezone_offset_minutes: data.timezone_offset_minutes,
       is_completed: false,
       reminder_sent: false,
     })
@@ -82,39 +83,40 @@ export async function deleteTask(id: string): Promise<void> {
 }
 
 export async function getDueTasks(): Promise<Task[]> {
-  const now = new Date();
+  const nowUtc = new Date();
   const pad = (n: number) => String(n).padStart(2, '0');
 
-  // Fetch all unnotified, incomplete tasks for today that have a scheduled time.
-  // We then filter in Node because each task has its own reminder_minutes_before.
-  const todayStr = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
-
+  // Fetch all unnotified incomplete tasks that have a scheduled time.
+  // We filter by date in Node because each task may have a different timezone offset.
   const { data, error } = await supabase
     .from('tasks')
     .select('*')
     .eq('is_completed', false)
     .eq('reminder_sent', false)
-    .eq('scheduled_date', todayStr)
+    .not('scheduled_date', 'is', null)
     .not('scheduled_time', 'is', null);
 
   if (error) throw new Error(`getDueTasks failed: ${error.message}`);
   const tasks = (data ?? []) as Task[];
 
-  // Keep tasks whose notify_at (scheduled_time - reminder_minutes_before) falls
-  // within the current cron window [now - 1 min, now + 5 min].
-  const windowStart = now.getTime() - 60_000;       // 1 min ago (catch late cron)
-  const windowEnd   = now.getTime() + 5 * 60_000;   // 5 min ahead (cron interval)
-
   return tasks.filter((task) => {
-    const timePart = task.scheduled_time!.slice(0, 5);
-    const [hh, mm] = timePart.split(':').map(Number);
-    const scheduledMs = new Date(
-      now.getFullYear(), now.getMonth(), now.getDate(), hh, mm, 0
-    ).getTime();
+    // Shift UTC now to the user's local time using the stored offset
+    const offsetMs = (task.timezone_offset_minutes ?? 0) * 60_000;
+    const userLocalNow = new Date(nowUtc.getTime() + offsetMs);
+
+    const userLocalDate = `${userLocalNow.getUTCFullYear()}-${pad(userLocalNow.getUTCMonth() + 1)}-${pad(userLocalNow.getUTCDate())}`;
+    if (task.scheduled_date !== userLocalDate) return false;
+
+    // Compare times purely in minutes-of-day (both in user's local timezone)
+    const [hh, mm] = task.scheduled_time!.slice(0, 5).split(':').map(Number);
+    const taskMinutes = hh * 60 + mm;
 
     const reminderMin = task.reminder_minutes_before ?? 15;
-    const notifyAt = scheduledMs - reminderMin * 60_000;
+    const notifyMinutes = taskMinutes - reminderMin;
 
-    return notifyAt >= windowStart && notifyAt <= windowEnd;
+    const curMinutes = userLocalNow.getUTCHours() * 60 + userLocalNow.getUTCMinutes();
+
+    // Window: [now - 1min, now + 5min]
+    return curMinutes >= notifyMinutes - 1 && curMinutes <= notifyMinutes + 5;
   });
 }

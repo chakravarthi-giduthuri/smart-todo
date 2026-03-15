@@ -8,6 +8,14 @@ import type { Category } from '../types/task';
 
 const router = Router();
 
+/** Parse timezone offset in minutes from a date string like "2026-03-14T07:17:30+05:30" */
+function parseOffsetMinutes(currentDate: string): number {
+  const match = currentDate.match(/([+-])(\d{2}):(\d{2})$/);
+  if (!match) return 0;
+  const sign = match[1] === '+' ? 1 : -1;
+  return sign * (parseInt(match[2]) * 60 + parseInt(match[3]));
+}
+
 router.post('/', validate(createTaskSchema), async (req, res, next) => {
   try {
     const { raw_input, current_date, timezone } = req.body as { raw_input: string; current_date: string; timezone?: string };
@@ -26,6 +34,7 @@ router.post('/', validate(createTaskSchema), async (req, res, next) => {
       duration_minutes: parsed.duration_minutes,
       ai_reasoning: parsed.reasoning,
       reminder_minutes_before: parsed.reminder_minutes_before,
+      timezone_offset_minutes: parseOffsetMinutes(current_date),
     });
     res.status(201).json({ task });
   } catch (err) {

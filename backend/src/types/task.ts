@@ -12,6 +12,7 @@ export interface Task {
   duration_minutes: number | null;
   ai_reasoning: string;
   reminder_minutes_before: number;
+  timezone_offset_minutes: number;
   is_completed: boolean;
   completed_at: string | null;
   reminder_sent: boolean;
@@ -39,6 +40,7 @@ export interface InsertTaskInput {
   duration_minutes: number | null;
   ai_reasoning: string;
   reminder_minutes_before: number;
+  timezone_offset_minutes: number;
 }
 
 export interface InsertOverrideInput {
