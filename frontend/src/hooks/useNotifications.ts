@@ -16,11 +16,10 @@ export function useNotifications() {
     if ('Notification' in window) setPermission(Notification.permission);
     // Check if already subscribed
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.ready.then((reg) => {
-        reg.pushManager.getSubscription().then((sub) => {
-          if (sub) setRegistered(true);
-        });
-      }).catch(() => {});
+      navigator.serviceWorker.ready
+        .then((reg) => reg.pushManager.getSubscription())
+        .then((sub) => { if (sub) setRegistered(true); })
+        .catch(() => {});
     }
   }, []);
 
