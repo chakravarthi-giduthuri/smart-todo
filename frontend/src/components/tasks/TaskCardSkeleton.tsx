@@ -1,6 +1,6 @@
 export function TaskCardSkeleton() {
   return (
-    <div className="mx-4 mb-3 rounded-2xl glass p-4 animate-pulse">
+    <div className="mx-4 mb-2 rounded-xl card p-4 animate-pulse">
       <div className="flex items-start gap-3">
         <div className="w-5 h-5 rounded-full shimmer-bg mt-0.5 shrink-0" />
         <div className="flex-1 space-y-2">

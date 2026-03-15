@@ -71,12 +71,12 @@ export function TaskCard({ task, delay = 0, priorityColor }: Props) {
   return (
     <>
       <div
-        className="mx-4 mb-3 animate-slide-up"
+        className="mx-4 mb-2 animate-slide-up"
         style={{ animationDelay: `${delay}ms` }}
       >
         <div
-          className={`group relative rounded-2xl glass overflow-hidden transition-all duration-200 hover:bg-white/[0.05] hover:shadow-lg hover:shadow-black/20 active:scale-[0.98] ${task.is_completed ? 'opacity-40' : ''}`}
-          style={{ backgroundColor: cardTint }}
+          className={`relative rounded-xl overflow-hidden transition-all duration-200 hover:brightness-110 active:scale-[0.99] group ${task.is_completed ? 'opacity-50' : ''}`}
+          style={{ background: cardTint !== 'transparent' ? cardTint : '#251409', border: '1px solid rgba(255,255,255,0.08)' }}
         >
           {/* Priority accent line */}
           <div className="absolute left-0 top-0 bottom-0 w-[3px] rounded-r-full" style={{ backgroundColor: borderColor }} />
@@ -84,7 +84,7 @@ export function TaskCard({ task, delay = 0, priorityColor }: Props) {
           {/* Left border accent (incomplete tasks only) */}
           {!task.is_completed && (
             <div
-              className="absolute left-0 top-0 bottom-0 w-0.5 rounded-l-2xl opacity-60 transition-opacity duration-300 group-hover:opacity-100"
+              className="absolute left-0 top-0 bottom-0 w-[3px] rounded-l-2xl opacity-60 transition-opacity duration-300 group-hover:opacity-100"
               style={{ background: borderColor }}
             />
           )}

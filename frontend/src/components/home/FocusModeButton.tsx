@@ -6,7 +6,6 @@ interface Props { tasks: Task[]; }
 
 export function FocusModeButton({ tasks }: Props) {
   const { data, isLoading, error, fetchFocus, clear } = useFocus();
-
   const focusTask = data ? tasks.find((t) => t.id === data.task.id) ?? data.task : null;
 
   return (
@@ -15,7 +14,8 @@ export function FocusModeButton({ tasks }: Props) {
         <button
           onClick={fetchFocus}
           disabled={isLoading || tasks.filter((t) => !t.is_completed).length === 0}
-          className="w-full flex items-center justify-center gap-2 py-3 rounded-2xl glass border border-orange-500/20 text-orange-400 text-sm font-bold hover:bg-orange-500/8 hover:border-orange-500/40 hover:glow-orange-sm transition-all duration-300 active:scale-[0.98] cursor-pointer disabled:opacity-40"
+          className="w-full flex items-center justify-center gap-2 py-3 rounded-xl text-[#ec5b13] text-sm font-semibold transition-all duration-200 active:scale-[0.98] cursor-pointer disabled:opacity-40"
+          style={{ background: 'rgba(236,91,19,0.08)', border: '1px solid rgba(236,91,19,0.2)' }}
         >
           {isLoading
             ? <><Loader2 size={15} className="animate-spin" /><span>Thinking...</span></>
@@ -23,11 +23,14 @@ export function FocusModeButton({ tasks }: Props) {
           }
         </button>
       ) : (
-        <div className="rounded-2xl glass border border-orange-500/30 p-4 animate-scale-in-bounce">
+        <div
+          className="rounded-xl p-4 animate-scale-in-bounce"
+          style={{ background: 'rgba(236,91,19,0.08)', border: '1px solid rgba(236,91,19,0.25)' }}
+        >
           <div className="flex items-start justify-between gap-2 mb-1">
             <div className="flex items-center gap-2">
-              <Target size={13} className="text-orange-400 shrink-0" />
-              <span className="text-[10px] font-bold uppercase tracking-widest text-orange-400">Focus now</span>
+              <Target size={13} className="text-[#ec5b13] shrink-0" />
+              <span className="text-[10px] font-bold uppercase tracking-widest text-[#ec5b13]">Focus now</span>
             </div>
             <button onClick={clear} className="text-white/25 hover:text-white/60 transition-colors cursor-pointer"><X size={13} /></button>
           </div>

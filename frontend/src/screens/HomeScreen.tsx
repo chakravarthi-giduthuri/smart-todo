@@ -39,33 +39,39 @@ export function HomeScreen() {
   const firstName = user?.user_metadata?.full_name?.split(' ')[0] ?? user?.email?.split('@')[0] ?? 'there';
 
   return (
-    <div className="min-h-screen bg-[#0A0A14] flex flex-col">
+    <div className="min-h-screen flex flex-col" style={{ background: '#1a0f08' }}>
       {/* Fixed top header */}
-      <div className="fixed top-0 left-0 right-0 z-40 pt-safe bg-[#0A0A14]/90 backdrop-blur-xl border-b border-white/5 animate-slide-down">
+      <div
+        className="fixed top-0 left-0 right-0 z-40 pt-safe animate-slide-down"
+        style={{ background: 'rgba(26,15,8,0.92)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', borderBottom: '1px solid rgba(255,255,255,0.07)' }}
+      >
         <div className="flex items-center justify-between px-4 py-3">
-          <div>
-            <div className="flex items-center gap-2">
-              <div className="w-7 h-7 rounded-xl flex items-center justify-center animate-float" style={{ background: 'linear-gradient(135deg, #f97316, #fb923c)' }}>
-                <Zap size={13} className="text-white" fill="white" />
-              </div>
-              <span className="text-sm font-bold text-white tracking-tight">Smart To-Do</span>
+          <div className="flex items-center gap-2.5">
+            <div
+              className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 animate-float"
+              style={{ background: 'linear-gradient(135deg, #ec5b13, #f97316)' }}
+            >
+              <Zap size={14} className="text-white" fill="white" />
             </div>
-            <p className="text-xs text-white/40 mt-0.5 ml-9 animate-fade-in stagger-3">{getGreeting()}, {firstName} 👋</p>
+            <div>
+              <span className="text-sm font-bold text-white tracking-tight">Smart To-Do</span>
+              <p className="text-[11px] text-white/35 mt-0 animate-fade-in stagger-3">{getGreeting()}, {firstName}</p>
+            </div>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
             {!isLoading && tasks.length > 0 && (
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1.5">
                 {completed.length > 0 && (
-                  <span className="text-xs font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-lg">{completed.length} done</span>
+                  <span className="text-[11px] font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded-lg">{completed.length} done</span>
                 )}
-                <span className="text-xs font-semibold text-white/30">{incomplete.length} left</span>
+                <span className="text-[11px] font-semibold text-white/30">{incomplete.length} left</span>
               </div>
             )}
             <button
               onClick={toggleTheme}
               aria-label="Toggle theme"
-              className="w-8 h-8 rounded-xl flex items-center justify-center text-white/40 hover:text-white hover:bg-white/10 transition-all duration-200 cursor-pointer active:scale-90"
+              className="w-8 h-8 rounded-lg flex items-center justify-center text-white/35 hover:text-white/70 hover:bg-white/8 transition-all duration-200 cursor-pointer active:scale-90"
             >
               {theme === 'dark' ? <Sun size={15} /> : <Moon size={15} />}
             </button>

@@ -58,7 +58,7 @@ export function TaskList({ tasks, isLoading, isPending }: Props) {
 
       {isEmpty && (
         <div className="flex flex-col items-center justify-center mt-20 px-8 animate-fade-in">
-          <div className="w-16 h-16 rounded-3xl bg-gradient-accent flex items-center justify-center mb-4 shadow-xl shadow-indigo-500/30">
+          <div className="w-16 h-16 rounded-3xl bg-gradient-accent flex items-center justify-center mb-4 shadow-xl shadow-[#ec5b13]/20">
             <Sparkles size={28} className="text-white" />
           </div>
           <p className="text-lg font-bold text-white mb-1">All clear</p>
@@ -68,7 +68,7 @@ export function TaskList({ tasks, isLoading, isPending }: Props) {
 
       {/* Time overload warning */}
       {isOverloaded && (
-        <div className="mx-4 mb-3 px-4 py-3 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-start gap-3 animate-fade-in">
+        <div className="mx-4 mb-3 px-4 py-3 rounded-2xl border border-amber-500/20 flex items-start gap-3 animate-fade-in" style={{ background: 'rgba(245,158,11,0.08)' }}>
           <AlertTriangle size={16} className="text-amber-400 shrink-0 mt-0.5" />
           <div>
             <p className="text-xs font-bold text-amber-400">Day overloaded</p>

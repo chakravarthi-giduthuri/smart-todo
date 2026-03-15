@@ -176,18 +176,18 @@ export function ChatBar({ energyLevel, prefill, onPrefillConsumed }: Props) {
 
       {/* Conversation question bubble */}
       {convMode && assistantQ && (
-        <div className="mx-3 mb-2 px-4 py-2.5 rounded-2xl bg-orange-500/10 border border-orange-500/20 animate-fade-in">
-          <p className="text-xs text-orange-300">{assistantQ}</p>
+        <div className="mx-3 mb-2 px-4 py-2.5 rounded-2xl border animate-fade-in" style={{ background: 'rgba(236,91,19,0.08)', borderColor: 'rgba(236,91,19,0.2)' }}>
+          <p className="text-xs text-[#f97316]">{assistantQ}</p>
         </div>
       )}
 
-      <div className="mx-3 glass-strong rounded-3xl px-3 py-2 flex items-center gap-2 shadow-2xl shadow-black/50 transition-all duration-300 focus-within:border-orange-500/30 focus-within:shadow-orange-500/10">
+      <div className="mx-3 glass-strong rounded-2xl px-3 py-2 flex items-center gap-2 shadow-2xl shadow-black/50 transition-all duration-300 focus-within:border-[#ec5b13]/30 focus-within:shadow-[#ec5b13]/10">
         {/* Conversation mode toggle */}
         <button
           onClick={() => convMode ? exitConvMode() : setConvMode(true)}
           disabled={isWorking}
           className={`w-11 h-11 rounded-2xl flex items-center justify-center transition-all duration-200 active:scale-90 cursor-pointer shrink-0 ${
-            convMode ? 'bg-orange-500 text-white shadow-lg shadow-orange-500/40' : 'text-white/40 hover:text-white hover:bg-white/5'
+            convMode ? 'bg-[#ec5b13] text-white shadow-lg shadow-[#ec5b13]/40' : 'text-white/40 hover:text-white hover:bg-white/5'
           }`}
           title={convMode ? 'Exit conversation mode' : 'Conversation mode'}
         >
@@ -230,7 +230,7 @@ export function ChatBar({ energyLevel, prefill, onPrefillConsumed }: Props) {
         <button
           onClick={convMode ? handleConvSubmit : handleDirectSubmit}
           disabled={!input.trim() || isWorking}
-          className="w-11 h-11 rounded-2xl bg-gradient-accent flex items-center justify-center text-white shadow-lg shadow-orange-500/30 disabled:opacity-30 active:scale-90 transition-all duration-150 cursor-pointer shrink-0 hover:shadow-xl hover:shadow-orange-500/40 hover:scale-105"
+          className="w-11 h-11 rounded-2xl bg-gradient-accent flex items-center justify-center text-white shadow-lg shadow-[#ec5b13]/30 disabled:opacity-30 active:scale-90 transition-all duration-150 cursor-pointer shrink-0 hover:shadow-xl hover:shadow-[#ec5b13]/40 hover:scale-105"
         >
           <ArrowUp size={18} strokeWidth={2.5} />
         </button>
