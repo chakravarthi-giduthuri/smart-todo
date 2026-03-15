@@ -1,0 +1,180 @@
+import { useState } from 'react';
+import { Calendar, Clock, Timer, PenLine, Plus, Pencil } from 'lucide-react';
+import type { Task, Priority, Category } from '../../types/task';
+import { CompletionToggle } from './CompletionToggle';
+import { OverrideDrawer, type OverrideField } from './OverrideDrawer';
+import { useCompleteTask } from '../../hooks/useTasks';
+import { useDeadlineStatus } from '../../hooks/useDeadlineStatus';
+import { CATEGORY_COLORS } from '../../constants/categories';
+import { formatDate, formatTime, formatDuration } from '../../utils/dateFormat';
+
+const PRIORITY_DOT: Record<Priority, string> = {
+  1: 'bg-red-500',
+  2: 'bg-orange-500',
+  3: 'bg-yellow-500',
+  4: 'bg-blue-500',
+  5: 'bg-gray-500',
+};
+
+const PILL_STYLE = {
+  overdue:  { bg: 'rgba(239,68,68,0.15)',   text: '#f87171' },
+  critical: { bg: 'rgba(249,115,22,0.15)',  text: '#fb923c' },
+  soon:     { bg: 'rgba(234,179,8,0.12)',   text: '#facc15' },
+  today:    { bg: 'rgba(99,102,241,0.12)',  text: '#818cf8' },
+  future:   { bg: 'rgba(255,255,255,0.06)', text: 'rgba(255,255,255,0.4)' },
+  none:     { bg: 'transparent', text: 'transparent' },
+};
+
+interface Props { task: Task; delay?: number; priorityColor?: string; }
+
+export function TaskCard({ task, delay = 0, priorityColor }: Props) {
+  const [activeField, setActiveField] = useState<OverrideField>(null);
+  const { mutate: complete } = useCompleteTask();
+  const deadline = useDeadlineStatus(task);
+
+  const catColor = CATEGORY_COLORS[task.category as Category];
+  const dotColor = PRIORITY_DOT[task.priority as Priority];
+  const borderColor = priorityColor ?? catColor;
+  const pill = PILL_STYLE[deadline.status];
+  const showBar = !task.is_completed && deadline.progressPercent !== null;
+  const showPill = !task.is_completed && deadline.label !== null;
+
+  const barPulseClass =
+    deadline.status === 'overdue'  ? 'deadline-bar-overdue'  :
+    deadline.status === 'critical' ? 'deadline-bar-critical' : '';
+
+  // Subtle priority-colored card tint (only for incomplete high-urgency tasks)
+  const cardTint = !task.is_completed && priorityColor && task.priority <= 2
+    ? `rgba(${task.priority === 1 ? '239,68,68' : '249,115,22'},0.04)`
+    : 'transparent';
+
+  return (
+    <>
+      <div
+        className="mx-4 mb-3 animate-slide-up"
+        style={{ animationDelay: `${delay}ms` }}
+      >
+        <div
+          className={`relative rounded-2xl glass overflow-hidden transition-all duration-300 hover:bg-white/[0.06] active:scale-[0.98] ${task.is_completed ? 'opacity-40' : ''}`}
+          style={{ backgroundColor: cardTint }}
+        >
+          {/* Priority accent line */}
+          <div className="absolute left-0 top-0 bottom-0 w-[3px] rounded-r-full" style={{ backgroundColor: borderColor }} />
+
+          <div className="pl-4 pr-4 pt-4 pb-3">
+            <div className="flex items-start gap-3">
+              <CompletionToggle checked={task.is_completed} onChange={() => !task.is_completed && complete(task.id)} />
+
+              <div className="flex-1 min-w-0">
+                {/* Title */}
+                <button
+                  onClick={() => !task.is_completed && setActiveField('title')}
+                  className={`group flex items-start gap-1.5 text-left w-full ${task.is_completed ? 'cursor-default' : 'cursor-pointer'}`}
+                >
+                  <span className={`text-[15px] font-semibold leading-snug ${task.is_completed ? 'line-through text-white/30' : 'text-white'}`}>
+                    {task.title}
+                  </span>
+                  {!task.is_completed && (
+                    <Pencil size={11} className="text-white/20 group-hover:text-indigo-400/70 transition-colors mt-1 shrink-0" />
+                  )}
+                </button>
+
+                <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 mt-2">
+                  {/* Category chip */}
+                  <button onClick={() => setActiveField('category')}
+                    className="flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold transition-all duration-200 active:scale-95 cursor-pointer"
+                    style={{ backgroundColor: `${catColor}20`, color: catColor }}>
+                    {task.category}
+                  </button>
+
+                  {/* Date/time */}
+                  {task.scheduled_date ? (
+                    <button onClick={() => setActiveField('scheduled_date')}
+                      className="flex items-center gap-1 text-xs text-white/40 hover:text-white/70 transition-colors cursor-pointer">
+                      <Calendar size={11} />
+                      <span>{formatDate(task.scheduled_date)}</span>
+                      {task.scheduled_time && (
+                        <>
+                          <Clock size={11} className="ml-0.5" />
+                          <span>{formatTime(task.scheduled_time)}</span>
+                        </>
+                      )}
+                    </button>
+                  ) : (
+                    <button onClick={() => setActiveField('scheduled_date')}
+                      className="flex items-center gap-1 text-xs text-white/20 hover:text-indigo-400/60 transition-colors cursor-pointer">
+                      <Plus size={11} />
+                      <span>Add date</span>
+                    </button>
+                  )}
+
+                  {/* Duration */}
+                  {task.duration_minutes && (
+                    <span className="flex items-center gap-1 text-xs text-white/30">
+                      <Timer size={11} />
+                      {formatDuration(task.duration_minutes)}
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              {/* Right column: priority + deadline pill */}
+              <div className="flex flex-col items-end gap-1.5 shrink-0">
+                <button onClick={() => setActiveField('priority')}
+                  className="flex items-center gap-1.5 glass rounded-xl px-2.5 py-1.5 transition-all duration-200 active:scale-90 cursor-pointer group">
+                  <span className={`w-2 h-2 rounded-full ${dotColor}`} />
+                  <span className="text-xs font-bold text-white/70 group-hover:text-white transition-colors">{task.priority}</span>
+                </button>
+
+                {showPill && (
+                  <div
+                    className="flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold"
+                    style={{ background: pill.bg, color: pill.text }}
+                  >
+                    <span>{deadline.label}</span>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Override indicator */}
+            {task._hasOverride && (
+              <div className="flex items-center gap-1 mt-2 pl-9">
+                <PenLine size={10} className="text-indigo-400/60" />
+                <span className="text-[10px] text-indigo-400/60 font-medium">Edited</span>
+              </div>
+            )}
+          </div>
+
+          {/* Deadline progress bar */}
+          {showBar && (
+            <div className="px-4 pb-3">
+              {/* Track */}
+              <div className="relative h-[3px] rounded-full bg-white/5 overflow-hidden">
+                {/* Fill */}
+                <div
+                  className={`absolute left-0 top-0 h-full rounded-full transition-all duration-[60000ms] ease-linear ${barPulseClass}`}
+                  style={{
+                    width: `${deadline.progressPercent}%`,
+                    background: deadline.status === 'overdue'
+                      ? '#ef4444'
+                      : deadline.status === 'critical'
+                      ? 'linear-gradient(90deg, #f97316, #ef4444)'
+                      : deadline.status === 'soon'
+                      ? 'linear-gradient(90deg, #6366f1, #eab308)'
+                      : 'linear-gradient(90deg, #6366f1, #818cf8)',
+                    boxShadow: deadline.status === 'overdue'  ? '0 0 6px rgba(239,68,68,0.8)'  :
+                               deadline.status === 'critical' ? '0 0 6px rgba(249,115,22,0.7)' :
+                               deadline.status === 'soon'     ? '0 0 4px rgba(234,179,8,0.5)'  : 'none',
+                  }}
+                />
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      <OverrideDrawer task={task} field={activeField} onClose={() => setActiveField(null)} />
+    </>
+  );
+}
