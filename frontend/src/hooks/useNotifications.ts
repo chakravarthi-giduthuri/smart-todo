@@ -27,7 +27,7 @@ export function useNotifications() {
     if (!('serviceWorker' in navigator) || !('PushManager' in window)) return;
 
     try {
-      const reg = await navigator.serviceWorker.register('/sw.js');
+      await navigator.serviceWorker.register('/sw.js');
       const perm = await Notification.requestPermission();
       setPermission(perm);
       if (perm !== 'granted') return;
@@ -35,7 +35,9 @@ export function useNotifications() {
       const vapidKey = import.meta.env.VITE_VAPID_PUBLIC_KEY;
       if (!vapidKey) return;
 
-      const sub = await reg.pushManager.subscribe({
+      // .ready only resolves once a SW is active — prevents "no active Service Worker" error
+      const activeReg = await navigator.serviceWorker.ready;
+      const sub = await activeReg.pushManager.subscribe({
         userVisibleOnly: true,
         applicationServerKey: urlBase64ToUint8Array(vapidKey) as unknown as ArrayBuffer,
       });
