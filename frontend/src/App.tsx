@@ -7,6 +7,7 @@ import { CalendarScreen } from './screens/CalendarScreen';
 import { DashboardScreen } from './screens/DashboardScreen';
 import { SettingsScreen } from './screens/SettingsScreen';
 import { ShareScreen } from './screens/ShareScreen';
+import { useRealtimeSync } from './hooks/useRealtimeSync';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -22,6 +23,7 @@ const queryClient = new QueryClient({
 function AppRoutes() {
   const location = useLocation();
   const isSharePage = location.pathname.startsWith('/share/');
+  useRealtimeSync();
   return (
     <>
       {!isSharePage && <BottomNav />}

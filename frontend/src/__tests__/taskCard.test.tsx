@@ -116,7 +116,7 @@ describe('TaskCard', () => {
   it('shows confirmation button after clicking delete', () => {
     renderCard();
     // First trash icon triggers confirm state
-    const trashButtons = screen.getAllByTitle ? [] : [];
+    const trashButtons: HTMLElement[] = [];
     // Find delete button by its accessible area — use role
     const buttons = screen.getAllByRole('button');
     const deleteBtn = buttons.find((b) => b.querySelector('svg') && b.className.includes('rose'));
