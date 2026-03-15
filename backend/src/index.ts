@@ -12,6 +12,14 @@ import preferencesRouter from './routes/preferences';
 import { startReminderCron } from './cron/reminderJob';
 import { loadSubscriptionFromDb } from './services/reminders';
 
+// Prevent unhandled rejections from crashing the process (Node 15+)
+process.on('unhandledRejection', (reason) => {
+  console.error('[Process] Unhandled rejection:', reason);
+});
+process.on('uncaughtException', (err) => {
+  console.error('[Process] Uncaught exception:', err);
+});
+
 const app = express();
 const PORT = Number(process.env.PORT ?? 3001);
 
