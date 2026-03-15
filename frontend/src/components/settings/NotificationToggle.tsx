@@ -4,7 +4,7 @@ import { useNotifications } from '@/hooks/useNotifications';
 import { testPush } from '@/api/push';
 
 export function NotificationToggle() {
-  const { permission, register } = useNotifications();
+  const { permission, registered, register, unregister } = useNotifications();
   const [testing, setTesting] = useState(false);
   const [testResult, setTestResult] = useState<'ok' | 'error' | null>(null);
 
@@ -32,8 +32,8 @@ export function NotificationToggle() {
           <p className="text-sm font-bold text-white">Push Notifications</p>
           <p className="text-xs text-white/30 mt-0.5">Custom reminder time per task · Safari iOS 16.4+</p>
         </div>
-        {permission === 'granted'
-          ? <span className="text-xs font-bold text-emerald-400 bg-emerald-500/10 px-3 py-1.5 rounded-xl">Active</span>
+        {permission === 'granted' && registered
+          ? <button onClick={unregister} className="text-xs font-bold text-emerald-400 bg-emerald-500/10 hover:bg-rose-500/15 hover:text-rose-400 px-3 py-1.5 rounded-xl cursor-pointer active:scale-95 transition-all duration-200">Active</button>
           : <button onClick={register} className="text-xs font-bold text-white bg-indigo-500 px-3 py-1.5 rounded-xl cursor-pointer active:scale-95 transition-transform">Enable</button>
         }
       </div>

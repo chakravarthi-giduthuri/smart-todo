@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { subscribePush } from '../api/push';
+import { subscribePush, unsubscribePush } from '../api/push';
 
 function urlBase64ToUint8Array(base64String: string): Uint8Array {
   const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
@@ -14,6 +14,14 @@ export function useNotifications() {
 
   useEffect(() => {
     if ('Notification' in window) setPermission(Notification.permission);
+    // Check if already subscribed
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.ready.then((reg) => {
+        reg.pushManager.getSubscription().then((sub) => {
+          if (sub) setRegistered(true);
+        });
+      }).catch(() => {});
+    }
   }, []);
 
   async function register() {
@@ -40,5 +48,17 @@ export function useNotifications() {
     }
   }
 
-  return { permission, registered, register };
+  async function unregister() {
+    try {
+      const reg = await navigator.serviceWorker.ready;
+      const sub = await reg.pushManager.getSubscription();
+      if (sub) await sub.unsubscribe();
+      await unsubscribePush();
+      setRegistered(false);
+    } catch (err) {
+      console.error('[Notifications] Unsubscribe failed:', err);
+    }
+  }
+
+  return { permission, registered, register, unregister };
 }

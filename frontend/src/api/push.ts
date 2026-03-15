@@ -7,6 +7,10 @@ export async function subscribePush(subscription: PushSubscription): Promise<voi
   });
 }
 
+export async function unsubscribePush(): Promise<void> {
+  await apiFetch('/api/push/subscribe', { method: 'DELETE' });
+}
+
 export async function testPush(): Promise<void> {
   await apiFetch('/api/push/test', { method: 'POST' });
 }

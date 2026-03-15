@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { setActiveSubscription, getActiveSubscription, runReminderJob } from '../services/reminders';
+import { setActiveSubscription, getActiveSubscription, clearSubscription, runReminderJob } from '../services/reminders';
 import webPush from 'web-push';
 
 const router = Router();
@@ -12,6 +12,15 @@ router.post('/subscribe', (req, res) => {
   }
   setActiveSubscription(subscription);
   res.status(201).json({ ok: true });
+});
+
+router.delete('/subscribe', async (req, res) => {
+  try {
+    await clearSubscription();
+    res.status(204).send();
+  } catch (err) {
+    res.status(500).json({ error: String(err) });
+  }
 });
 
 // Test endpoint — sends an immediate push to verify the whole chain works

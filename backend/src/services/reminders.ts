@@ -52,6 +52,11 @@ export function getActiveSubscription() {
   return activeSubscription;
 }
 
+export async function clearSubscription(): Promise<void> {
+  activeSubscription = null;
+  await supabase.from('push_subscriptions').delete().eq('id', 1);
+}
+
 export async function sendPushNotification(task: Task): Promise<void> {
   if (!vapidReady || !activeSubscription) return;
 
