@@ -116,19 +116,31 @@ function strengthOf(count: number): RuleInsight['strength'] {
 // ─── Public API ───────────────────────────────────────────────────────────────
 
 export async function buildRules(userId?: string): Promise<string[]> {
-  const count = await getOverrideCount(userId);
-  if (count < MIN_OVERRIDES_FOR_LEARNING) return [];
+  try {
+    const count = await getOverrideCount(userId);
+    if (count < MIN_OVERRIDES_FOR_LEARNING) return [];
 
-  const logs = await getRecentOverrides(50, userId);
-  const patterns = detectPatterns(logs).filter((b) => b.count >= RULE_THRESHOLD);
-  return patterns.slice(0, MAX_RULES).map(patternToRule);
+    const logs = await getRecentOverrides(50, userId);
+    const patterns = detectPatterns(logs).filter((b) => b.count >= RULE_THRESHOLD);
+    return patterns.slice(0, MAX_RULES).map(patternToRule);
+  } catch (err) {
+    // Gracefully degrade — task creation must not fail just because learning data is unavailable
+    console.error('[preferences] buildRules error (returning empty rules):', err);
+    return [];
+  }
 }
 
 export async function buildInsights(userId?: string): Promise<LearningInsights> {
-  const [allLogs, recentWithTitles] = await Promise.all([
-    getAllOverrides(userId),
-    getOverridesWithTitles(15, userId),
-  ]);
+  let allLogs: OverrideLog[] = [];
+  let recentWithTitles: Array<OverrideLog & { task_title: string | null }> = [];
+  try {
+    [allLogs, recentWithTitles] = await Promise.all([
+      getAllOverrides(userId),
+      getOverridesWithTitles(15, userId),
+    ]);
+  } catch (err) {
+    console.error('[preferences] buildInsights error (returning empty insights):', err);
+  }
 
   const total = allLogs.length;
   const patterns = detectPatterns(allLogs);
