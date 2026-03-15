@@ -1,10 +1,12 @@
 import { Router } from 'express';
+import { requireAuth } from '../middleware/auth';
 import { validate } from '../middleware/validate';
 import { patchOverrideSchema } from '../schemas/overrideSchemas';
 import { updateTaskField } from '../db/taskQueries';
 import { insertOverride } from '../db/overrideQueries';
 
 const router = Router();
+router.use(requireAuth);
 
 router.patch('/:id/override', validate(patchOverrideSchema), async (req, res, next) => {
   try {

@@ -115,19 +115,19 @@ function strengthOf(count: number): RuleInsight['strength'] {
 
 // ─── Public API ───────────────────────────────────────────────────────────────
 
-export async function buildRules(): Promise<string[]> {
-  const count = await getOverrideCount();
+export async function buildRules(userId?: string): Promise<string[]> {
+  const count = await getOverrideCount(userId);
   if (count < MIN_OVERRIDES_FOR_LEARNING) return [];
 
-  const logs = await getRecentOverrides(50);
+  const logs = await getRecentOverrides(50, userId);
   const patterns = detectPatterns(logs).filter((b) => b.count >= RULE_THRESHOLD);
   return patterns.slice(0, MAX_RULES).map(patternToRule);
 }
 
-export async function buildInsights(): Promise<LearningInsights> {
+export async function buildInsights(userId?: string): Promise<LearningInsights> {
   const [allLogs, recentWithTitles] = await Promise.all([
-    getAllOverrides(),
-    getOverridesWithTitles(15),
+    getAllOverrides(userId),
+    getOverridesWithTitles(15, userId),
   ]);
 
   const total = allLogs.length;

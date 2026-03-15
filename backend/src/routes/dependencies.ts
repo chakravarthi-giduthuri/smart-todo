@@ -1,7 +1,9 @@
 import { Router } from 'express';
+import { requireAuth } from '../middleware/auth';
 import { addDependency, listDependencies, removeDependency } from '../db/dependencyQueries';
 
 const router = Router({ mergeParams: true });
+router.use(requireAuth);
 
 router.post('/', async (req, res, next) => {
   try {

@@ -1,9 +1,11 @@
 import { Router } from 'express';
+import { requireAuth } from '../middleware/auth';
 import { createShare, getShare, completeShare } from '../db/sharesQueries';
 
 const router = Router();
 
-router.post('/', async (req, res, next) => {
+// POST /api/shares — create a share link (requires auth)
+router.post('/', requireAuth, async (req, res, next) => {
   try {
     const { task_id, recipient_email } = req.body as { task_id: string; recipient_email?: string };
 
@@ -18,6 +20,7 @@ router.post('/', async (req, res, next) => {
   }
 });
 
+// GET /api/shares/:token — public (no auth needed for recipients)
 router.get('/:token', async (req, res, next) => {
   try {
     const share = await getShare(req.params.token);
@@ -28,6 +31,7 @@ router.get('/:token', async (req, res, next) => {
   }
 });
 
+// PATCH /api/shares/:token/complete — public (recipient marks task done)
 router.patch('/:token/complete', async (req, res, next) => {
   try {
     const share = await completeShare(req.params.token);

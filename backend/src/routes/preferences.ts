@@ -1,8 +1,10 @@
 import { Router } from 'express';
+import { requireAuth } from '../middleware/auth';
 import { buildRules, buildInsights } from '../services/preferences';
 import { truncateOverrideLogs } from '../db/overrideQueries';
 
 const router = Router();
+router.use(requireAuth);
 
 router.get('/', async (req, res, next) => {
   try {

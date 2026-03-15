@@ -1,10 +1,12 @@
 import { Router } from 'express';
+import { requireAuth } from '../middleware/auth';
 import { buildConversationPrompt, callClaude } from '../services/claude';
 import type { ConversationMessage } from '../services/claude';
 import { insertTask } from '../db/taskQueries';
 import type { Category, Priority } from '../types/task';
 
 const router = Router();
+router.use(requireAuth);
 
 router.post('/', async (req, res, next) => {
   try {
@@ -35,6 +37,7 @@ router.post('/', async (req, res, next) => {
       );
 
       const task = await insertTask({
+        user_id: req.userId,
         raw_input: messages[messages.length - 1]?.content ?? '',
         title: String(parsed.title ?? '').slice(0, 60),
         category: (parsed.category as Category) ?? 'Personal',

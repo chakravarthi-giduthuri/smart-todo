@@ -1,3 +1,5 @@
+import { supabase } from '../lib/supabase';
+
 const BASE_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:3001';
 
 export class ApiError extends Error {
@@ -7,9 +9,22 @@ export class ApiError extends Error {
   }
 }
 
+async function getAuthHeader(): Promise<Record<string, string>> {
+  if (!supabase) return {};
+  const { data } = await supabase.auth.getSession();
+  const token = data.session?.access_token;
+  return token ? { Authorization: `Bearer ${token}` } : {};
+}
+
 export async function apiFetch<T>(path: string, options?: RequestInit): Promise<T> {
+  const authHeader = await getAuthHeader();
+
   const res = await fetch(`${BASE_URL}${path}`, {
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    headers: {
+      'Content-Type': 'application/json',
+      ...authHeader,
+      ...options?.headers,
+    },
     ...options,
   });
 

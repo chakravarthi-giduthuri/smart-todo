@@ -187,6 +187,7 @@ describe('buildPrompt', () => {
 describe('buildReschedulePrompt', () => {
   const task: Task = {
     id: 'abc-123',
+    user_id: 'test-user',
     raw_input: 'dentist',
     title: 'Dentist appointment',
     category: 'Health',
@@ -230,6 +231,7 @@ describe('buildFocusPrompt', () => {
   const tasks: Task[] = [
     {
       id: 'task-1',
+      user_id: 'test-user',
       raw_input: 'write report',
       title: 'Write quarterly report',
       category: 'Work',

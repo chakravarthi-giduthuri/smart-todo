@@ -5,6 +5,7 @@ export async function insertTask(data: InsertTaskInput): Promise<Task> {
   const { data: task, error } = await supabase
     .from('tasks')
     .insert({
+      user_id: data.user_id,
       raw_input: data.raw_input,
       title: data.title,
       category: data.category,
@@ -30,9 +31,10 @@ export async function insertTask(data: InsertTaskInput): Promise<Task> {
   return task as Task;
 }
 
-export async function listTasks(filters: TaskFilters = {}): Promise<Task[]> {
+export async function listTasks(filters: TaskFilters = {}, userId?: string): Promise<Task[]> {
   let query = supabase.from('tasks').select('*').eq('is_archived', false).order('priority', { ascending: true }).order('created_at', { ascending: false });
 
+  if (userId) query = query.eq('user_id', userId);
   if (filters.category) query = query.eq('category', filters.category);
   if (filters.is_completed !== undefined) query = query.eq('is_completed', filters.is_completed);
 
@@ -127,6 +129,7 @@ export async function spawnNextRecurrence(task: Task): Promise<void> {
   if (!nextDate) return;
 
   await insertTask({
+    user_id: task.user_id,
     raw_input: task.raw_input,
     title: task.title,
     category: task.category,

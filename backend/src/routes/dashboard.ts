@@ -1,11 +1,13 @@
 import { Router } from 'express';
+import { requireAuth } from '../middleware/auth';
 import { aggregateStats } from '../services/dashboard';
 
 const router = Router();
+router.use(requireAuth);
 
 router.get('/', async (req, res, next) => {
   try {
-    const stats = await aggregateStats();
+    const stats = await aggregateStats(req.userId);
     res.json(stats);
   } catch (err) {
     next(err);

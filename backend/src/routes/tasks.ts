@@ -6,8 +6,10 @@ import { buildPrompt, callClaude, parseClaudeResponse, buildReschedulePrompt } f
 import { insertTask, listTasks, markComplete, deleteTask, archiveTask, spawnNextRecurrence, updateTaskField, snoozeTask } from '../db/taskQueries';
 import type { Category } from '../types/task';
 import { supabase } from '../db/supabase';
+import { requireAuth } from '../middleware/auth';
 
 const router = Router();
+router.use(requireAuth);
 
 /** Parse timezone offset in minutes from a date string like "2026-03-14T07:17:30+05:30" */
 function parseOffsetMinutes(currentDate: string): number {
@@ -20,12 +22,13 @@ function parseOffsetMinutes(currentDate: string): number {
 router.post('/', validate(createTaskSchema), async (req, res, next) => {
   try {
     const { raw_input, current_date, timezone } = req.body as { raw_input: string; current_date: string; timezone?: string };
-    const rules = await buildRules();
+    const rules = await buildRules(req.userId);
     const prompt = buildPrompt(raw_input, rules, current_date, timezone);
     const rawText = await callClaude(prompt);
     const parsed = parseClaudeResponse(rawText);
 
     const task = await insertTask({
+      user_id: req.userId,
       raw_input,
       title: parsed.title,
       category: parsed.category as import('../types/task').Category,
@@ -52,7 +55,7 @@ router.get('/', async (req, res, next) => {
       category: req.query.category as Category | undefined,
       is_completed: req.query.completed !== undefined ? req.query.completed === 'true' : undefined,
     };
-    const tasks = await listTasks(filters);
+    const tasks = await listTasks(filters, req.userId);
     res.json({ tasks });
   } catch (err) {
     next(err);
@@ -96,6 +99,7 @@ router.patch('/:id/reschedule', async (req, res, next) => {
       .from('tasks')
       .select('*')
       .eq('id', req.params.id)
+      .eq('user_id', req.userId)
       .single();
     if (error || !taskRow) return res.status(404).json({ error: 'Task not found' });
 

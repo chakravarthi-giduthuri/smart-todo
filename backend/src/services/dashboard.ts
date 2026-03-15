@@ -17,7 +17,7 @@ function localDateStr(d: Date): string {
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
 }
 
-export async function aggregateStats(): Promise<DashboardStats> {
+export async function aggregateStats(userId?: string): Promise<DashboardStats> {
   const now = new Date();
   const today = localDateStr(now);
   const weekStart = new Date(now);
@@ -33,15 +33,18 @@ export async function aggregateStats(): Promise<DashboardStats> {
   ninetyDaysAgo.setDate(ninetyDaysAgo.getDate() - 90);
   const ninetyDaysAgoStr = localDateStr(ninetyDaysAgo);
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const u = (q: any) => (userId ? q.eq('user_id', userId) : q);
+
   const [totalResult, completedTodayResult, categoryResult, weekResult, overdueResult, chartResult, streakResult] =
     await Promise.all([
-      supabase.from('tasks').select('*', { count: 'exact', head: true }).eq('is_archived', false),
-      supabase.from('tasks').select('*', { count: 'exact', head: true }).eq('is_completed', true).eq('scheduled_date', today),
-      supabase.from('tasks').select('category').eq('is_archived', false),
-      supabase.from('tasks').select('*', { count: 'exact', head: true }).gte('scheduled_date', weekStartStr).eq('is_archived', false),
-      supabase.from('tasks').select('*', { count: 'exact', head: true }).eq('is_completed', false).eq('is_archived', false).lt('scheduled_date', today),
-      supabase.from('tasks').select('scheduled_date, is_completed').gte('scheduled_date', sevenDaysAgoStr).lte('scheduled_date', today),
-      supabase.from('tasks').select('completed_at').eq('is_completed', true).gte('completed_at', ninetyDaysAgoStr + 'T00:00:00Z'),
+      u(supabase.from('tasks').select('*', { count: 'exact', head: true }).eq('is_archived', false)),
+      u(supabase.from('tasks').select('*', { count: 'exact', head: true }).eq('is_completed', true).eq('scheduled_date', today)),
+      u(supabase.from('tasks').select('category').eq('is_archived', false)),
+      u(supabase.from('tasks').select('*', { count: 'exact', head: true }).gte('scheduled_date', weekStartStr).eq('is_archived', false)),
+      u(supabase.from('tasks').select('*', { count: 'exact', head: true }).eq('is_completed', false).eq('is_archived', false).lt('scheduled_date', today)),
+      u(supabase.from('tasks').select('scheduled_date, is_completed').gte('scheduled_date', sevenDaysAgoStr).lte('scheduled_date', today)),
+      u(supabase.from('tasks').select('completed_at').eq('is_completed', true).gte('completed_at', ninetyDaysAgoStr + 'T00:00:00Z')),
     ]);
 
   // Top category

@@ -4,6 +4,7 @@ export type EnergyLevel = 'high' | 'medium' | 'low';
 
 export interface Task {
   id: string;
+  user_id: string;
   raw_input: string;
   title: string;
   category: Category;
@@ -77,6 +78,7 @@ export interface OverrideLog {
 }
 
 export interface InsertTaskInput {
+  user_id: string;
   raw_input: string;
   title: string;
   category: Category;

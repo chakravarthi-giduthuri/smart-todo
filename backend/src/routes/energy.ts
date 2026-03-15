@@ -1,8 +1,10 @@
 import { Router } from 'express';
+import { requireAuth } from '../middleware/auth';
 import { insertCheckin, getTodayCheckin } from '../db/energyQueries';
 import type { EnergyLevel } from '../types/task';
 
 const router = Router();
+router.use(requireAuth);
 
 router.get('/today', async (req, res, next) => {
   try {

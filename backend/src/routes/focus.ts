@@ -1,13 +1,15 @@
 import { Router } from 'express';
+import { requireAuth } from '../middleware/auth';
 import { listTasks } from '../db/taskQueries';
 import { buildFocusPrompt, callClaude } from '../services/claude';
 
 const router = Router();
+router.use(requireAuth);
 
 router.get('/', async (req, res, next) => {
   try {
     const currentDate = (req.query.current_date as string | undefined) ?? new Date().toISOString();
-    const tasks = await listTasks({ is_completed: false });
+    const tasks = await listTasks({ is_completed: false }, req.userId);
 
     if (tasks.length === 0) {
       return res.json({ task_id: null, reason: 'No incomplete tasks found.' });
