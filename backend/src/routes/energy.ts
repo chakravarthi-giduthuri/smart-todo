@@ -8,7 +8,7 @@ router.use(requireAuth);
 
 router.get('/today', async (req, res, next) => {
   try {
-    const checkin = await getTodayCheckin();
+    const checkin = await getTodayCheckin(req.userId);
     if (!checkin) return res.json({ checkin: null });
     res.json({ checkin });
   } catch (err) {
@@ -24,7 +24,7 @@ router.post('/', async (req, res, next) => {
       return res.status(400).json({ error: 'level must be high, medium, or low' });
     }
     const today = new Date().toISOString().split('T')[0];
-    const checkin = await insertCheckin(today, level);
+    const checkin = await insertCheckin(today, level, req.userId);
     res.status(201).json({ checkin });
   } catch (err) {
     next(err);
