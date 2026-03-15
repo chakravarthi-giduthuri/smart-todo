@@ -24,7 +24,7 @@ export function SettingsScreen() {
       </div>
       <div className="space-y-3">
         {/* Theme toggle */}
-        <div className="rounded-xl px-4 py-3.5 flex items-center justify-between" style={{ background: '#18181b', border: '1px solid rgba(255,255,255,0.09)' }}>
+        <div className="rounded-xl px-4 py-3.5 flex items-center justify-between" style={{ background: 'var(--surface)', border: '1px solid var(--border)' }}>
           <div>
             <p className="text-sm font-semibold text-white">Appearance</p>
             <p className="text-xs text-white/40 mt-0.5">{theme === 'dark' ? 'Dark mode' : 'Light mode'}</p>
@@ -45,7 +45,7 @@ export function SettingsScreen() {
         </div>
 
         {/* Timezone — auto-detected, no permission needed */}
-        <div className="rounded-xl px-4 py-3.5 flex items-center gap-3" style={{ background: '#18181b', border: '1px solid rgba(255,255,255,0.09)' }}>
+        <div className="rounded-xl px-4 py-3.5 flex items-center gap-3" style={{ background: 'var(--surface)', border: '1px solid var(--border)' }}>
           <div className="w-8 h-8 rounded-xl bg-cyan-500/10 flex items-center justify-center shrink-0">
             <Globe size={15} className="text-cyan-400" />
           </div>
@@ -61,7 +61,7 @@ export function SettingsScreen() {
         <ResetAiButton />
 
         {/* Account */}
-        <div className="rounded-xl px-4 py-3.5 flex items-center justify-between" style={{ background: '#18181b', border: '1px solid rgba(255,255,255,0.09)' }}>
+        <div className="rounded-xl px-4 py-3.5 flex items-center justify-between" style={{ background: 'var(--surface)', border: '1px solid var(--border)' }}>
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 rounded-xl bg-indigo-500/10 flex items-center justify-center shrink-0">
               <LogOut size={15} className="text-indigo-400" />

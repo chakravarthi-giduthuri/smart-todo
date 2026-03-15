@@ -6,9 +6,9 @@
 
 /* ─── Theme Tokens ─────────────────────────────────── */
 :root {
-  --app-bg:            #1a0f08;
-  --surface:           #251409;
-  --surface-2:         #2e1a0d;
+  --app-bg:            #0e0e10;
+  --surface:           #18181b;
+  --surface-2:         #1e1e22;
   --border:            rgba(255,255,255,0.08);
   --border-strong:     rgba(255,255,255,0.13);
   --text-base:         rgba(255,255,255,0.95);
@@ -19,14 +19,14 @@
 }
 
 html.light {
-  --app-bg:            #f8f6f6;
+  --app-bg:            #f5f5f7;
   --surface:           #ffffff;
-  --surface-2:         #f3f0ee;
-  --border:            rgba(0,0,0,0.07);
-  --border-strong:     rgba(0,0,0,0.12);
-  --text-base:         #1c1410;
-  --text-muted:        rgba(28,20,16,0.5);
-  --text-faint:        rgba(28,20,16,0.3);
+  --surface-2:         #f0f0f2;
+  --border:            rgba(0,0,0,0.08);
+  --border-strong:     rgba(0,0,0,0.13);
+  --text-base:         #1c1c1e;
+  --text-muted:        rgba(28,28,30,0.55);
+  --text-faint:        rgba(28,28,30,0.3);
 }
 
 @layer base {
@@ -56,34 +56,34 @@ html.light {
   .card {
     background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: 0.875rem;
-    transition: background 0.2s ease, border-color 0.2s ease;
+    border-radius: 1rem;
+    transition: background 0.25s ease, border-color 0.25s ease;
   }
   .card-strong {
     background: var(--surface-2);
     border: 1px solid var(--border-strong);
-    border-radius: 0.875rem;
+    border-radius: 1rem;
   }
 
   /* Glass — only for overlay elements (header, chatbar) */
   .glass {
-    background: rgba(26,15,8,0.85);
+    background: rgba(14,14,16,0.85);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     border: 1px solid var(--border);
     transition: background 0.3s ease;
   }
   .glass-strong {
-    background: rgba(26,15,8,0.92);
+    background: rgba(14,14,16,0.92);
     backdrop-filter: blur(30px);
     -webkit-backdrop-filter: blur(30px);
     border: 1px solid var(--border-strong);
   }
   html.light .glass {
-    background: rgba(248,246,246,0.88);
+    background: rgba(245,245,247,0.88);
   }
   html.light .glass-strong {
-    background: rgba(248,246,246,0.95);
+    background: rgba(245,245,247,0.95);
   }
 
   .gradient-text {
@@ -108,18 +108,18 @@ html.light {
   .btn-glow:active { transform: scale(0.95); }
 }
 
-/* Light mode overrides for dark text classes */
+/* Light mode overrides */
 html.light .text-white        { color: var(--text-base) !important; }
-html.light .text-white\/90    { color: rgba(28,20,16,0.9) !important; }
-html.light .text-white\/70    { color: rgba(28,20,16,0.7) !important; }
-html.light .text-white\/50    { color: rgba(28,20,16,0.55) !important; }
-html.light .text-white\/40    { color: rgba(28,20,16,0.45) !important; }
-html.light .text-white\/30    { color: rgba(28,20,16,0.35) !important; }
-html.light .text-white\/25    { color: rgba(28,20,16,0.3) !important; }
-html.light .text-white\/20    { color: rgba(28,20,16,0.25) !important; }
-html.light .text-white\/10    { color: rgba(28,20,16,0.15) !important; }
-html.light .bg-\[\#1a0f08\]  { background-color: var(--app-bg) !important; }
+html.light .text-white\/90    { color: rgba(28,28,30,0.9) !important; }
+html.light .text-white\/70    { color: rgba(28,28,30,0.7) !important; }
+html.light .text-white\/50    { color: rgba(28,28,30,0.55) !important; }
+html.light .text-white\/40    { color: rgba(28,28,30,0.45) !important; }
+html.light .text-white\/30    { color: rgba(28,28,30,0.35) !important; }
+html.light .text-white\/25    { color: rgba(28,28,30,0.3) !important; }
+html.light .text-white\/20    { color: rgba(28,28,30,0.25) !important; }
+html.light .text-white\/10    { color: rgba(28,28,30,0.15) !important; }
 html.light .border-white\/5   { border-color: rgba(0,0,0,0.06) !important; }
+html.light .border-white\/8   { border-color: rgba(0,0,0,0.08) !important; }
 html.light .bg-white\/5       { background-color: rgba(0,0,0,0.04) !important; }
 html.light .bg-white\/10      { background-color: rgba(0,0,0,0.06) !important; }
 html.light .bg-white\/\[0\.06\] { background-color: rgba(0,0,0,0.04) !important; }

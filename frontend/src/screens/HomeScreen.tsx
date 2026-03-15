@@ -39,11 +39,11 @@ export function HomeScreen() {
   const firstName = user?.user_metadata?.full_name?.split(' ')[0] ?? user?.email?.split('@')[0] ?? 'there';
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ background: '#1a0f08' }}>
+    <div className="min-h-screen flex flex-col" style={{ background: 'var(--app-bg)' }}>
       {/* Fixed top header */}
       <div
-        className="fixed top-0 left-0 right-0 z-40 pt-safe animate-slide-down"
-        style={{ background: 'rgba(26,15,8,0.92)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', borderBottom: '1px solid rgba(255,255,255,0.07)' }}
+        className="fixed top-0 left-0 right-0 z-40 pt-safe animate-slide-down glass-strong"
+        style={{ borderBottom: '1px solid var(--border)' }}
       >
         <div className="flex items-center justify-between px-4 py-3">
           <div className="flex items-center gap-2.5">

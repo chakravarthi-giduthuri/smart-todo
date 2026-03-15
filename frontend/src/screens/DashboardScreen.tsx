@@ -12,9 +12,9 @@ export function DashboardScreen() {
         <div className="animate-pulse space-y-3">
           <div className="h-8 bg-white/5 rounded-xl w-40" />
           <div className="grid grid-cols-2 gap-3">
-            {[...Array(4)].map((_, i) => <div key={i} className="rounded-xl h-28" style={{ background: '#18181b', border: '1px solid rgba(255,255,255,0.09)' }} />)}
+            {[...Array(4)].map((_, i) => <div key={i} className="rounded-xl h-28" style={{ background: 'var(--surface)', border: '1px solid var(--border)' }} />)}
           </div>
-          <div className="rounded-xl h-40" style={{ background: '#18181b', border: '1px solid rgba(255,255,255,0.09)' }} />
+          <div className="rounded-xl h-40" style={{ background: 'var(--surface)', border: '1px solid var(--border)' }} />
         </div>
       </PageShell>
     );
@@ -36,7 +36,7 @@ export function DashboardScreen() {
       {/* Primary metric cards - 2x2 grid */}
       <div className="grid grid-cols-2 gap-3 mb-3">
         {/* Tasks Completed */}
-        <div className="rounded-2xl p-4 animate-slide-up-fade" style={{ background: '#18181b', border: '1px solid rgba(255,255,255,0.09)' }}>
+        <div className="rounded-2xl p-4 animate-slide-up-fade" style={{ background: 'var(--surface)', border: '1px solid var(--border)' }}>
           <div className="w-8 h-8 rounded-xl flex items-center justify-center mb-3" style={{ background: 'rgba(249,115,22,0.15)' }}>
             <CheckCircle2 size={16} className="text-orange-400" />
           </div>
@@ -46,7 +46,7 @@ export function DashboardScreen() {
         </div>
 
         {/* Day Streak */}
-        <div className="rounded-2xl p-4 animate-slide-up-fade" style={{ background: '#18181b', border: '1px solid rgba(255,255,255,0.09)', animationDelay: '50ms' }}>
+        <div className="rounded-2xl p-4 animate-slide-up-fade" style={{ background: 'var(--surface)', border: '1px solid var(--border)', animationDelay: '50ms' }}>
           <div className="w-8 h-8 rounded-xl flex items-center justify-center mb-3 bg-amber-500/15">
             <Flame size={16} className="text-amber-400" />
           </div>
@@ -56,7 +56,7 @@ export function DashboardScreen() {
         </div>
 
         {/* This Week */}
-        <div className="rounded-2xl p-4 animate-slide-up-fade" style={{ background: '#18181b', border: '1px solid rgba(255,255,255,0.09)', animationDelay: '100ms' }}>
+        <div className="rounded-2xl p-4 animate-slide-up-fade" style={{ background: 'var(--surface)', border: '1px solid var(--border)', animationDelay: '100ms' }}>
           <div className="w-8 h-8 rounded-xl flex items-center justify-center mb-3 bg-emerald-500/15">
             <TrendingUp size={16} className="text-emerald-400" />
           </div>
@@ -66,7 +66,7 @@ export function DashboardScreen() {
         </div>
 
         {/* Overdue */}
-        <div className="rounded-2xl p-4 animate-slide-up-fade" style={{ background: '#18181b', border: '1px solid rgba(255,255,255,0.09)', animationDelay: '150ms' }}>
+        <div className="rounded-2xl p-4 animate-slide-up-fade" style={{ background: 'var(--surface)', border: '1px solid var(--border)', animationDelay: '150ms' }}>
           <div className="w-8 h-8 rounded-xl flex items-center justify-center mb-3 bg-rose-500/15">
             <AlertCircle size={16} className="text-rose-400" />
           </div>
@@ -78,7 +78,7 @@ export function DashboardScreen() {
 
       {/* Top Category highlight */}
       {stats.top_category && (
-        <div className="rounded-xl px-4 py-3 mb-3 flex items-center justify-between animate-scale-in" style={{ background: '#18181b', border: '1px solid rgba(255,255,255,0.09)', animationDelay: '200ms' }}>
+        <div className="rounded-xl px-4 py-3 mb-3 flex items-center justify-between animate-scale-in" style={{ background: 'var(--surface)', border: '1px solid var(--border)', animationDelay: '200ms' }}>
           <div>
             <p className="text-xs text-white/40">Most active category</p>
             <p className="text-base font-bold text-white mt-0.5">{stats.top_category}</p>
@@ -88,7 +88,7 @@ export function DashboardScreen() {
       )}
 
       {/* Total tasks */}
-      <div className="rounded-xl px-4 py-3 mb-4 flex items-center justify-between animate-scale-in" style={{ background: '#18181b', border: '1px solid rgba(255,255,255,0.09)', animationDelay: '250ms' }}>
+      <div className="rounded-xl px-4 py-3 mb-4 flex items-center justify-between animate-scale-in" style={{ background: 'var(--surface)', border: '1px solid var(--border)', animationDelay: '250ms' }}>
         <p className="text-xs text-white/40">Total active tasks</p>
         <p className="text-xl font-extrabold text-white">{stats.total_tasks}</p>
       </div>

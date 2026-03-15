@@ -69,7 +69,7 @@ export function TaskCard({ task, delay = 0 }: Props) {
         {/* Card — exact mockup style: neutral dark, clean border */}
         <div
           className={`rounded-2xl overflow-hidden transition-all duration-200 active:scale-[0.99] ${task.is_completed ? 'opacity-55' : ''}`}
-          style={{ background: '#18181b', border: '1px solid rgba(255,255,255,0.09)' }}
+          style={{ background: 'var(--surface)', border: '1px solid var(--border)' }}
         >
           <div className="flex items-start gap-3 px-4 pt-4 pb-3">
 

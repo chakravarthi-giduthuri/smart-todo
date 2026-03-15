@@ -8,7 +8,7 @@ export function WeekBarChart({ data }: Props) {
   const today = new Date().toISOString().split('T')[0];
 
   return (
-    <div className="rounded-2xl p-5 animate-scale-in" style={{ background: '#18181b', border: '1px solid rgba(255,255,255,0.09)' }}>
+    <div className="rounded-2xl p-5 animate-scale-in" style={{ background: 'var(--surface)', border: '1px solid var(--border)' }}>
       <p className="text-xs font-bold text-white/40 uppercase tracking-widest mb-5">7-Day Activity</p>
       <div className="flex items-end gap-2 h-24">
         {data.map((bar, i) => {
