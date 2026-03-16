@@ -43,6 +43,10 @@ vi.mock('../services/claude', () => ({
 
 vi.mock('../services/preferences', () => ({
   buildRules: vi.fn(async () => []),
+  buildLearningContext: vi.fn(async () => ({
+    priorityRules: [], categoryRules: [], timeRules: [],
+    durationRules: [], behaviorProfile: [], reasonInsights: [],
+  })),
 }));
 
 const MOCK_TASK = {

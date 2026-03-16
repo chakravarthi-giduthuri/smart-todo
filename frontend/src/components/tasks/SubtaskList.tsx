@@ -18,7 +18,7 @@ export function SubtaskList({ taskId }: Props) {
     addSub(title, { onSuccess: () => setInputVal('') });
   }
 
-  if (isLoading) return <div className="mt-2 pl-9 h-4 w-24 rounded-full bg-white/5 animate-pulse" />;
+  if (isLoading) return <div className="mt-2 pl-9 h-4 w-24 rounded-full bg-slate-200 dark:bg-white/5 animate-pulse" />;
 
   const done = subtasks.filter((s) => s.is_completed).length;
 
@@ -27,10 +27,10 @@ export function SubtaskList({ taskId }: Props) {
       {subtasks.length > 0 && (
         <div className="mb-1.5">
           <div className="flex items-center gap-1.5 mb-1">
-            <span className="text-[10px] font-bold uppercase tracking-widest text-white/25">
+            <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400 dark:text-white/25">
               Subtasks {done}/{subtasks.length}
             </span>
-            <div className="flex-1 h-[2px] rounded-full bg-white/5 overflow-hidden">
+            <div className="flex-1 h-[2px] rounded-full bg-slate-200 dark:bg-white/5 overflow-hidden">
               <div
                 className="h-full bg-emerald-500/50 transition-all duration-300"
                 style={{ width: subtasks.length > 0 ? `${(done / subtasks.length) * 100}%` : '0%' }}
@@ -42,19 +42,19 @@ export function SubtaskList({ taskId }: Props) {
               <div key={s.id} className="group flex items-center gap-2 py-0.5">
                 <button
                   onClick={() => !s.is_completed && completeSub(s.id)}
-                  className="shrink-0 text-white/30 hover:text-emerald-400 transition-colors cursor-pointer"
+                  className="shrink-0 text-slate-400 dark:text-white/30 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors cursor-pointer"
                 >
                   {s.is_completed
                     ? <CheckCircle2 size={13} className="text-emerald-500/60" />
                     : <Circle size={13} />
                   }
                 </button>
-                <span className={`flex-1 text-xs ${s.is_completed ? 'line-through text-white/20' : 'text-white/60'}`}>
+                <span className={`flex-1 text-xs ${s.is_completed ? 'line-through text-slate-300 dark:text-white/20' : 'text-slate-700 dark:text-white/60'}`}>
                   {s.title}
                 </span>
                 <button
                   onClick={() => deleteSub(s.id)}
-                  className="opacity-0 group-hover:opacity-100 text-white/20 hover:text-rose-400 transition-all cursor-pointer"
+                  className="opacity-0 group-hover:opacity-100 text-slate-300 dark:text-white/20 hover:text-rose-500 dark:hover:text-rose-400 transition-all cursor-pointer"
                 >
                   <Trash2 size={10} />
                 </button>
@@ -71,7 +71,7 @@ export function SubtaskList({ taskId }: Props) {
           onChange={(e) => setInputVal(e.target.value)}
           onKeyDown={(e) => { if (e.key === 'Enter') handleAdd(); }}
           placeholder="Add subtask..."
-          className="flex-1 text-xs bg-white/5 rounded-lg px-2.5 py-1.5 text-white/60 placeholder-white/20 outline-none focus:bg-white/8 transition-colors"
+          className="flex-1 text-xs bg-slate-100 dark:bg-white/5 rounded-lg px-2.5 py-1.5 text-slate-700 dark:text-white/60 placeholder-slate-400 dark:placeholder-white/20 outline-none focus:bg-slate-200 dark:focus:bg-white/8 transition-colors"
         />
         <button
           onClick={handleAdd}

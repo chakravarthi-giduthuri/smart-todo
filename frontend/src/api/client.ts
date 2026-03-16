@@ -30,7 +30,8 @@ export async function apiFetch<T>(path: string, options?: RequestInit): Promise<
 
   if (!res.ok) {
     const body = await res.json().catch(() => ({ error: res.statusText }));
-    throw new ApiError(res.status, body.error ?? 'Request failed');
+    const message = body.detail ? `${body.error}: ${body.detail}` : (body.error ?? 'Request failed');
+    throw new ApiError(res.status, message);
   }
 
   if (res.status === 204 || res.headers.get('content-length') === '0') {

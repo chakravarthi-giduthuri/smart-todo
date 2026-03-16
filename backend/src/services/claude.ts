@@ -2,22 +2,67 @@ import Anthropic from '@anthropic-ai/sdk';
 import type { ClaudeResponse } from '../types/claude';
 import { ClaudeParseError } from '../types/claude';
 import type { Task } from '../types/task';
+import type { LearningContext } from './preferences';
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
+function buildPreferencesBlock(context: LearningContext | string[]): string {
+  // Flat string[] — legacy format
+  if (Array.isArray(context)) {
+    if (context.length === 0) return '';
+    return `\n═══ LEARNED USER PREFERENCES ═══\n${context.map((r, i) => `${i + 1}. ${r}`).join('\n')}\n═══ END PREFERENCES ═══\n`;
+  }
+
+  const ctx = context as LearningContext;
+  const hasAny = [
+    ctx.priorityRules, ctx.categoryRules, ctx.timeRules,
+    ctx.durationRules, ctx.behaviorProfile, ctx.reasonInsights,
+  ].some(arr => arr.length > 0);
+
+  if (!hasAny) return '';
+
+  const lines: string[] = ['\n═══ LEARNED USER PREFERENCES (apply these FIRST before defaults) ═══'];
+
+  if (ctx.categoryRules.length > 0) {
+    lines.push('\n[Category Corrections — high confidence, follow strictly]');
+    ctx.categoryRules.forEach(r => lines.push(`  • ${r}`));
+  }
+  if (ctx.priorityRules.length > 0) {
+    lines.push('\n[Priority Adjustments — override default priority logic with these]');
+    ctx.priorityRules.forEach(r => lines.push(`  • ${r}`));
+  }
+  if (ctx.timeRules.length > 0) {
+    lines.push('\n[Scheduling Preferences — use these times instead of defaults]');
+    ctx.timeRules.forEach(r => lines.push(`  • ${r}`));
+  }
+  if (ctx.durationRules.length > 0) {
+    lines.push('\n[Duration Preferences — adjust durations to match user habits]');
+    ctx.durationRules.forEach(r => lines.push(`  • ${r}`));
+  }
+  if (ctx.reasonInsights.length > 0) {
+    lines.push('\n[User-Stated Preferences — explicit feedback from the user]');
+    ctx.reasonInsights.forEach(r => lines.push(`  • ${r}`));
+  }
+  if (ctx.behaviorProfile.length > 0) {
+    lines.push('\n[Behavior Profile — use to inform scheduling and priority]');
+    ctx.behaviorProfile.forEach(r => lines.push(`  • ${r}`));
+  }
+
+  lines.push('═══ END PREFERENCES ═══');
+  return lines.join('\n') + '\n';
+}
+
 export function buildPrompt(
   rawInput: string,
-  rules: string[],
+  context: LearningContext | string[],
   currentDate: string,
   timezone?: string,
   energyLevel?: string,
 ): string {
-  const prefsBlock = rules.length > 0
-    ? `\n--- Learned User Preferences ---\n${rules.map((r, i) => `${i + 1}. ${r}`).join('\n')}\n--- End Preferences ---\n`
-    : '';
+  const prefsBlock = buildPreferencesBlock(context);
 
   const energyBlock = energyLevel
-    ? `\nUser's current energy level is ${energyLevel.toUpperCase()} — prefer lighter tasks for morning if LOW, ambitious tasks if HIGH.\n`
+    ? `\nUser's current energy level: ${energyLevel.toUpperCase()}.\n  LOW energy → prefer admin, email, errands (avoid deep work).\n  MEDIUM energy → routine tasks, meetings, planning.\n  HIGH energy → deep work, complex problems, creative tasks.\n`
     : '';
 
   return `You are a world-class personal assistant with 20+ years of experience managing tasks, schedules, and priorities for busy professionals. You have an exceptional instinct for what truly matters, when things should happen, and how long they take.
@@ -167,16 +212,18 @@ export function parseClaudeResponse(text: string): ClaudeResponse {
 }
 
 export function buildReschedulePrompt(task: Task, currentDate: string): string {
-  return `You are a smart scheduling assistant. An overdue task needs to be rescheduled.
+  const priorityLabel = ['', 'Critical', 'High', 'Medium', 'Low', 'Minimal'][task.priority] ?? 'Unknown';
+  return `You are an expert scheduling assistant. Reschedule the following task to the best upcoming time slot.
 
 Current date and time: ${currentDate}
 
-Overdue task:
+Task to reschedule:
 - Title: ${task.title}
 - Category: ${task.category}
-- Originally scheduled: ${task.scheduled_date ?? 'unset'} at ${task.scheduled_time ?? 'unset'}
-- Duration: ${task.duration_minutes ?? 'unknown'} minutes
-- Priority: ${task.priority}
+- Priority: ${task.priority} (${priorityLabel})
+- Original schedule: ${task.scheduled_date ?? 'none'} at ${task.scheduled_time ?? 'none'}
+- Duration: ${task.duration_minutes != null ? `${task.duration_minutes} minutes` : 'unknown'}
+- Context tags: ${task.context_tags?.join(', ') || 'none'}
 
 Return ONLY a valid JSON object with exactly these two fields:
 {
@@ -184,13 +231,20 @@ Return ONLY a valid JSON object with exactly these two fields:
   "scheduled_time": "HH:MM"
 }
 
-Rules:
-- Pick a realistic future date and time based on the task type and priority.
-- High priority (1-2): schedule as soon as possible, today or tomorrow.
-- Medium priority (3): schedule within the next 2-3 days.
-- Low priority (4-5): schedule within the next week.
-- Follow the same time-of-day logic as normal scheduling (health → morning, deep work → 09:00-11:30, etc.).
-- Never pick a time in the past.
+Scheduling rules:
+- NEVER pick a date/time that is in the past relative to the current date and time above.
+- Priority 1 (Critical): schedule today within the next 2 hours if possible, otherwise first thing tomorrow.
+- Priority 2 (High): schedule today or tomorrow at the most suitable time.
+- Priority 3 (Medium): schedule within the next 2-3 days.
+- Priority 4-5 (Low/Minimal): schedule within the next week.
+- Time-of-day guidelines by category:
+  · Health / Exercise / Meditation → 06:00–08:00
+  · Deep Work / Study / Writing → 09:00–11:30
+  · Work meetings / Calls → 10:00–12:00 or 14:00–16:00
+  · Admin / Email / Errands → 11:00–12:00 or 17:00–18:00
+  · Personal chores / Shopping → 18:00–19:30
+- If the task has @5min tag, it can go in any small gap (e.g., 12:00 or 17:00).
+- Pick a clean time (on the hour or half-hour) unless a specific time makes more sense.
 
 Do not include markdown, code fences, or any text outside the JSON object.`;
 }

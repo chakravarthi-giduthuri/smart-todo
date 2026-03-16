@@ -16,6 +16,7 @@ import energyRouter from './routes/energy';
 import dependenciesRouter from './routes/dependencies';
 import calendarRouter from './routes/calendar';
 import sharesRouter from './routes/shares';
+import userRouter from './routes/user';
 import { startReminderCron } from './cron/reminderJob';
 import { startMorningPlanCron } from './cron/morningPlanJob';
 import { startWeeklyReviewCron } from './cron/weeklyReviewJob';
@@ -47,6 +48,7 @@ app.use('/api/conversation', conversationRouter);
 app.use('/api/energy', energyRouter);
 app.use('/api/calendar', calendarRouter);
 app.use('/api/shares', sharesRouter);
+app.use('/api/user', userRouter);
 
 app.get('/health', (req, res) => res.json({ ok: true }));
 

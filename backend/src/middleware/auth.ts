@@ -1,8 +1,5 @@
 import type { Request, Response, NextFunction } from 'express';
-import { createClient } from '@supabase/supabase-js';
-
-const supabaseUrl = process.env.SUPABASE_URL!;
-const supabaseAnonKey = process.env.SUPABASE_ANON_KEY!;
+import { supabase } from '../db/supabase';
 
 // Extend Express Request to carry userId
 declare global {
@@ -23,14 +20,11 @@ export async function requireAuth(req: Request, res: Response, next: NextFunctio
 
   const token = authHeader.slice(7);
 
-  // Create a per-request client so we verify against the real user token
-  const client = createClient(supabaseUrl, supabaseAnonKey, {
-    global: { headers: { Authorization: `Bearer ${token}` } },
-  });
-
-  const { data, error } = await client.auth.getUser();
+  // auth.getUser(jwt) validates the token against Supabase auth server
+  const { data, error } = await supabase.auth.getUser(token);
   if (error || !data.user) {
-    res.status(401).json({ error: 'Invalid or expired token' });
+    console.error('[auth] getUser failed:', error?.message, '| SUPABASE_URL set:', !!process.env.SUPABASE_URL, '| ANON_KEY set:', !!process.env.SUPABASE_ANON_KEY, '| token prefix:', token.slice(0, 20));
+    res.status(401).json({ error: 'Invalid or expired token', detail: error?.message });
     return;
   }
 

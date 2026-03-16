@@ -65,7 +65,24 @@ export function MonthGrid({ year, month, tasks, selectedDate, onSelectDate }: Pr
               }`}>
                 {day}
               </span>
-              <div className="space-y-0.5">
+              {/* Mobile: dots only */}
+              {dayTasks.length > 0 && (
+                <div className="flex sm:hidden flex-wrap gap-0.5 mt-0.5 justify-center">
+                  {dayTasks.slice(0, 3).map((t, j) => (
+                    <span
+                      key={j}
+                      className="w-1.5 h-1.5 rounded-full shrink-0"
+                      style={{ backgroundColor: CATEGORY_COLORS[t.category] }}
+                    />
+                  ))}
+                  {dayTasks.length > 3 && (
+                    <span className="w-1.5 h-1.5 rounded-full bg-slate-400 shrink-0" />
+                  )}
+                </div>
+              )}
+
+              {/* Desktop: task pills */}
+              <div className="hidden sm:block space-y-0.5">
                 {dayTasks.slice(0, 2).map((t, j) => (
                   <div
                     key={j}

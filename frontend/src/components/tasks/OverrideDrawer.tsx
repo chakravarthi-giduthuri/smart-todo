@@ -74,8 +74,8 @@ export function OverrideDrawer({ task, field, onClose }: Props) {
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-base font-bold text-white">{FIELD_LABELS[field]}</h3>
-          <button onClick={onClose} className="w-8 h-8 flex items-center justify-center rounded-full glass text-gray-400 hover:text-white transition-colors cursor-pointer">
+          <h3 className="text-base font-bold text-slate-900 dark:text-white">{FIELD_LABELS[field]}</h3>
+          <button onClick={onClose} className="w-8 h-8 flex items-center justify-center rounded-full glass text-slate-500 dark:text-gray-400 hover:text-slate-700 dark:hover:text-white transition-colors cursor-pointer">
             <X size={16} />
           </button>
         </div>
@@ -88,7 +88,7 @@ export function OverrideDrawer({ task, field, onClose }: Props) {
               value={titleValue}
               onChange={(e) => setTitleValue(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleSaveTitle()}
-              className="flex-1 glass rounded-2xl px-4 h-12 text-white text-sm font-medium outline-none focus:border-indigo-500/50 transition-colors"
+              className="flex-1 glass rounded-2xl px-4 h-12 text-slate-900 dark:text-white text-sm font-medium outline-none focus:border-indigo-500/50 transition-colors"
             />
             <button onClick={handleSaveTitle}
               className="w-12 h-12 rounded-2xl bg-indigo-500 flex items-center justify-center text-white cursor-pointer active:scale-90 transition-transform shrink-0">
@@ -109,14 +109,14 @@ export function OverrideDrawer({ task, field, onClose }: Props) {
           <>
             <div className="flex gap-3 mb-3">
               <div className="flex-1">
-                <p className="text-xs text-white/40 mb-1.5 font-medium">Date</p>
+                <p className="text-xs text-slate-500 dark:text-white/40 mb-1.5 font-medium">Date</p>
                 <input type="date" value={dateValue} onChange={(e) => setDateValue(e.target.value)}
-                  className="w-full glass text-white rounded-xl px-3 h-12 text-sm outline-none focus:border-indigo-500/50 transition-colors cursor-pointer" />
+                  className="w-full glass text-slate-900 dark:text-white rounded-xl px-3 h-12 text-sm outline-none focus:border-indigo-500/50 transition-colors cursor-pointer [color-scheme:dark] dark:[color-scheme:dark]" />
               </div>
               <div className="flex-1">
-                <p className="text-xs text-white/40 mb-1.5 font-medium">Time</p>
+                <p className="text-xs text-slate-500 dark:text-white/40 mb-1.5 font-medium">Time</p>
                 <input type="time" value={timeValue} onChange={(e) => setTimeValue(e.target.value)}
-                  className="w-full glass text-white rounded-xl px-3 h-12 text-sm outline-none focus:border-indigo-500/50 transition-colors cursor-pointer" />
+                  className="w-full glass text-slate-900 dark:text-white rounded-xl px-3 h-12 text-sm outline-none focus:border-indigo-500/50 transition-colors cursor-pointer [color-scheme:dark] dark:[color-scheme:dark]" />
               </div>
             </div>
             <button onClick={handleSaveDateTime}
@@ -129,7 +129,7 @@ export function OverrideDrawer({ task, field, onClose }: Props) {
         {field !== 'title' && !isDateTimeField && (
           <input type="text" value={reason} onChange={(e) => setReason(e.target.value.slice(0, 80))}
             placeholder="Why? (optional — helps AI learn)"
-            className="w-full mt-4 glass rounded-2xl px-4 h-11 text-sm text-white placeholder-white/25 outline-none focus:border-indigo-500/50 transition-colors" />
+            className="w-full mt-4 glass rounded-2xl px-4 h-11 text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-white/25 outline-none focus:border-indigo-500/50 transition-colors" />
         )}
       </div>
     </div>

@@ -9,7 +9,7 @@ export function WeekBarChart({ data }: Props) {
 
   return (
     <div className="rounded-2xl p-5 animate-scale-in" style={{ background: 'var(--surface)', border: '1px solid var(--border)' }}>
-      <p className="text-xs font-bold text-white/40 uppercase tracking-widest mb-5">7-Day Activity</p>
+      <p className="text-xs font-bold text-slate-500 dark:text-white/40 uppercase tracking-widest mb-5">7-Day Activity</p>
       <div className="flex items-end gap-2 h-24">
         {data.map((bar, i) => {
           const isToday = bar.date === today;
@@ -35,19 +35,19 @@ export function WeekBarChart({ data }: Props) {
                   />
                 )}
               </div>
-              <span className={`text-[10px] font-bold ${isToday ? 'text-orange-400' : 'text-white/25'}`}>{dayName}</span>
+              <span className={`text-[10px] font-bold ${isToday ? 'text-orange-500 dark:text-orange-400' : 'text-slate-400 dark:text-white/25'}`}>{dayName}</span>
             </div>
           );
         })}
       </div>
-      <div className="flex items-center gap-4 mt-4 pt-4 border-t border-white/5">
+      <div className="flex items-center gap-4 mt-4 pt-4 border-t border-slate-200 dark:border-white/5">
         <div className="flex items-center gap-1.5">
           <span className="w-2.5 h-2.5 rounded-sm" style={{ background: 'linear-gradient(135deg, #f97316, #fb923c)' }} />
-          <span className="text-[10px] text-white/40 font-medium">Completed</span>
+          <span className="text-[10px] text-slate-500 dark:text-white/40 font-medium">Completed</span>
         </div>
         <div className="flex items-center gap-1.5">
-          <span className="w-2.5 h-2.5 rounded-sm bg-white/10" />
-          <span className="text-[10px] text-white/40 font-medium">Total</span>
+          <span className="w-2.5 h-2.5 rounded-sm bg-slate-200 dark:bg-white/10" />
+          <span className="text-[10px] text-slate-500 dark:text-white/40 font-medium">Total</span>
         </div>
       </div>
     </div>

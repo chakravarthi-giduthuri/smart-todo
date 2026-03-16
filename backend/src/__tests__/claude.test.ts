@@ -165,12 +165,12 @@ describe('buildPrompt', () => {
   it('includes learned preference rules when provided', () => {
     const prompt = buildPrompt('Task', ['Always schedule health tasks in the morning'], '2026-03-15T09:00:00+00:00');
     expect(prompt).toContain('Always schedule health tasks in the morning');
-    expect(prompt).toContain('Learned User Preferences');
+    expect(prompt).toContain('LEARNED USER PREFERENCES');
   });
 
   it('omits preference block when no rules provided', () => {
     const prompt = buildPrompt('Task', [], '2026-03-15T09:00:00+00:00');
-    expect(prompt).not.toContain('Learned User Preferences');
+    expect(prompt).not.toContain('LEARNED USER PREFERENCES');
   });
 
   it('includes timezone when provided', () => {

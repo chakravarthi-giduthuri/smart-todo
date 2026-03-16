@@ -1,10 +1,10 @@
-import { useState } from 'react';
-import { Calendar, Clock, Timer, PenLine, Plus, Pencil, Trash2, Repeat2, ChevronDown, RefreshCw, Share2, Link2, StickyNote } from 'lucide-react';
+import { useState, useRef, useEffect } from 'react';
+import { Calendar, Clock, Timer, PenLine, Plus, Pencil, Trash2, Repeat2, ChevronDown, RefreshCw, Share2, Link2, StickyNote, Check, X } from 'lucide-react';
 import type { Task, Priority, Category } from '../../types/task';
 import { CompletionToggle } from './CompletionToggle';
 import { OverrideDrawer, type OverrideField } from './OverrideDrawer';
 import { SubtaskList } from './SubtaskList';
-import { useCompleteTask, useDeleteTask, useRescheduleTask } from '../../hooks/useTasks';
+import { useCompleteTask, useDeleteTask, useRescheduleTask, useUpdateNote } from '../../hooks/useTasks';
 import { createShare } from '../../api/shares';
 import { useDeadlineStatus } from '../../hooks/useDeadlineStatus';
 import { CATEGORY_COLORS } from '../../constants/categories';
@@ -32,12 +32,36 @@ export function TaskCard({ task, delay = 0 }: Props) {
   const [activeField, setActiveField] = useState<OverrideField>(null);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [showSubtasks, setShowSubtasks] = useState(false);
-  const [showNote, setShowNote] = useState(false);
+  const [showNote, setShowNote] = useState(!!task.note);
+  const [editingNote, setEditingNote] = useState(false);
+  const [noteText, setNoteText] = useState(task.note ?? '');
   const [shareLink, setShareLink] = useState<string | null>(null);
   const [isSharing, setIsSharing] = useState(false);
+  const noteRef = useRef<HTMLTextAreaElement>(null);
   const { mutate: complete } = useCompleteTask();
   const { mutate: remove } = useDeleteTask();
   const { mutate: reschedule, isPending: isRescheduling } = useRescheduleTask();
+  const { mutate: saveNote, isPending: isSavingNote } = useUpdateNote();
+  const [rescheduled, setRescheduled] = useState(false);
+
+  function handleReschedule() {
+    reschedule(task.id, {
+      onSuccess: () => { setRescheduled(true); setTimeout(() => setRescheduled(false), 2500); },
+    });
+  }
+
+  useEffect(() => { if (editingNote) noteRef.current?.focus(); }, [editingNote]);
+
+  function handleNoteSave() {
+    saveNote({ id: task.id, note: noteText.trim() }, {
+      onSuccess: () => { setEditingNote(false); setShowNote(!!noteText.trim()); },
+    });
+  }
+
+  function handleNoteCancel() {
+    setNoteText(task.note ?? '');
+    setEditingNote(false);
+  }
 
   async function handleShare() {
     if (shareLink) { await navigator.clipboard.writeText(shareLink); return; }
@@ -154,15 +178,21 @@ export function TaskCard({ task, delay = 0 }: Props) {
                       {task.recurrence}
                     </span>
                   )}
-                  {task.note && (
-                    <button
-                      onClick={() => setShowNote((v) => !v)}
-                      className="flex items-center gap-1 text-[11px] font-medium text-amber-400/55 hover:text-amber-400 transition-colors cursor-pointer"
-                    >
-                      <StickyNote size={9} />
-                      <span>note</span>
-                    </button>
-                  )}
+                  <button
+                    onClick={() => {
+                      if (editingNote) { handleNoteCancel(); return; }
+                      setShowNote(true);
+                      setEditingNote(true);
+                    }}
+                    className={`flex items-center gap-1 text-[11px] font-medium transition-colors cursor-pointer ${
+                      task.note
+                        ? 'text-amber-400/70 hover:text-amber-400'
+                        : 'text-gray-300 dark:text-white/20 hover:text-amber-400'
+                    }`}
+                  >
+                    <StickyNote size={9} />
+                    <span>{task.note ? 'note' : 'add note'}</span>
+                  </button>
                   {!task.is_completed && (
                     <button
                       onClick={() => setShowSubtasks((v) => !v)}
@@ -183,11 +213,58 @@ export function TaskCard({ task, delay = 0 }: Props) {
                 </div>
               )}
 
-              {/* Note content */}
-              {showNote && task.note && (
-                <div className="mt-2 flex items-start gap-1.5 animate-fade-in">
-                  <StickyNote size={10} className="text-amber-400/55 mt-0.5 shrink-0" />
-                  <p className="text-xs text-amber-400/65 leading-relaxed">{task.note}</p>
+              {/* Note section */}
+              {showNote && (
+                <div className="mt-2 animate-fade-in">
+                  {editingNote ? (
+                    <div className="flex flex-col gap-1.5">
+                      <textarea
+                        ref={noteRef}
+                        value={noteText}
+                        onChange={(e) => setNoteText(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) handleNoteSave();
+                          if (e.key === 'Escape') handleNoteCancel();
+                        }}
+                        placeholder="Add a note for this task…"
+                        rows={2}
+                        className="w-full text-xs bg-amber-500/5 border border-amber-400/20 rounded-lg px-2.5 py-2 text-amber-300/80 placeholder-amber-400/30 focus:outline-none focus:border-amber-400/50 resize-none leading-relaxed"
+                      />
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={handleNoteSave}
+                          disabled={isSavingNote}
+                          className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-amber-500/15 text-amber-400 text-[11px] font-bold hover:bg-amber-500/25 transition-colors cursor-pointer disabled:opacity-50"
+                        >
+                          <Check size={10} />
+                          {isSavingNote ? 'Saving…' : 'Save'}
+                        </button>
+                        <button
+                          onClick={handleNoteCancel}
+                          className="flex items-center gap-1 px-2.5 py-1 rounded-lg text-gray-400 dark:text-white/30 text-[11px] font-bold hover:bg-gray-100 dark:hover:bg-white/5 transition-colors cursor-pointer"
+                        >
+                          <X size={10} />
+                          Cancel
+                        </button>
+                        {noteText.trim() && task.note && (
+                          <button
+                            onClick={() => { setNoteText(''); saveNote({ id: task.id, note: '' }, { onSuccess: () => { setEditingNote(false); setShowNote(false); } }); }}
+                            className="ml-auto flex items-center gap-1 text-[11px] text-rose-400/60 hover:text-rose-400 transition-colors cursor-pointer"
+                          >
+                            <Trash2 size={9} /> Remove
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  ) : task.note ? (
+                    <button
+                      onClick={() => setEditingNote(true)}
+                      className="flex items-start gap-1.5 w-full text-left group"
+                    >
+                      <StickyNote size={10} className="text-amber-400/55 mt-0.5 shrink-0" />
+                      <p className="text-xs text-amber-400/65 leading-relaxed group-hover:text-amber-400/85 transition-colors">{task.note}</p>
+                    </button>
+                  ) : null}
                 </div>
               )}
 
@@ -210,13 +287,17 @@ export function TaskCard({ task, delay = 0 }: Props) {
                 <span className="text-xs font-bold text-gray-600 dark:text-white/70">{task.priority}</span>
               </button>
 
-              {/* AI reschedule — overdue only */}
-              {!task.is_completed && task.scheduled_date && task.scheduled_date < new Date().toISOString().split('T')[0] && (
+              {/* AI reschedule — all incomplete tasks */}
+              {!task.is_completed && (
                 <button
-                  onClick={() => reschedule(task.id)}
+                  onClick={handleReschedule}
                   disabled={isRescheduling}
-                  title="AI reschedule"
-                  className="w-7 h-7 flex items-center justify-center rounded-lg text-gray-300 dark:text-white/20 hover:text-sky-400 hover:bg-sky-500/10 transition-all cursor-pointer disabled:opacity-40"
+                  title={rescheduled ? 'Rescheduled!' : 'AI reschedule'}
+                  className={`w-7 h-7 flex items-center justify-center rounded-lg transition-all cursor-pointer disabled:opacity-40 ${
+                    rescheduled
+                      ? 'text-emerald-400 bg-emerald-500/10'
+                      : 'text-gray-300 dark:text-white/20 hover:text-sky-400 hover:bg-sky-500/10'
+                  }`}
                 >
                   <RefreshCw size={12} className={isRescheduling ? 'animate-spin' : ''} />
                 </button>

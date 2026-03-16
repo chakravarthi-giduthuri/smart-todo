@@ -83,20 +83,20 @@ function RuleCard({ rule }: { rule: RuleInsight }) {
 
       {/* Direction arrow */}
       <div className="flex items-center gap-2 px-1">
-        <span className="text-xs font-semibold text-white/40 line-through">{formatValue(rule.field, from)}</span>
-        <span className="text-[10px] text-white/25">→</span>
-        <span className="text-xs font-semibold text-white">{formatValue(rule.field, to)}</span>
-        <span className="ml-auto text-[10px] text-white/30">{rule.count}× overridden</span>
+        <span className="text-xs font-semibold text-slate-400 dark:text-white/40 line-through">{formatValue(rule.field, from)}</span>
+        <span className="text-[10px] text-slate-400 dark:text-white/25">→</span>
+        <span className="text-xs font-semibold text-slate-900 dark:text-white">{formatValue(rule.field, to)}</span>
+        <span className="ml-auto text-[10px] text-slate-400 dark:text-white/30">{rule.count}× overridden</span>
       </div>
 
       {/* Rule text */}
-      <p className="text-[11px] text-white/50 leading-relaxed">{rule.rule_text}</p>
+      <p className="text-[11px] text-slate-600 dark:text-white/50 leading-relaxed">{rule.rule_text}</p>
 
       {/* Keywords */}
       {rule.keywords.length > 0 && (
         <div className="flex flex-wrap gap-1">
           {rule.keywords.map((kw) => (
-            <span key={kw} className="text-[10px] px-2 py-0.5 rounded-full bg-white/5 text-white/35 font-medium">
+            <span key={kw} className="text-[10px] px-2 py-0.5 rounded-full bg-slate-200 dark:bg-white/5 text-slate-600 dark:text-white/35 font-medium">
               {kw}
             </span>
           ))}
@@ -111,25 +111,25 @@ function OverrideRow({ entry }: { entry: OverrideEntry }) {
   const Icon = meta.Icon;
   const [from, to] = [entry.ai_value, entry.user_value];
   return (
-    <div className="flex items-start gap-3 py-3 border-b border-white/5 last:border-0">
+    <div className="flex items-start gap-3 py-3 border-b border-slate-200 dark:border-white/5 last:border-0">
       <div className="w-7 h-7 rounded-xl flex items-center justify-center shrink-0 mt-0.5" style={{ background: meta.bg }}>
         <Icon size={12} style={{ color: meta.color }} />
       </div>
       <div className="flex-1 min-w-0">
         {entry.task_title && (
-          <p className="text-xs font-semibold text-white truncate mb-0.5">{entry.task_title}</p>
+          <p className="text-xs font-semibold text-slate-900 dark:text-white truncate mb-0.5">{entry.task_title}</p>
         )}
         <div className="flex items-center gap-1.5 flex-wrap">
           <span className="text-[10px] font-bold" style={{ color: meta.color }}>{formatField(entry.field_changed)}</span>
-          <span className="text-[10px] text-white/30 line-through">{formatValue(entry.field_changed, from)}</span>
-          <span className="text-[9px] text-white/20">→</span>
-          <span className="text-[10px] text-white font-semibold">{formatValue(entry.field_changed, to)}</span>
+          <span className="text-[10px] text-slate-400 dark:text-white/30 line-through">{formatValue(entry.field_changed, from)}</span>
+          <span className="text-[9px] text-slate-300 dark:text-white/20">→</span>
+          <span className="text-[10px] text-slate-900 dark:text-white font-semibold">{formatValue(entry.field_changed, to)}</span>
         </div>
         {entry.reason && (
-          <p className="text-[10px] text-white/35 mt-0.5 italic">"{entry.reason}"</p>
+          <p className="text-[10px] text-slate-500 dark:text-white/35 mt-0.5 italic">"{entry.reason}"</p>
         )}
       </div>
-      <span className="text-[9px] text-white/25 shrink-0 mt-1">{timeAgo(entry.created_at)}</span>
+      <span className="text-[9px] text-slate-400 dark:text-white/25 shrink-0 mt-1">{timeAgo(entry.created_at)}</span>
     </div>
   );
 }
@@ -145,7 +145,7 @@ export function AiLearningJournal() {
       <div className="glass rounded-2xl p-4">
         <div className="flex items-center gap-2 mb-3">
           <Brain size={16} className="text-violet-400" />
-          <span className="text-sm font-bold text-white">AI Learning Journal</span>
+          <span className="text-sm font-bold text-slate-900 dark:text-white">AI Learning Journal</span>
         </div>
         <div className="space-y-2">
           {[1, 2].map((i) => <div key={i} className="h-4 rounded-xl shimmer-bg" />)}
@@ -173,8 +173,8 @@ export function AiLearningJournal() {
             <Brain size={16} className="text-violet-400" />
           </div>
           <div>
-            <p className="text-sm font-bold text-white leading-none">AI Learning Journal</p>
-            <p className="text-[10px] text-white/30 mt-0.5">How Claude evolves with your edits</p>
+            <p className="text-sm font-bold text-slate-900 dark:text-white leading-none">AI Learning Journal</p>
+            <p className="text-[10px] text-slate-400 dark:text-white/30 mt-0.5">How Claude evolves with your edits</p>
           </div>
           {rules.length > 0 && (
             <div className="ml-auto flex items-center gap-1 px-2.5 py-1 rounded-full bg-violet-500/15">
@@ -191,9 +191,9 @@ export function AiLearningJournal() {
             { label: 'Rules learned', value: String(stats?.rules_active ?? 0) },
             { label: 'Until next rule', value: hasStarted && rules.length > 0 ? `${stats?.overrides_until_next_rule ?? '—'}` : total < progressTarget ? `${progressTarget - total}` : '—' },
           ].map(({ label, value }) => (
-            <div key={label} className="bg-white/4 rounded-xl px-3 py-2.5 text-center">
-              <p className="text-base font-extrabold text-white">{value}</p>
-              <p className="text-[9px] text-white/35 mt-0.5 leading-tight">{label}</p>
+            <div key={label} className="bg-slate-100 dark:bg-white/4 rounded-xl px-3 py-2.5 text-center">
+              <p className="text-base font-extrabold text-slate-900 dark:text-white">{value}</p>
+              <p className="text-[9px] text-slate-500 dark:text-white/35 mt-0.5 leading-tight">{label}</p>
             </div>
           ))}
         </div>
@@ -201,14 +201,14 @@ export function AiLearningJournal() {
         {/* Top fields */}
         {(stats?.top_fields ?? []).length > 0 && (
           <div className="mb-4">
-            <p className="text-[10px] text-white/30 font-semibold uppercase tracking-wider mb-2">Most edited</p>
+            <p className="text-[10px] text-slate-500 dark:text-white/30 font-semibold uppercase tracking-wider mb-2">Most edited</p>
             <div className="flex flex-wrap gap-2">
               {stats!.top_fields.map(({ field, count }) => {
                 const m = fieldMeta(field);
                 return (
                   <div key={field} className="flex items-center gap-1.5 px-2.5 py-1 rounded-full" style={{ background: m.bg }}>
                     <span className="text-[10px] font-bold" style={{ color: m.color }}>{m.label}</span>
-                    <span className="text-[9px] text-white/30">{count}×</span>
+                    <span className="text-[9px] text-slate-400 dark:text-white/30">{count}×</span>
                   </div>
                 );
               })}
@@ -220,10 +220,10 @@ export function AiLearningJournal() {
         {rules.length === 0 && (
           <div>
             <div className="flex justify-between mb-1.5">
-              <span className="text-[10px] text-white/30">Learning progress</span>
-              <span className="text-[10px] text-white/30">{total}/{progressTarget} edits</span>
+              <span className="text-[10px] text-slate-400 dark:text-white/30">Learning progress</span>
+              <span className="text-[10px] text-slate-400 dark:text-white/30">{total}/{progressTarget} edits</span>
             </div>
-            <div className="h-[3px] rounded-full bg-white/5 overflow-hidden">
+            <div className="h-[3px] rounded-full bg-slate-200 dark:bg-white/5 overflow-hidden">
               <div
                 className="h-full rounded-full transition-all duration-500"
                 style={{
@@ -232,7 +232,7 @@ export function AiLearningJournal() {
                 }}
               />
             </div>
-            <p className="text-[10px] text-white/25 mt-2">
+            <p className="text-[10px] text-slate-400 dark:text-white/25 mt-2">
               {total === 0
                 ? 'Edit any task field to start teaching Claude your preferences.'
                 : `${progressTarget - total} more edit${progressTarget - total !== 1 ? 's' : ''} until Claude starts adapting.`}
@@ -244,7 +244,7 @@ export function AiLearningJournal() {
       {/* Active rules */}
       {rules.length > 0 && (
         <div className="glass rounded-2xl p-4">
-          <p className="text-[10px] font-bold uppercase tracking-wider text-white/40 mb-3">Active Rules</p>
+          <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-white/40 mb-3">Active Rules</p>
           <div className="space-y-2.5">
             {rules.map((rule, i) => <RuleCard key={i} rule={rule} />)}
           </div>
@@ -259,10 +259,10 @@ export function AiLearningJournal() {
             className="w-full flex items-center justify-between px-4 py-3.5 cursor-pointer"
           >
             <div className="flex items-center gap-2">
-              <p className="text-[10px] font-bold uppercase tracking-wider text-white/40">Edit History</p>
-              <span className="text-[10px] text-white/20">{overrides.length} recent</span>
+              <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-white/40">Edit History</p>
+              <span className="text-[10px] text-slate-400 dark:text-white/20">{overrides.length} recent</span>
             </div>
-            {showHistory ? <ChevronUp size={14} className="text-white/30" /> : <ChevronDown size={14} className="text-white/30" />}
+            {showHistory ? <ChevronUp size={14} className="text-slate-400 dark:text-white/30" /> : <ChevronDown size={14} className="text-slate-400 dark:text-white/30" />}
           </button>
 
           {showHistory && (

@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { validate } from '../middleware/validate';
 import { createTaskSchema } from '../schemas/taskSchemas';
-import { buildRules } from '../services/preferences';
+import { buildLearningContext } from '../services/preferences';
 import { buildPrompt, callClaude, parseClaudeResponse, buildReschedulePrompt } from '../services/claude';
 import { insertTask, listTasks, markComplete, deleteTask, archiveTask, spawnNextRecurrence, updateTaskField, snoozeTask } from '../db/taskQueries';
 import type { Category } from '../types/task';
@@ -21,9 +21,14 @@ function parseOffsetMinutes(currentDate: string): number {
 
 router.post('/', validate(createTaskSchema), async (req, res, next) => {
   try {
-    const { raw_input, current_date, timezone } = req.body as { raw_input: string; current_date: string; timezone?: string };
-    const rules = await buildRules(req.userId);
-    const prompt = buildPrompt(raw_input, rules, current_date, timezone);
+    const { raw_input, current_date, timezone, energy_level } = req.body as {
+      raw_input: string;
+      current_date: string;
+      timezone?: string;
+      energy_level?: string;
+    };
+    const context = await buildLearningContext(req.userId);
+    const prompt = buildPrompt(raw_input, context, current_date, timezone, energy_level);
     const rawText = await callClaude(prompt);
     const parsed = parseClaudeResponse(rawText);
 

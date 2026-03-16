@@ -32,10 +32,10 @@ export function FocusModeButton({ tasks }: Props) {
               <Target size={13} className="text-[#ec5b13] shrink-0" />
               <span className="text-[10px] font-bold uppercase tracking-widest text-[#ec5b13]">Focus now</span>
             </div>
-            <button onClick={clear} className="text-white/25 hover:text-white/60 transition-colors cursor-pointer"><X size={13} /></button>
+            <button onClick={clear} className="text-slate-400 dark:text-white/25 hover:text-slate-600 dark:hover:text-white/60 transition-colors cursor-pointer"><X size={13} /></button>
           </div>
-          <p className="text-sm font-bold text-white mt-1">{focusTask.title}</p>
-          <p className="text-xs text-white/40 mt-1 leading-relaxed">{data?.reason}</p>
+          <p className="text-sm font-bold text-slate-900 dark:text-white mt-1">{focusTask.title}</p>
+          <p className="text-xs text-slate-500 dark:text-white/40 mt-1 leading-relaxed">{data?.reason}</p>
         </div>
       )}
       {error && <p className="text-xs text-rose-400 mt-1 text-center">{error}</p>}

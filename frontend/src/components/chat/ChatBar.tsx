@@ -187,7 +187,7 @@ export function ChatBar({ energyLevel, prefill, onPrefillConsumed }: Props) {
           onClick={() => convMode ? exitConvMode() : setConvMode(true)}
           disabled={isWorking}
           className={`w-11 h-11 rounded-2xl flex items-center justify-center transition-all duration-200 active:scale-90 cursor-pointer shrink-0 ${
-            convMode ? 'bg-[#ec5b13] text-white shadow-lg shadow-[#ec5b13]/40' : 'text-white/40 hover:text-white hover:bg-white/5'
+            convMode ? 'bg-[#ec5b13] text-white shadow-lg shadow-[#ec5b13]/40' : 'text-slate-400 dark:text-white/40 hover:text-slate-600 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5'
           }`}
           title={convMode ? 'Exit conversation mode' : 'Conversation mode'}
         >
@@ -202,7 +202,7 @@ export function ChatBar({ energyLevel, prefill, onPrefillConsumed }: Props) {
             className={`w-11 h-11 rounded-2xl flex items-center justify-center transition-all duration-200 active:scale-90 cursor-pointer shrink-0 ${
               isListening
                 ? 'bg-rose-500 text-white shadow-lg shadow-rose-500/40 animate-pulse'
-                : 'text-white/40 hover:text-white hover:bg-white/5'
+                : 'text-slate-400 dark:text-white/40 hover:text-slate-600 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5'
             }`}
           >
             {isListening ? <MicOff size={18} /> : <Mic size={18} />}
@@ -222,8 +222,8 @@ export function ChatBar({ energyLevel, prefill, onPrefillConsumed }: Props) {
             'What do you need to do?'
           }
           disabled={isWorking}
-          className={`flex-1 bg-transparent text-white text-[15px] font-medium outline-none py-2 transition-colors duration-200 disabled:opacity-50 ${
-            isListening ? 'placeholder-rose-400/60' : convMode ? 'placeholder-orange-400/50' : 'placeholder-white/25'
+          className={`flex-1 bg-transparent text-slate-900 dark:text-white text-[15px] font-medium outline-none py-2 transition-colors duration-200 disabled:opacity-50 ${
+            isListening ? 'placeholder-rose-400/60' : convMode ? 'placeholder-orange-400/50' : 'placeholder-slate-400 dark:placeholder-white/25'
           }`}
         />
 

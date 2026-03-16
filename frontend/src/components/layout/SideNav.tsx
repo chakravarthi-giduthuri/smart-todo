@@ -1,5 +1,5 @@
-import { NavLink, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, CalendarDays, BarChart2, Settings, CheckCircle2, Plus } from 'lucide-react';
+import { NavLink } from 'react-router-dom';
+import { LayoutDashboard, CalendarDays, BarChart2, Settings, CheckCircle2 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 
 const NAV = [
@@ -11,7 +11,6 @@ const NAV = [
 
 export function SideNav() {
   const { user } = useAuth();
-  const navigate = useNavigate();
   const firstName = user?.user_metadata?.full_name?.split(' ')[0] ?? user?.email?.split('@')[0] ?? 'You';
 
   return (
@@ -52,15 +51,7 @@ export function SideNav() {
       </nav>
 
       {/* Bottom */}
-      <div className="p-4 border-t border-slate-200 dark:border-slate-800 space-y-3">
-        <button
-          onClick={() => navigate('/')}
-          className="w-full bg-primary hover:bg-primary-dark text-white font-bold py-2.5 px-4 rounded-lg flex items-center justify-center gap-2 transition-all shadow-md shadow-primary/20 cursor-pointer"
-        >
-          <Plus size={16} />
-          <span>New Task</span>
-        </button>
-
+      <div className="p-4 border-t border-slate-200 dark:border-slate-800">
         {/* User */}
         <div className="flex items-center gap-3 px-2 py-1">
           <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold text-sm shrink-0">
