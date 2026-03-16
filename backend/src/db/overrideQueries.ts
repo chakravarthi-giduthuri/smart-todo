@@ -1,8 +1,10 @@
-import { supabase } from './supabase';
+import { supabase, type UserSupabaseClient } from './supabase';
 import type { OverrideLog, InsertOverrideInput } from '../types/task';
 
-export async function insertOverride(data: InsertOverrideInput): Promise<OverrideLog> {
-  const { data: log, error } = await supabase
+type Db = UserSupabaseClient | typeof supabase;
+
+export async function insertOverride(data: InsertOverrideInput, db: Db = supabase): Promise<OverrideLog> {
+  const { data: log, error } = await db
     .from('override_log')
     .insert(data)
     .select()

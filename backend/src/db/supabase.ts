@@ -10,18 +10,20 @@ if (!supabaseUrl || !supabaseAnonKey) {
   throw new Error('Missing SUPABASE_URL or SUPABASE_ANON_KEY environment variables');
 }
 
-// Use service role key for backend DB operations (bypasses RLS).
-// Falls back to anon key if service role key is not set.
-const activeKey = supabaseServiceKey ?? supabaseAnonKey;
-export const supabase = createClient(supabaseUrl, activeKey, {
-  auth: {
-    autoRefreshToken: false,
-    persistSession: false,
-  },
+// Admin client — used only for auth.getUser() token validation
+export const supabase = createClient(supabaseUrl, supabaseServiceKey ?? supabaseAnonKey, {
+  auth: { autoRefreshToken: false, persistSession: false },
 });
 
-if (!supabaseServiceKey) {
-  console.warn('[Supabase] SUPABASE_SERVICE_ROLE_KEY not set — using anon key, RLS will apply');
-} else {
-  console.log('[Supabase] Using service role key — RLS bypassed');
+/**
+ * Creates a per-request Supabase client authenticated as the calling user.
+ * This makes auth.uid() work in RLS policies, bypassing service-role issues.
+ */
+export function createUserClient(token: string) {
+  return createClient(supabaseUrl, supabaseAnonKey, {
+    global: { headers: { Authorization: `Bearer ${token}` } },
+    auth: { autoRefreshToken: false, persistSession: false },
+  });
 }
+
+export type UserSupabaseClient = ReturnType<typeof createUserClient>;

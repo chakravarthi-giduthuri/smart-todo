@@ -1,8 +1,10 @@
-import { supabase } from './supabase';
+import { supabase, type UserSupabaseClient } from './supabase';
 import type { Task, InsertTaskInput, TaskFilters } from '../types/task';
 
-export async function insertTask(data: InsertTaskInput): Promise<Task> {
-  const { data: task, error } = await supabase
+type Db = UserSupabaseClient | typeof supabase;
+
+export async function insertTask(data: InsertTaskInput, db: Db = supabase): Promise<Task> {
+  const { data: task, error } = await db
     .from('tasks')
     .insert({
       user_id: data.user_id,
@@ -31,8 +33,8 @@ export async function insertTask(data: InsertTaskInput): Promise<Task> {
   return task as Task;
 }
 
-export async function listTasks(filters: TaskFilters = {}, userId?: string): Promise<Task[]> {
-  let query = supabase.from('tasks').select('*').eq('is_archived', false).order('priority', { ascending: true }).order('created_at', { ascending: false });
+export async function listTasks(filters: TaskFilters = {}, userId?: string, db: Db = supabase): Promise<Task[]> {
+  let query = db.from('tasks').select('*').eq('is_archived', false).order('priority', { ascending: true }).order('created_at', { ascending: false });
 
   if (userId) query = query.eq('user_id', userId);
   if (filters.category) query = query.eq('category', filters.category);
@@ -43,8 +45,8 @@ export async function listTasks(filters: TaskFilters = {}, userId?: string): Pro
   return (data ?? []) as Task[];
 }
 
-export async function markComplete(id: string): Promise<Task> {
-  const { data, error } = await supabase
+export async function markComplete(id: string, db: Db = supabase): Promise<Task> {
+  const { data, error } = await db
     .from('tasks')
     .update({ is_completed: true, completed_at: new Date().toISOString() })
     .eq('id', id)
@@ -55,8 +57,8 @@ export async function markComplete(id: string): Promise<Task> {
   return data as Task;
 }
 
-export async function updateTaskField(id: string, field: string, value: unknown): Promise<Task> {
-  const { data, error } = await supabase
+export async function updateTaskField(id: string, field: string, value: unknown, db: Db = supabase): Promise<Task> {
+  const { data, error } = await db
     .from('tasks')
     .update({ [field]: value })
     .eq('id', id)
@@ -84,8 +86,8 @@ export async function getTasksByDateRange(from: string, to: string): Promise<Tas
   return (data ?? []) as Task[];
 }
 
-export async function archiveTask(id: string): Promise<Task> {
-  const { data, error } = await supabase
+export async function archiveTask(id: string, db: Db = supabase): Promise<Task> {
+  const { data, error } = await db
     .from('tasks')
     .update({ is_archived: true })
     .eq('id', id)
@@ -95,8 +97,8 @@ export async function archiveTask(id: string): Promise<Task> {
   return data as Task;
 }
 
-export async function deleteTask(id: string): Promise<void> {
-  const { error } = await supabase.from('tasks').delete().eq('id', id);
+export async function deleteTask(id: string, db: Db = supabase): Promise<void> {
+  const { error } = await db.from('tasks').delete().eq('id', id);
   if (error) throw new Error(`deleteTask failed: ${error.message}`);
 }
 
@@ -112,7 +114,6 @@ function computeNextDate(task: Task): string | null {
     base.setUTCMonth(base.getUTCMonth() + 1);
   } else if (task.recurrence === 'weekdays') {
     base.setUTCDate(base.getUTCDate() + 1);
-    // Skip weekend
     while (base.getUTCDay() === 0 || base.getUTCDay() === 6) {
       base.setUTCDate(base.getUTCDate() + 1);
     }
@@ -145,8 +146,8 @@ export async function spawnNextRecurrence(task: Task): Promise<void> {
   });
 }
 
-export async function snoozeTask(id: string, snoozedUntilISO: string): Promise<Task> {
-  const { data, error } = await supabase
+export async function snoozeTask(id: string, snoozedUntilISO: string, db: Db = supabase): Promise<Task> {
+  const { data, error } = await db
     .from('tasks')
     .update({ snoozed_until: snoozedUntilISO })
     .eq('id', id)
@@ -161,8 +162,6 @@ export async function getDueTasks(): Promise<Task[]> {
   const nowIso = nowUtc.toISOString();
   const pad = (n: number) => String(n).padStart(2, '0');
 
-  // Fetch all unnotified incomplete tasks that have a scheduled time.
-  // Exclude tasks that are currently snoozed (snoozed_until > now).
   const { data, error } = await supabase
     .from('tasks')
     .select('*')
@@ -176,23 +175,18 @@ export async function getDueTasks(): Promise<Task[]> {
   const tasks = (data ?? []) as Task[];
 
   return tasks.filter((task) => {
-    // Shift UTC now to the user's local time using the stored offset
     const offsetMs = (task.timezone_offset_minutes ?? 0) * 60_000;
     const userLocalNow = new Date(nowUtc.getTime() + offsetMs);
 
     const userLocalDate = `${userLocalNow.getUTCFullYear()}-${pad(userLocalNow.getUTCMonth() + 1)}-${pad(userLocalNow.getUTCDate())}`;
     if (task.scheduled_date !== userLocalDate) return false;
 
-    // Compare times purely in minutes-of-day (both in user's local timezone)
     const [hh, mm] = task.scheduled_time!.slice(0, 5).split(':').map(Number);
     const taskMinutes = hh * 60 + mm;
-
     const reminderMin = task.reminder_minutes_before ?? 15;
     const notifyMinutes = taskMinutes - reminderMin;
-
     const curMinutes = userLocalNow.getUTCHours() * 60 + userLocalNow.getUTCMinutes();
 
-    // Window: [now - 1min, now + 5min]
     return curMinutes >= notifyMinutes - 1 && curMinutes <= notifyMinutes + 5;
   });
 }

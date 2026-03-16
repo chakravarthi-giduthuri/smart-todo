@@ -5,7 +5,6 @@ import { buildLearningContext } from '../services/preferences';
 import { buildPrompt, callClaude, parseClaudeResponse, buildReschedulePrompt } from '../services/claude';
 import { insertTask, listTasks, markComplete, deleteTask, archiveTask, spawnNextRecurrence, updateTaskField, snoozeTask } from '../db/taskQueries';
 import type { Category } from '../types/task';
-import { supabase } from '../db/supabase';
 import { requireAuth } from '../middleware/auth';
 
 const router = Router();
@@ -47,7 +46,7 @@ router.post('/', validate(createTaskSchema), async (req, res, next) => {
       recurrence: parsed.recurrence,
       context_tags: parsed.context_tags,
       note: parsed.note,
-    });
+    }, req.userSupabase);
     res.status(201).json({ task });
   } catch (err) {
     next(err);
@@ -60,7 +59,7 @@ router.get('/', async (req, res, next) => {
       category: req.query.category as Category | undefined,
       is_completed: req.query.completed !== undefined ? req.query.completed === 'true' : undefined,
     };
-    const tasks = await listTasks(filters, req.userId);
+    const tasks = await listTasks(filters, req.userId, req.userSupabase);
     res.json({ tasks });
   } catch (err) {
     next(err);
@@ -69,7 +68,7 @@ router.get('/', async (req, res, next) => {
 
 router.patch('/:id/complete', async (req, res, next) => {
   try {
-    const task = await markComplete(req.params.id);
+    const task = await markComplete(req.params.id, req.userSupabase);
     if (task.recurrence) {
       spawnNextRecurrence(task).catch((err) => console.error('[Recurrence] spawn failed:', err));
     }
@@ -81,7 +80,7 @@ router.patch('/:id/complete', async (req, res, next) => {
 
 router.patch('/:id/archive', async (req, res, next) => {
   try {
-    const task = await archiveTask(req.params.id);
+    const task = await archiveTask(req.params.id, req.userSupabase);
     res.json({ task });
   } catch (err) {
     next(err);
@@ -90,7 +89,7 @@ router.patch('/:id/archive', async (req, res, next) => {
 
 router.delete('/:id', async (req, res, next) => {
   try {
-    await deleteTask(req.params.id);
+    await deleteTask(req.params.id, req.userSupabase);
     res.status(204).send();
   } catch (err) {
     next(err);
@@ -100,7 +99,7 @@ router.delete('/:id', async (req, res, next) => {
 router.patch('/:id/reschedule', async (req, res, next) => {
   try {
     const { current_date } = req.body as { current_date: string };
-    const { data: taskRow, error } = await supabase
+    const { data: taskRow, error } = await req.userSupabase
       .from('tasks')
       .select('*')
       .eq('id', req.params.id)
@@ -113,8 +112,8 @@ router.patch('/:id/reschedule', async (req, res, next) => {
     const cleaned = rawText.replace(/```(?:json)?\n?/g, '').replace(/```$/g, '').trim();
     const parsed = JSON.parse(cleaned) as { scheduled_date: string; scheduled_time: string };
 
-    const updatedDate = await updateTaskField(req.params.id, 'scheduled_date', parsed.scheduled_date);
-    const task = await updateTaskField(req.params.id, 'scheduled_time', parsed.scheduled_time);
+    const updatedDate = await updateTaskField(req.params.id, 'scheduled_date', parsed.scheduled_date, req.userSupabase);
+    const task = await updateTaskField(req.params.id, 'scheduled_time', parsed.scheduled_time, req.userSupabase);
     void updatedDate;
     res.json({ task });
   } catch (err) {
@@ -129,7 +128,7 @@ router.patch('/:id/snooze', async (req, res, next) => {
       return res.status(400).json({ error: 'minutes must be a positive number' });
     }
     const snoozedUntil = new Date(Date.now() + minutes * 60_000).toISOString();
-    const task = await snoozeTask(req.params.id, snoozedUntil);
+    const task = await snoozeTask(req.params.id, snoozedUntil, req.userSupabase);
     res.json({ task });
   } catch (err) {
     next(err);
@@ -142,7 +141,7 @@ router.patch('/:id/note', async (req, res, next) => {
     if (typeof note !== 'string') {
       return res.status(400).json({ error: 'note must be a string' });
     }
-    const task = await updateTaskField(req.params.id, 'note', note);
+    const task = await updateTaskField(req.params.id, 'note', note, req.userSupabase);
     res.json({ task });
   } catch (err) {
     next(err);
