@@ -51,7 +51,7 @@ router.post('/', async (req, res, next) => {
         recurrence: (parsed.recurrence as string | null) ?? null,
         context_tags,
         note: parsed.note ? String(parsed.note) : null,
-      });
+      }, req.userSupabase);
 
       return res.status(201).json({ type: 'task', task });
     }
