@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import type { Task } from '../../types/task';
 import { TaskCard } from './TaskCard';
 import { TaskCardSkeleton } from './TaskCardSkeleton';
@@ -20,7 +21,7 @@ function getTodayStr() {
   return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
 }
 
-export function TaskList({ tasks, isLoading, isPending }: Props) {
+export const TaskList = memo(function TaskList({ tasks, isLoading, isPending }: Props) {
   const { mutate: archive } = useArchiveTask();
 
   if (isLoading) {
@@ -143,4 +144,4 @@ export function TaskList({ tasks, isLoading, isPending }: Props) {
       )}
     </div>
   );
-}
+});

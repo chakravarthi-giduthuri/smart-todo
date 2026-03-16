@@ -1,13 +1,17 @@
 import { Router } from 'express';
 import { requireAuth } from '../middleware/auth';
 import { aggregateStats } from '../services/dashboard';
+import { getDashboardCached, setDashboardCached } from '../cache/dashboardCache';
 
 const router = Router();
 router.use(requireAuth);
 
 router.get('/', async (req, res, next) => {
   try {
+    const cached = getDashboardCached(req.userId);
+    if (cached) return res.json(cached);
     const stats = await aggregateStats(req.userId, req.userSupabase);
+    setDashboardCached(req.userId, stats);
     res.json(stats);
   } catch (err) {
     next(err);

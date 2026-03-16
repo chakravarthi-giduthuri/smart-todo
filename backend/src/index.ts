@@ -2,6 +2,7 @@ import express from 'express';
 import dotenv from 'dotenv';
 dotenv.config();
 
+import compression from 'compression';
 import { corsMiddleware } from './middleware/cors';
 import { errorHandler } from './middleware/errorHandler';
 import tasksRouter from './routes/tasks';
@@ -37,6 +38,7 @@ const app = express();
 const PORT = Number(process.env.PORT ?? 3001);
 
 app.use(corsMiddleware);
+app.use(compression());
 app.use(express.json());
 
 app.use('/api/tasks', tasksRouter);

@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { memo, useState, useRef, useEffect } from 'react';
 import { Calendar, Clock, Timer, PenLine, Plus, Pencil, Trash2, Repeat2, ChevronDown, RefreshCw, Share2, Link2, StickyNote, Check, X, BellRing } from 'lucide-react';
 import type { Task, Priority, Category } from '../../types/task';
 import { CompletionToggle } from './CompletionToggle';
@@ -29,7 +29,7 @@ const PRIORITY_BADGE_COLOR: Record<Priority, string> = {
 
 interface Props { task: Task; delay?: number; priorityColor?: string; }
 
-export function TaskCard({ task, delay = 0 }: Props) {
+export const TaskCard = memo(function TaskCard({ task, delay = 0 }: Props) {
   const [activeField, setActiveField] = useState<OverrideField>(null);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [showSubtasks, setShowSubtasks] = useState(false);
@@ -437,4 +437,4 @@ export function TaskCard({ task, delay = 0 }: Props) {
       {showFocusTimer && <FocusTimer task={task} onClose={() => setShowFocusTimer(false)} />}
     </>
   );
-}
+});

@@ -6,6 +6,7 @@ import { buildPrompt, callClaude, parseClaudeResponse, buildReschedulePrompt } f
 import { insertTask, listTasks, markComplete, deleteTask, archiveTask, spawnNextRecurrence, updateTaskField, snoozeTask } from '../db/taskQueries';
 import type { Category } from '../types/task';
 import { requireAuth } from '../middleware/auth';
+import { invalidateDashboardCache } from '../cache/dashboardCache';
 
 const router = Router();
 router.use(requireAuth);
@@ -47,6 +48,7 @@ router.post('/', validate(createTaskSchema), async (req, res, next) => {
       context_tags: parsed.context_tags,
       note: parsed.note,
     }, req.userSupabase);
+    invalidateDashboardCache(req.userId);
     res.status(201).json({ task });
   } catch (err) {
     next(err);
@@ -60,6 +62,9 @@ router.get('/', async (req, res, next) => {
       is_completed: req.query.completed !== undefined ? req.query.completed === 'true' : undefined,
     };
     const tasks = await listTasks(filters, req.userId, req.userSupabase);
+    const etag = `"${tasks.length}-${tasks[0]?.id ?? 'empty'}"`;
+    res.set('ETag', etag);
+    if (req.headers['if-none-match'] === etag) return res.status(304).send();
     res.json({ tasks });
   } catch (err) {
     next(err);
@@ -72,6 +77,7 @@ router.patch('/:id/complete', async (req, res, next) => {
     if (task.recurrence) {
       spawnNextRecurrence(task).catch((err) => console.error('[Recurrence] spawn failed:', err));
     }
+    invalidateDashboardCache(req.userId);
     res.json({ task });
   } catch (err) {
     next(err);
@@ -81,6 +87,7 @@ router.patch('/:id/complete', async (req, res, next) => {
 router.patch('/:id/archive', async (req, res, next) => {
   try {
     const task = await archiveTask(req.params.id, req.userSupabase);
+    invalidateDashboardCache(req.userId);
     res.json({ task });
   } catch (err) {
     next(err);
@@ -90,6 +97,7 @@ router.patch('/:id/archive', async (req, res, next) => {
 router.delete('/:id', async (req, res, next) => {
   try {
     await deleteTask(req.params.id, req.userSupabase);
+    invalidateDashboardCache(req.userId);
     res.status(204).send();
   } catch (err) {
     next(err);

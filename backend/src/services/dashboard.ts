@@ -38,22 +38,31 @@ export async function aggregateStats(userId?: string, db: Db = supabase): Promis
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const u = (q: any) => (userId ? q.eq('user_id', userId) : q);
 
-  const [totalResult, completedTodayResult, categoryResult, weekResult, overdueResult, chartResult, streakResult] =
+  const [totalResult, completedTodayResult, weekResult, overdueResult, chartResult, streakResult,
+         workCount, studyCount, personalCount, healthCount, errandCount] =
     await Promise.all([
       u(db.from('tasks').select('*', { count: 'exact', head: true }).eq('is_archived', false)),
       u(db.from('tasks').select('*', { count: 'exact', head: true }).eq('is_completed', true).eq('scheduled_date', today)),
-      u(db.from('tasks').select('category').eq('is_archived', false)),
       u(db.from('tasks').select('*', { count: 'exact', head: true }).gte('scheduled_date', weekStartStr).eq('is_archived', false)),
       u(db.from('tasks').select('*', { count: 'exact', head: true }).eq('is_completed', false).eq('is_archived', false).lt('scheduled_date', today)),
       u(db.from('tasks').select('scheduled_date, is_completed').gte('scheduled_date', sevenDaysAgoStr).lte('scheduled_date', today)),
       u(db.from('tasks').select('completed_at').eq('is_completed', true).gte('completed_at', ninetyDaysAgoStr + 'T00:00:00Z')),
+      u(db.from('tasks').select('*', { count: 'exact', head: true }).eq('category', 'Work').eq('is_archived', false)),
+      u(db.from('tasks').select('*', { count: 'exact', head: true }).eq('category', 'Study').eq('is_archived', false)),
+      u(db.from('tasks').select('*', { count: 'exact', head: true }).eq('category', 'Personal').eq('is_archived', false)),
+      u(db.from('tasks').select('*', { count: 'exact', head: true }).eq('category', 'Health').eq('is_archived', false)),
+      u(db.from('tasks').select('*', { count: 'exact', head: true }).eq('category', 'Errand').eq('is_archived', false)),
     ]);
 
-  // Top category
-  const cats = (categoryResult.data ?? []) as { category: string }[];
-  const catCounts: Record<string, number> = {};
-  for (const { category } of cats) catCounts[category] = (catCounts[category] ?? 0) + 1;
-  const topCategory = Object.entries(catCounts).sort((a, b) => b[1] - a[1])[0]?.[0] as Category | null ?? null;
+  // Top category from counts
+  const catCounts: Record<string, number> = {
+    Work: workCount.count ?? 0,
+    Study: studyCount.count ?? 0,
+    Personal: personalCount.count ?? 0,
+    Health: healthCount.count ?? 0,
+    Errand: errandCount.count ?? 0,
+  };
+  const topCategory = (Object.entries(catCounts).sort((a, b) => b[1] - a[1])[0]?.[0] as Category | null) ?? null;
 
   // 7-day chart
   const chartRows = (chartResult.data ?? []) as { scheduled_date: string; is_completed: boolean }[];
