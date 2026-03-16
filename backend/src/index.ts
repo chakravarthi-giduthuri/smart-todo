@@ -17,6 +17,9 @@ import dependenciesRouter from './routes/dependencies';
 import calendarRouter from './routes/calendar';
 import sharesRouter from './routes/shares';
 import userRouter from './routes/user';
+import dailyPlanRouter from './routes/dailyPlan';
+import focusSessionsRouter from './routes/focusSessions';
+import templatesRouter from './routes/templates';
 import { startReminderCron } from './cron/reminderJob';
 import { startMorningPlanCron } from './cron/morningPlanJob';
 import { startWeeklyReviewCron } from './cron/weeklyReviewJob';
@@ -49,6 +52,9 @@ app.use('/api/energy', energyRouter);
 app.use('/api/calendar', calendarRouter);
 app.use('/api/shares', sharesRouter);
 app.use('/api/user', userRouter);
+app.use('/api/daily-plan', dailyPlanRouter);
+app.use('/api/focus-sessions', focusSessionsRouter);
+app.use('/api/templates', templatesRouter);
 
 app.get('/health', (req, res) => res.json({ ok: true }));
 

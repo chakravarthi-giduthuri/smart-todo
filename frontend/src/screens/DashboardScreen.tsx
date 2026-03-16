@@ -1,9 +1,9 @@
 import { useState } from 'react';
-import { useDashboard } from '../hooks/useDashboard';
+import { useDashboard, useWeeklyReviews } from '../hooks/useDashboard';
 import { useTasks } from '../hooks/useTasks';
 import {
   CheckCircle2, Flame, TrendingUp, TrendingDown, AlertCircle, BarChart2, Download,
-  Search, X, Activity,
+  Search, X, Activity, Star, ChevronRight, ArrowRight,
 } from 'lucide-react';
 
 const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
@@ -24,9 +24,16 @@ function getTodayStr() {
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
 }
 
+function scoreColor(score: number): string {
+  if (score >= 8) return 'bg-emerald-500 text-white';
+  if (score >= 5) return 'bg-amber-500 text-white';
+  return 'bg-rose-500 text-white';
+}
+
 export function DashboardScreen() {
   const { data: stats, isLoading } = useDashboard();
   const { data: allTasks = [] } = useTasks();
+  const { data: weeklyReviews = [] } = useWeeklyReviews();
   const [trendView, setTrendView] = useState<ChartView>('week');
   const [chartType, setChartType] = useState<'bar' | 'line'>('bar');
   const [searchQuery, setSearchQuery] = useState('');
@@ -407,6 +414,77 @@ export function DashboardScreen() {
           <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">Total active tasks</p>
           <p className="text-2xl font-black text-slate-900 dark:text-white">{stats.total_tasks}</p>
         </div>
+
+        {/* Weekly Reviews */}
+        {weeklyReviews.length > 0 && (
+          <div className="space-y-4">
+            <div className="flex items-center gap-2">
+              <Star size={16} className="text-primary" />
+              <h2 className="text-base font-bold text-slate-900 dark:text-white">Weekly Reviews</h2>
+            </div>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              {weeklyReviews.map((review) => (
+                <div
+                  key={review.id}
+                  className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-5 shadow-sm space-y-3"
+                >
+                  {/* Header: date + score */}
+                  <div className="flex items-center justify-between">
+                    <p className="text-xs font-semibold text-slate-400 dark:text-slate-500">
+                      Week of {new Date(review.week_start).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                    </p>
+                    {review.score != null && (
+                      <span className={`text-xs font-black px-2 py-0.5 rounded-full ${scoreColor(review.score)}`}>
+                        {review.score}/10
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Summary */}
+                  {review.summary && (
+                    <p className="text-sm text-slate-700 dark:text-slate-300 leading-relaxed">{review.summary}</p>
+                  )}
+
+                  {/* Wins */}
+                  {review.wins && review.wins.length > 0 && (
+                    <div className="space-y-1">
+                      {review.wins.map((win, i) => (
+                        <div key={i} className="flex items-start gap-2">
+                          <CheckCircle2 size={13} className="text-emerald-500 shrink-0 mt-0.5" />
+                          <p className="text-xs text-slate-600 dark:text-slate-400">{win}</p>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Improvement areas */}
+                  {review.improvement_areas && review.improvement_areas.length > 0 && (
+                    <div className="space-y-1">
+                      {review.improvement_areas.map((area, i) => (
+                        <div key={i} className="flex items-start gap-2">
+                          <ChevronRight size={13} className="text-amber-400 shrink-0 mt-0.5" />
+                          <p className="text-xs text-slate-600 dark:text-slate-400">{area}</p>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Next week suggestions */}
+                  {review.next_week_suggestions && review.next_week_suggestions.length > 0 && (
+                    <div className="space-y-1 pt-1 border-t border-slate-100 dark:border-slate-800">
+                      {review.next_week_suggestions.map((suggestion, i) => (
+                        <div key={i} className="flex items-start gap-2">
+                          <ArrowRight size={13} className="text-blue-400 shrink-0 mt-0.5" />
+                          <p className="text-xs text-slate-600 dark:text-slate-400">{suggestion}</p>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
       </div>
     </div>

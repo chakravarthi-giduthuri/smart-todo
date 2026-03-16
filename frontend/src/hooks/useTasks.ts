@@ -1,14 +1,28 @@
+import { useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { listTasks, createTask, completeTask, deleteTask, archiveTask, getSubtasks, addSubtask, completeSubtask, deleteSubtask, snoozeTask, rescheduleTask, updateTaskNote, getDependencies, addDependency, removeDependency } from '../api/tasks';
+import { listTasks, createTask, completeTask, deleteTask, archiveTask, getSubtasks, addSubtask, completeSubtask, deleteSubtask, snoozeTask, rescheduleTask, updateTaskNote, getDependencies, addDependency, removeDependency, setTaskNag, scheduleTask } from '../api/tasks';
 import type { Task, Subtask } from '../types/task';
 import type { DependencyItem } from '../api/tasks';
 
 export function useTasks(filters?: { category?: string }) {
-  return useQuery({
+  const query = useQuery({
     queryKey: ['tasks', filters],
     queryFn: () => listTasks(filters),
     staleTime: 30_000,
   });
+
+  useEffect(() => {
+    if (query.data && 'setAppBadge' in navigator) {
+      const highPriorityCount = query.data.filter((t) => !t.is_completed && t.priority <= 2).length;
+      if (highPriorityCount > 0) {
+        (navigator as any).setAppBadge(highPriorityCount).catch(() => {});
+      } else {
+        (navigator as any).clearAppBadge?.().catch(() => {});
+      }
+    }
+  }, [query.data]);
+
+  return query;
 }
 
 export function useCreateTask() {
@@ -184,6 +198,24 @@ export function useRemoveDependency(taskId: string) {
       if (ctx?.prev) qc.setQueryData(['dependencies', taskId], ctx.prev);
     },
     onSettled: () => qc.invalidateQueries({ queryKey: ['dependencies', taskId] }),
+  });
+}
+
+export function useSetNag() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, interval_minutes }: { id: string; interval_minutes: number | null }) =>
+      setTaskNag(id, interval_minutes),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['tasks'] }),
+  });
+}
+
+export function useScheduleTask() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, scheduled_date, scheduled_time }: { id: string; scheduled_date: string; scheduled_time: string }) =>
+      scheduleTask(id, scheduled_date, scheduled_time),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['tasks'] }),
   });
 }
 

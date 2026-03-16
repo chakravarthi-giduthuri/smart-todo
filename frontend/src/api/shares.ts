@@ -3,10 +3,11 @@ import type { ShareToken } from '../types/api';
 import type { Task } from '../types/task';
 
 export async function createShare(taskId: string, recipientEmail?: string): Promise<ShareToken> {
-  return apiFetch<ShareToken>('/api/shares', {
+  const res = await apiFetch<{ share: ShareToken }>('/api/shares', {
     method: 'POST',
     body: JSON.stringify({ task_id: taskId, recipient_email: recipientEmail }),
   });
+  return res.share;
 }
 
 export interface PublicShare {

@@ -148,4 +148,39 @@ router.patch('/:id/note', async (req, res, next) => {
   }
 });
 
+router.patch('/:id/schedule', async (req, res, next) => {
+  try {
+    const { scheduled_date, scheduled_time } = req.body as { scheduled_date: string; scheduled_time: string };
+    if (!scheduled_date || !scheduled_time) {
+      return res.status(400).json({ error: 'scheduled_date and scheduled_time are required' });
+    }
+    const updatedDate = await updateTaskField(req.params.id, 'scheduled_date', scheduled_date, req.userSupabase);
+    void updatedDate;
+    const task = await updateTaskField(req.params.id, 'scheduled_time', scheduled_time, req.userSupabase);
+    res.json({ task });
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.patch('/:id/nag', async (req, res, next) => {
+  try {
+    const { interval_minutes } = req.body as { interval_minutes: number | null };
+    if (interval_minutes !== null && (typeof interval_minutes !== 'number' || interval_minutes < 1)) {
+      return res.status(400).json({ error: 'interval_minutes must be a positive number or null' });
+    }
+    const { data: task, error } = await req.userSupabase
+      .from('tasks')
+      .update({ nag_interval_minutes: interval_minutes, nag_count: 0, nag_last_sent_at: null })
+      .eq('id', req.params.id)
+      .eq('user_id', req.userId)
+      .select()
+      .single();
+    if (error || !task) return res.status(404).json({ error: 'Task not found' });
+    res.json({ task });
+  } catch (err) {
+    next(err);
+  }
+});
+
 export default router;

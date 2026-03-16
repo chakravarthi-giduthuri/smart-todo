@@ -1,12 +1,15 @@
 import { NavLink } from 'react-router-dom';
-import { LayoutDashboard, CalendarDays, BarChart2, Settings, CheckCircle2 } from 'lucide-react';
+import { LayoutDashboard, CalendarDays, BarChart2, Settings, CheckCircle2, ClipboardList, Clock, Repeat } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 
 const NAV = [
-  { to: '/',          label: 'Dashboard', Icon: LayoutDashboard },
-  { to: '/calendar',  label: 'Planner',   Icon: CalendarDays   },
-  { to: '/dashboard', label: 'Analytics', Icon: BarChart2       },
-  { to: '/settings',  label: 'Settings',  Icon: Settings        },
+  { to: '/',           label: 'Dashboard', Icon: LayoutDashboard },
+  { to: '/calendar',   label: 'Planner',   Icon: CalendarDays    },
+  { to: '/timeline',   label: 'Timeline',  Icon: Clock           },
+  { to: '/plan',       label: 'Plan',      Icon: ClipboardList   },
+  { to: '/templates',  label: 'Templates', Icon: Repeat          },
+  { to: '/dashboard',  label: 'Analytics', Icon: BarChart2        },
+  { to: '/settings',   label: 'Settings',  Icon: Settings         },
 ];
 
 export function SideNav() {

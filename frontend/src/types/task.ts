@@ -21,6 +21,9 @@ export interface Task {
   context_tags: string[];
   note: string | null;
   snoozed_until: string | null;
+  nag_interval_minutes?: number | null;
+  nag_last_sent_at?: string | null;
+  nag_count?: number;
   created_at: string;
   _hasOverride?: boolean;
 }

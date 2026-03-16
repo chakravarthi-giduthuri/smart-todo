@@ -5,6 +5,8 @@ import { ChatBar } from '../components/chat/ChatBar';
 import { TaskList } from '../components/tasks/TaskList';
 import { EnergyBanner } from '../components/home/EnergyBanner';
 import { SmartSuggestions } from '../components/home/SmartSuggestions';
+import { DailyPlanBanner } from '../components/home/DailyPlanBanner';
+import { CapacityBar } from '../components/home/CapacityBar';
 import { useTasks, useCreateTask } from '../hooks/useTasks';
 import { useTodayEnergy } from '../hooks/useEnergy';
 import { useDashboard } from '../hooks/useDashboard';
@@ -217,6 +219,9 @@ export function HomeScreen() {
           </div>
         </section>
 
+        {/* Daily Plan Banner */}
+        <DailyPlanBanner date={today} />
+
         {/* Stats — mobile: compact 3 tiles, desktop: full cards */}
 
         {/* Mobile compact tiles */}
@@ -398,6 +403,7 @@ export function HomeScreen() {
 
           {/* Today's tasks — incomplete only (completed moved to bottom) */}
           <div className="flex flex-col gap-4">
+            <CapacityBar tasks={tasks} />
             <div className="flex items-center justify-between">
               <h2 className="text-xl font-bold text-slate-900 dark:text-white">Today's Tasks</h2>
               <span className="text-sm font-bold text-slate-400">{incomplete.length} remaining</span>

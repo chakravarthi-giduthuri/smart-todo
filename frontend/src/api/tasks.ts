@@ -97,3 +97,19 @@ export async function addDependency(taskId: string, dependsOnId: string): Promis
 export async function removeDependency(taskId: string, depId: string): Promise<void> {
   await apiFetch<void>(`/api/tasks/${taskId}/dependencies/${depId}`, { method: 'DELETE' });
 }
+
+export async function setTaskNag(id: string, interval_minutes: number | null): Promise<Task> {
+  const res = await apiFetch<{ task: Task }>(`/api/tasks/${id}/nag`, {
+    method: 'PATCH',
+    body: JSON.stringify({ interval_minutes }),
+  });
+  return res.task;
+}
+
+export async function scheduleTask(id: string, scheduled_date: string, scheduled_time: string): Promise<Task> {
+  const res = await apiFetch<{ task: Task }>(`/api/tasks/${id}/schedule`, {
+    method: 'PATCH',
+    body: JSON.stringify({ scheduled_date, scheduled_time }),
+  });
+  return res.task;
+}

@@ -1,10 +1,11 @@
 import { useState, useRef, useEffect } from 'react';
-import { Calendar, Clock, Timer, PenLine, Plus, Pencil, Trash2, Repeat2, ChevronDown, RefreshCw, Share2, Link2, StickyNote, Check, X } from 'lucide-react';
+import { Calendar, Clock, Timer, PenLine, Plus, Pencil, Trash2, Repeat2, ChevronDown, RefreshCw, Share2, Link2, StickyNote, Check, X, BellRing } from 'lucide-react';
 import type { Task, Priority, Category } from '../../types/task';
 import { CompletionToggle } from './CompletionToggle';
 import { OverrideDrawer, type OverrideField } from './OverrideDrawer';
 import { SubtaskList } from './SubtaskList';
-import { useCompleteTask, useDeleteTask, useRescheduleTask, useUpdateNote } from '../../hooks/useTasks';
+import { FocusTimer } from './FocusTimer';
+import { useCompleteTask, useDeleteTask, useRescheduleTask, useUpdateNote, useSetNag } from '../../hooks/useTasks';
 import { createShare } from '../../api/shares';
 import { useDeadlineStatus } from '../../hooks/useDeadlineStatus';
 import { CATEGORY_COLORS } from '../../constants/categories';
@@ -43,6 +44,33 @@ export function TaskCard({ task, delay = 0 }: Props) {
   const { mutate: reschedule, isPending: isRescheduling } = useRescheduleTask();
   const { mutate: saveNote, isPending: isSavingNote } = useUpdateNote();
   const [rescheduled, setRescheduled] = useState(false);
+  const [showNagPicker, setShowNagPicker] = useState(false);
+  const [showFocusTimer, setShowFocusTimer] = useState(false);
+  const { mutate: setNag } = useSetNag();
+
+  const NAG_OPTIONS: { label: string; value: number | null }[] = [
+    { label: 'Every 15 min', value: 15 },
+    { label: 'Every 30 min', value: 30 },
+    { label: 'Every 1 hour', value: 60 },
+    { label: 'Disable', value: null },
+  ];
+
+  function handleNagSelect(value: number | null) {
+    setNag({ id: task.id, interval_minutes: value });
+    setShowNagPicker(false);
+  }
+
+  const isOverdueHighPriority = (() => {
+    if (task.is_completed || task.priority > 2) return false;
+    if (!task.scheduled_date) return false;
+    const now = new Date();
+    const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+    if (task.scheduled_date < todayStr) return true;
+    if (task.scheduled_date === todayStr && task.scheduled_time) {
+      return task.scheduled_time < `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+    }
+    return false;
+  })();
 
   function handleReschedule() {
     reschedule(task.id, {
@@ -303,6 +331,51 @@ export function TaskCard({ task, delay = 0 }: Props) {
                 </button>
               )}
 
+              {/* Focus timer — incomplete tasks only */}
+              {!task.is_completed && (
+                <button
+                  onClick={() => setShowFocusTimer(true)}
+                  title="Start focus timer"
+                  className="w-7 h-7 flex items-center justify-center rounded-lg text-gray-300 dark:text-white/20 hover:text-[#ec5b13] hover:bg-[#ec5b13]/10 transition-all cursor-pointer"
+                >
+                  <Timer size={13} />
+                </button>
+              )}
+
+              {/* Nag reminder toggle — overdue priority 1-2 only */}
+              {isOverdueHighPriority && (
+                <div className="relative">
+                  <button
+                    onClick={() => setShowNagPicker((v) => !v)}
+                    title={task.nag_interval_minutes ? `Nagging every ${task.nag_interval_minutes}min` : 'Set nag reminder'}
+                    className={`w-7 h-7 flex items-center justify-center rounded-lg transition-all cursor-pointer ${
+                      task.nag_interval_minutes
+                        ? 'text-orange-400 bg-orange-500/10'
+                        : 'text-gray-300 dark:text-white/20 hover:text-orange-400 hover:bg-orange-500/10'
+                    }`}
+                  >
+                    <BellRing size={12} />
+                  </button>
+                  {showNagPicker && (
+                    <div className="absolute right-0 top-8 z-20 bg-white dark:bg-[#18181b] border border-gray-100 dark:border-white/10 rounded-xl shadow-lg p-1.5 min-w-[140px] animate-fade-in">
+                      {NAG_OPTIONS.map((opt) => (
+                        <button
+                          key={String(opt.value)}
+                          onClick={() => handleNagSelect(opt.value)}
+                          className={`w-full text-left px-3 py-2 text-xs rounded-lg transition-colors cursor-pointer ${
+                            task.nag_interval_minutes === opt.value
+                              ? 'bg-orange-500/10 text-orange-400 font-bold'
+                              : 'text-gray-600 dark:text-white/60 hover:bg-gray-50 dark:hover:bg-white/5'
+                          }`}
+                        >
+                          {opt.label}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+
               {/* Share */}
               <button
                 onClick={handleShare}
@@ -361,6 +434,7 @@ export function TaskCard({ task, delay = 0 }: Props) {
       </div>
 
       <OverrideDrawer task={task} field={activeField} onClose={() => setActiveField(null)} />
+      {showFocusTimer && <FocusTimer task={task} onClose={() => setShowFocusTimer(false)} />}
     </>
   );
 }

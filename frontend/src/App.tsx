@@ -11,6 +11,9 @@ import { DashboardScreen } from './screens/DashboardScreen';
 import { SettingsScreen } from './screens/SettingsScreen';
 import { ShareScreen } from './screens/ShareScreen';
 import { LoginScreen } from './screens/LoginScreen';
+import { DailyPlanScreen } from './screens/DailyPlanScreen';
+import { TimeBlockScreen } from './screens/TimeBlockScreen';
+import { TemplatesScreen } from './screens/TemplatesScreen';
 import { useRealtimeSync } from './hooks/useRealtimeSync';
 
 const queryClient = new QueryClient({
@@ -49,6 +52,9 @@ function AppRoutes() {
           <Route path="/calendar" element={<ProtectedRoute><CalendarScreen /></ProtectedRoute>} />
           <Route path="/dashboard" element={<ProtectedRoute><DashboardScreen /></ProtectedRoute>} />
           <Route path="/settings" element={<ProtectedRoute><SettingsScreen /></ProtectedRoute>} />
+          <Route path="/plan" element={<ProtectedRoute><DailyPlanScreen /></ProtectedRoute>} />
+          <Route path="/timeline" element={<ProtectedRoute><TimeBlockScreen /></ProtectedRoute>} />
+          <Route path="/templates" element={<ProtectedRoute><TemplatesScreen /></ProtectedRoute>} />
         </Routes>
       </div>
 

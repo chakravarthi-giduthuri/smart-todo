@@ -1,11 +1,12 @@
 import { NavLink } from 'react-router-dom';
-import { CheckSquare, CalendarDays, BarChart2, Settings } from 'lucide-react';
+import { CheckSquare, CalendarDays, BarChart2, Settings, ClipboardList, Clock, Repeat } from 'lucide-react';
 
 const NAV_ITEMS = [
-  { to: '/',          label: 'Tasks',    Icon: CheckSquare  },
-  { to: '/calendar',  label: 'Calendar', Icon: CalendarDays },
-  { to: '/dashboard', label: 'Stats',    Icon: BarChart2    },
-  { to: '/settings',  label: 'Settings', Icon: Settings     },
+  { to: '/',           label: 'Tasks',     Icon: CheckSquare  },
+  { to: '/calendar',   label: 'Calendar',  Icon: CalendarDays },
+  { to: '/templates',  label: 'Templates', Icon: Repeat       },
+  { to: '/dashboard',  label: 'Stats',     Icon: BarChart2    },
+  { to: '/settings',   label: 'Settings',  Icon: Settings     },
 ];
 
 export function BottomNav() {

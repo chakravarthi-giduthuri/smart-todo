@@ -23,9 +23,9 @@ router.post('/', requireAuth, async (req, res, next) => {
 // GET /api/shares/:token — public (no auth needed for recipients)
 router.get('/:token', async (req, res, next) => {
   try {
-    const share = await getShare(req.params.token);
-    if (!share) return res.status(404).json({ error: 'Share not found' });
-    res.json({ share });
+    const result = await getShare(req.params.token);
+    if (!result) return res.status(404).json({ error: 'Share not found' });
+    res.json(result);
   } catch (err) {
     next(err);
   }

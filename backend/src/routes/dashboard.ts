@@ -14,4 +14,20 @@ router.get('/', async (req, res, next) => {
   }
 });
 
+router.get('/weekly-reviews', async (req, res, next) => {
+  try {
+    const limit = Math.min(Math.max(parseInt(String(req.query.limit ?? '4')), 1), 20);
+    const { data, error } = await req.userSupabase
+      .from('weekly_reviews')
+      .select('*')
+      .eq('user_id', req.userId)
+      .order('created_at', { ascending: false })
+      .limit(limit);
+    if (error) throw error;
+    res.json({ reviews: data ?? [] });
+  } catch (err) {
+    next(err);
+  }
+});
+
 export default router;

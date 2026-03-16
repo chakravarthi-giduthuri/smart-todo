@@ -57,6 +57,20 @@ export async function clearSubscription(): Promise<void> {
   await supabase.from('push_subscriptions').delete().eq('id', 1);
 }
 
+async function getHighPriorityIncompleteCount(): Promise<number> {
+  try {
+    const { count, error } = await supabase
+      .from('tasks')
+      .select('id', { count: 'exact', head: true })
+      .eq('is_completed', false)
+      .lte('priority', 2);
+    if (error) return 0;
+    return count ?? 0;
+  } catch {
+    return 0;
+  }
+}
+
 export async function sendPushNotification(task: Task): Promise<void> {
   if (!vapidReady || !activeSubscription) return;
 
@@ -65,10 +79,13 @@ export async function sendPushNotification(task: Task): Promise<void> {
     ? `Starting now · ${task.category}`
     : `Starting in ${reminderMin} min · ${task.category}`;
 
+  const badgeCount = await getHighPriorityIncompleteCount();
+
   const payload = JSON.stringify({
     title: `Reminder: ${task.title}`,
     body: bodyText,
     data: { taskId: task.id, url: '/' },
+    badgeCount,
   });
 
   try {
@@ -80,6 +97,65 @@ export async function sendPushNotification(task: Task): Promise<void> {
       activeSubscription = null;
       await supabase.from('push_subscriptions').delete().eq('id', 1);
     }
+  }
+}
+
+export async function runNagJob(): Promise<void> {
+  try {
+    if (!activeSubscription) await loadSubscriptionFromDb();
+    if (!activeSubscription) return;
+
+    const now = new Date();
+    const todayStr = now.toISOString().slice(0, 10);
+    const nowTimeStr = now.toISOString().slice(11, 16); // HH:MM
+
+    const { data: tasks, error } = await supabase
+      .from('tasks')
+      .select('*')
+      .eq('is_completed', false)
+      .lte('priority', 2)
+      .not('nag_interval_minutes', 'is', null)
+      .or(`scheduled_date.lt.${todayStr},and(scheduled_date.eq.${todayStr},scheduled_time.lt.${nowTimeStr})`);
+
+    if (error) {
+      console.error('[Nag] Query failed:', error.message);
+      return;
+    }
+    if (!tasks || tasks.length === 0) return;
+
+    for (const task of tasks) {
+      const nagCount: number = task.nag_count ?? 0;
+      if (nagCount >= 5) continue;
+
+      const intervalMs = (task.nag_interval_minutes as number) * 60_000;
+      const lastSent = task.nag_last_sent_at ? new Date(task.nag_last_sent_at as string).getTime() : null;
+      const isDue = lastSent === null || (now.getTime() - lastSent) >= intervalMs;
+      if (!isDue) continue;
+
+      const payload = JSON.stringify({
+        title: `⚠️ Overdue: ${task.title as string}`,
+        body: `${nagCount + 1}x reminder — still pending`,
+        data: { taskId: task.id, url: '/' },
+      });
+
+      try {
+        await webPush.sendNotification(activeSubscription, payload);
+        await supabase
+          .from('tasks')
+          .update({ nag_last_sent_at: now.toISOString(), nag_count: nagCount + 1 })
+          .eq('id', task.id);
+        console.log(`[Nag] Sent nag #${nagCount + 1} for task "${task.title as string}"`);
+      } catch (err) {
+        console.error(`[Nag] Push failed for task ${task.id as string}:`, err);
+        if ((err as { statusCode?: number }).statusCode === 410) {
+          activeSubscription = null;
+          await supabase.from('push_subscriptions').delete().eq('id', 1);
+          break;
+        }
+      }
+    }
+  } catch (err) {
+    console.error('[Nag] Job failed:', err);
   }
 }
 

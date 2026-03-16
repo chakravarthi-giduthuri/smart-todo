@@ -2,6 +2,7 @@ import cron from 'node-cron';
 import { supabase } from '../db/supabase';
 import { buildMorningPlanPrompt, callClaude } from '../services/claude';
 import { getActiveSubscription, loadSubscriptionFromDb } from '../services/reminders';
+import { spawnTasksFromTemplates } from '../services/templateSpawner';
 import webPush from 'web-push';
 import type { Task } from '../types/task';
 
@@ -22,6 +23,11 @@ async function getTodayTasks(): Promise<Task[]> {
 async function runMorningPlanJob(): Promise<void> {
   try {
     console.log('[MorningPlan] Running morning briefing job');
+
+    // Spawn tasks from active recurring templates
+    await spawnTasksFromTemplates().catch((err) =>
+      console.error('[MorningPlan] Template spawner error:', err)
+    );
 
     if (!getActiveSubscription()) await loadSubscriptionFromDb();
     const subscription = getActiveSubscription();

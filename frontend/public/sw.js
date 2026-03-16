@@ -56,6 +56,12 @@ self.addEventListener('fetch', (event) => {
 self.addEventListener('push', (event) => {
   if (!event.data) return;
   const data = event.data.json();
+
+  // Set app badge with high-priority incomplete task count
+  if ('setAppBadge' in self.registration) {
+    self.registration.setBadge(data.badgeCount ?? 0).catch(() => {});
+  }
+
   event.waitUntil(
     self.registration.showNotification(data.title, {
       body: data.body ?? '',

@@ -345,7 +345,7 @@ Do not include markdown, code fences, or any text outside the JSON object.`;
 }
 
 export function buildWeeklyReviewPrompt(stats: Record<string, unknown>, currentDate: string): string {
-  return `You are a weekly review assistant. Generate a brief weekly review for the user.
+  return `You are a weekly productivity coach. Analyze the user's week and generate a structured review with actionable insights.
 
 Date: ${currentDate}
 
@@ -354,8 +354,14 @@ ${JSON.stringify(stats, null, 2)}
 
 Return ONLY a valid JSON object:
 {
-  "review": "A friendly 2-3 sentence weekly review highlighting achievements, completion rate, and encouragement for next week. Keep it under 250 characters for a push notification."
+  "summary": "2-sentence summary of the week's productivity",
+  "wins": ["win 1", "win 2", "win 3"],
+  "improvement_areas": ["area 1", "area 2"],
+  "next_week_suggestions": ["suggestion 1", "suggestion 2", "suggestion 3"],
+  "score": <integer 1-10 overall productivity score>,
+  "push_message": "Short motivating push notification message under 150 chars"
 }
 
+Base wins on completion rate, streak, and tasks completed. Be specific and encouraging.
 Do not include markdown, code fences, or any text outside the JSON object.`;
 }
