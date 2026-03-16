@@ -1,8 +1,10 @@
-import { supabase } from './supabase';
+import { supabase, type UserSupabaseClient } from './supabase';
 import type { Subtask, InsertSubtaskInput } from '../types/task';
 
-export async function insertSubtask(data: InsertSubtaskInput): Promise<Subtask> {
-  const { data: subtask, error } = await supabase
+type Db = UserSupabaseClient | typeof supabase;
+
+export async function insertSubtask(data: InsertSubtaskInput, db: Db = supabase): Promise<Subtask> {
+  const { data: subtask, error } = await db
     .from('subtasks')
     .insert({
       task_id: data.task_id,
@@ -17,8 +19,8 @@ export async function insertSubtask(data: InsertSubtaskInput): Promise<Subtask> 
   return subtask as Subtask;
 }
 
-export async function listSubtasks(taskId: string): Promise<Subtask[]> {
-  const { data, error } = await supabase
+export async function listSubtasks(taskId: string, db: Db = supabase): Promise<Subtask[]> {
+  const { data, error } = await db
     .from('subtasks')
     .select('*')
     .eq('task_id', taskId)
@@ -28,8 +30,8 @@ export async function listSubtasks(taskId: string): Promise<Subtask[]> {
   return (data ?? []) as Subtask[];
 }
 
-export async function completeSubtask(id: string): Promise<Subtask> {
-  const { data, error } = await supabase
+export async function completeSubtask(id: string, db: Db = supabase): Promise<Subtask> {
+  const { data, error } = await db
     .from('subtasks')
     .update({ is_completed: true })
     .eq('id', id)
@@ -40,7 +42,7 @@ export async function completeSubtask(id: string): Promise<Subtask> {
   return data as Subtask;
 }
 
-export async function deleteSubtask(id: string): Promise<void> {
-  const { error } = await supabase.from('subtasks').delete().eq('id', id);
+export async function deleteSubtask(id: string, db: Db = supabase): Promise<void> {
+  const { error } = await db.from('subtasks').delete().eq('id', id);
   if (error) throw new Error(`deleteSubtask failed: ${error.message}`);
 }
