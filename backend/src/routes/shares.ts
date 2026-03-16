@@ -13,7 +13,7 @@ router.post('/', requireAuth, async (req, res, next) => {
       return res.status(400).json({ error: 'task_id is required' });
     }
 
-    const share = await createShare(task_id, recipient_email);
+    const share = await createShare(task_id, recipient_email, req.userSupabase);
     res.status(201).json({ share });
   } catch (err) {
     next(err);

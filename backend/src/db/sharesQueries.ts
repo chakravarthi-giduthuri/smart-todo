@@ -1,11 +1,14 @@
 import { supabase } from './supabase';
+import type { UserSupabaseClient } from './supabase';
 import type { TaskShare } from '../types/task';
 import { randomBytes } from 'crypto';
 
-export async function createShare(taskId: string, recipientEmail?: string): Promise<TaskShare> {
+type Db = UserSupabaseClient | typeof supabase;
+
+export async function createShare(taskId: string, recipientEmail?: string, db: Db = supabase): Promise<TaskShare> {
   const token = randomBytes(16).toString('hex');
 
-  const { data, error } = await supabase
+  const { data, error } = await db
     .from('task_shares')
     .insert({
       task_id: taskId,
