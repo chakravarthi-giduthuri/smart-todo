@@ -12,4 +12,16 @@ if (!supabaseUrl || !supabaseAnonKey) {
 
 // Use service role key for backend DB operations (bypasses RLS).
 // Falls back to anon key if service role key is not set.
-export const supabase = createClient(supabaseUrl, supabaseServiceKey ?? supabaseAnonKey);
+const activeKey = supabaseServiceKey ?? supabaseAnonKey;
+export const supabase = createClient(supabaseUrl, activeKey, {
+  auth: {
+    autoRefreshToken: false,
+    persistSession: false,
+  },
+});
+
+if (!supabaseServiceKey) {
+  console.warn('[Supabase] SUPABASE_SERVICE_ROLE_KEY not set — using anon key, RLS will apply');
+} else {
+  console.log('[Supabase] Using service role key — RLS bypassed');
+}
