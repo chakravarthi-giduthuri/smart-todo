@@ -117,12 +117,29 @@ router.patch('/:id/reschedule', async (req, res, next) => {
 
     const prompt = buildReschedulePrompt(taskRow as import('../types/task').Task, current_date ?? new Date().toISOString());
     const rawText = await callClaude(prompt);
-    const cleaned = rawText.replace(/```(?:json)?\n?/g, '').replace(/```$/g, '').trim();
-    const parsed = JSON.parse(cleaned) as { scheduled_date: string; scheduled_time: string };
 
-    const updatedDate = await updateTaskField(req.params.id, 'scheduled_date', parsed.scheduled_date, req.userSupabase);
-    const task = await updateTaskField(req.params.id, 'scheduled_time', parsed.scheduled_time, req.userSupabase);
-    void updatedDate;
+    // Robust JSON extraction — handles any leading/trailing text Claude may add
+    const jsonMatch = rawText.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) throw new Error('No JSON object found in Claude response');
+    const parsed = JSON.parse(jsonMatch[0]) as { scheduled_date: string; scheduled_time: string };
+
+    if (!parsed.scheduled_date || !parsed.scheduled_time) {
+      throw new Error(`Claude returned incomplete schedule: ${JSON.stringify(parsed)}`);
+    }
+
+    // Single atomic update — also resets reminder_sent so the new time triggers a reminder
+    const { data: task, error: updateError } = await req.userSupabase
+      .from('tasks')
+      .update({
+        scheduled_date: parsed.scheduled_date,
+        scheduled_time: parsed.scheduled_time,
+        reminder_sent: false,
+      })
+      .eq('id', req.params.id)
+      .select()
+      .single();
+
+    if (updateError) throw new Error(`Failed to update task: ${updateError.message}`);
     res.json({ task });
   } catch (err) {
     next(err);
