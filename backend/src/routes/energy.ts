@@ -8,8 +8,7 @@ router.use(requireAuth);
 
 router.get('/today', async (req, res, next) => {
   try {
-    const checkin = await getTodayCheckin(req.userId);
-    // Return flat shape matching EnergyResponse frontend type
+    const checkin = await getTodayCheckin(req.userSupabase);
     res.json({
       level: checkin?.level ?? null,
       date: checkin?.date ?? null,
@@ -27,7 +26,7 @@ router.post('/', async (req, res, next) => {
       return res.status(400).json({ error: 'level must be high, medium, or low' });
     }
     const today = new Date().toISOString().split('T')[0];
-    const checkin = await insertCheckin(today, level, req.userId);
+    const checkin = await insertCheckin(today, level, req.userSupabase);
     res.status(201).json({ checkin });
   } catch (err) {
     next(err);

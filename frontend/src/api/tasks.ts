@@ -63,10 +63,10 @@ export async function snoozeTask(id: string, minutes: number): Promise<Task> {
   return res.task;
 }
 
-export async function rescheduleTask(id: string): Promise<Task> {
+export async function rescheduleTask(id: string, currentDate?: string): Promise<Task> {
   const res = await apiFetch<{ task: Task }>(`/api/tasks/${id}/reschedule`, {
     method: 'PATCH',
-    body: JSON.stringify({ current_date: new Date().toISOString() }),
+    body: JSON.stringify({ current_date: currentDate ?? new Date().toISOString() }),
   });
   return res.task;
 }

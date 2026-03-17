@@ -1,10 +1,10 @@
-import { supabase } from './supabase';
 import type { EnergyCheckin, EnergyLevel } from '../types/task';
+import type { UserSupabaseClient } from './supabase';
 
-export async function insertCheckin(date: string, level: EnergyLevel, userId: string): Promise<EnergyCheckin> {
-  const { data, error } = await supabase
+export async function insertCheckin(date: string, level: EnergyLevel, userSupabase: UserSupabaseClient): Promise<EnergyCheckin> {
+  const { data, error } = await userSupabase
     .from('energy_checkins')
-    .upsert({ user_id: userId, date, level }, { onConflict: 'user_id,date' })
+    .upsert({ date, level }, { onConflict: 'user_id,date' })
     .select()
     .single();
 
@@ -12,12 +12,11 @@ export async function insertCheckin(date: string, level: EnergyLevel, userId: st
   return data as EnergyCheckin;
 }
 
-export async function getTodayCheckin(userId: string): Promise<EnergyCheckin | null> {
+export async function getTodayCheckin(userSupabase: UserSupabaseClient): Promise<EnergyCheckin | null> {
   const today = new Date().toISOString().split('T')[0];
-  const { data, error } = await supabase
+  const { data, error } = await userSupabase
     .from('energy_checkins')
     .select('*')
-    .eq('user_id', userId)
     .eq('date', today)
     .single();
 

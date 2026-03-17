@@ -153,7 +153,14 @@ export function useSnoozeTask() {
 export function useRescheduleTask() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (id: string) => rescheduleTask(id),
+    mutationFn: (id: string) => {
+      const now = new Date();
+      const pad = (n: number) => String(n).padStart(2, '0');
+      const local = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}T${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+      const off = -now.getTimezoneOffset();
+      const tz = `${off >= 0 ? '+' : '-'}${pad(Math.floor(Math.abs(off)/60))}:${pad(Math.abs(off)%60)}`;
+      return rescheduleTask(id, `${local}${tz}`);
+    },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['tasks'] });
       qc.invalidateQueries({ queryKey: ['dashboard'] });
