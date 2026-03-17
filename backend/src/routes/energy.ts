@@ -26,7 +26,7 @@ router.post('/', async (req, res, next) => {
       return res.status(400).json({ error: 'level must be high, medium, or low' });
     }
     const today = new Date().toISOString().split('T')[0];
-    const checkin = await insertCheckin(today, level, req.userSupabase);
+    const checkin = await insertCheckin(today, level, req.userId, req.userSupabase);
     res.status(201).json({ checkin });
   } catch (err) {
     next(err);

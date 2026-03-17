@@ -1,10 +1,15 @@
 import type { EnergyCheckin, EnergyLevel } from '../types/task';
 import type { UserSupabaseClient } from './supabase';
 
-export async function insertCheckin(date: string, level: EnergyLevel, userSupabase: UserSupabaseClient): Promise<EnergyCheckin> {
+export async function insertCheckin(
+  date: string,
+  level: EnergyLevel,
+  userId: string,
+  userSupabase: UserSupabaseClient,
+): Promise<EnergyCheckin> {
   const { data, error } = await userSupabase
     .from('energy_checkins')
-    .upsert({ date, level }, { onConflict: 'user_id,date' })
+    .upsert({ user_id: userId, date, level }, { onConflict: 'user_id,date' })
     .select()
     .single();
 
