@@ -120,7 +120,7 @@ export const TaskCard = memo(function TaskCard({ task, delay = 0 }: Props) {
       >
         {/* Card — white light / dark surface */}
         <div
-          className={`bg-white dark:bg-[#18181b] border border-gray-100 dark:border-white/[0.08] rounded-2xl soft-shadow hover:border-blue-100 dark:hover:border-white/[0.15] overflow-hidden transition-all duration-200 active:scale-[0.99] ${task.is_completed ? 'opacity-55' : ''}`}
+          className={`group bg-white dark:bg-[#18181b] border border-gray-100 dark:border-white/[0.08] rounded-2xl soft-shadow hover:border-blue-100 dark:hover:border-white/[0.15] overflow-hidden transition-all duration-200 active:scale-[0.99] ${task.is_completed ? 'opacity-55' : ''}`}
         >
           <div className="flex items-start gap-3 px-4 pt-4 pb-3">
 
@@ -390,21 +390,26 @@ export const TaskCard = memo(function TaskCard({ task, delay = 0 }: Props) {
                 {shareLink ? <Link2 size={13} /> : <Share2 size={13} />}
               </button>
 
-              {/* Delete */}
-              {confirmDelete ? (
-                <button
-                  onClick={() => remove(task.id)}
-                  className="flex items-center gap-0.5 px-2 py-1 rounded-lg bg-red-500/20 text-red-400 text-[10px] font-bold active:scale-90 transition-all cursor-pointer animate-fade-in"
-                >
-                  <Trash2 size={10} />
-                </button>
-              ) : (
-                <button
-                  onClick={() => { setConfirmDelete(true); setTimeout(() => setConfirmDelete(false), 3000); }}
-                  className="w-7 h-7 flex items-center justify-center rounded-lg text-gray-300 dark:text-white/20 hover:text-rose-400 hover:bg-rose-500/10 transition-all cursor-pointer"
-                >
-                  <Trash2 size={13} />
-                </button>
+              {/* Hover-reveal action buttons (complete + delete) — web swipe parity */}
+              {!task.is_completed && (
+                <div className="flex flex-col items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-150">
+                  <button
+                    onClick={() => complete(task.id)}
+                    title="Mark complete"
+                    className="w-7 h-7 flex items-center justify-center rounded-lg text-[#10B981] bg-[#10B981]/10 hover:bg-[#10B981]/20 transition-all cursor-pointer"
+                  >
+                    <Check size={13} />
+                  </button>
+                  <button
+                    onClick={() => {
+                      if (window.confirm('Delete this task?')) remove(task.id);
+                    }}
+                    title="Delete task"
+                    className="w-7 h-7 flex items-center justify-center rounded-lg text-[#ef4444] bg-[#ef4444]/10 hover:bg-[#ef4444]/20 transition-all cursor-pointer"
+                  >
+                    <Trash2 size={13} />
+                  </button>
+                </div>
               )}
             </div>
           </div>

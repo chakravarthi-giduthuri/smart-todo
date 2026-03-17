@@ -196,8 +196,9 @@ export function parseClaudeResponse(text: string): ClaudeResponse {
 
   const note = obj.note && typeof obj.note === 'string' ? obj.note : null;
 
+  const rawTitle = String(obj.title);
   return {
-    title: String(obj.title).slice(0, 60),
+    title: rawTitle.length > 60 ? rawTitle.slice(0, 59) + '\u2026' : rawTitle,
     category: obj.category as ClaudeResponse['category'],
     scheduled_date: obj.scheduled_date ? String(obj.scheduled_date) : null,
     scheduled_time: obj.scheduled_time ? String(obj.scheduled_time) : null,
@@ -225,10 +226,11 @@ Task to reschedule:
 - Duration: ${task.duration_minutes != null ? `${task.duration_minutes} minutes` : 'unknown'}
 - Context tags: ${task.context_tags?.join(', ') || 'none'}
 
-Return ONLY a valid JSON object with exactly these two fields:
+Return ONLY a valid JSON object with exactly these three fields:
 {
   "scheduled_date": "YYYY-MM-DD",
-  "scheduled_time": "HH:MM"
+  "scheduled_time": "HH:MM",
+  "reason": "1-sentence explanation of why this time slot was chosen"
 }
 
 Scheduling rules:

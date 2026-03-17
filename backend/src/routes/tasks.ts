@@ -121,10 +121,22 @@ router.patch('/:id/reschedule', async (req, res, next) => {
     // Robust JSON extraction — handles any leading/trailing text Claude may add
     const jsonMatch = rawText.match(/\{[\s\S]*\}/);
     if (!jsonMatch) throw new Error('No JSON object found in Claude response');
-    const parsed = JSON.parse(jsonMatch[0]) as { scheduled_date: string; scheduled_time: string };
+    const parsed = JSON.parse(jsonMatch[0]) as { scheduled_date: string; scheduled_time: string; reason?: string };
 
     if (!parsed.scheduled_date || !parsed.scheduled_time) {
       throw new Error(`Claude returned incomplete schedule: ${JSON.stringify(parsed)}`);
+    }
+
+    // BUG-013: Deadline protection — warn if AI is moving a far-future date to an earlier one
+    let deadline_warning: string | undefined;
+    if (taskRow.scheduled_date) {
+      const originalMs  = new Date(taskRow.scheduled_date).getTime();
+      const currentMs   = new Date(current_date ?? new Date().toISOString()).getTime();
+      const proposedMs  = new Date(parsed.scheduled_date).getTime();
+      const hoursAhead  = (originalMs - currentMs) / (1000 * 60 * 60);
+      if (hoursAhead > 48 && proposedMs < originalMs) {
+        deadline_warning = `AI moved this from ${taskRow.scheduled_date} to ${parsed.scheduled_date}. Confirm to keep the change.`;
+      }
     }
 
     // Single atomic update — also resets reminder_sent so the new time triggers a reminder
@@ -140,7 +152,8 @@ router.patch('/:id/reschedule', async (req, res, next) => {
       .single();
 
     if (updateError) throw new Error(`Failed to update task: ${updateError.message}`);
-    res.json({ task });
+    const reason = parsed.reason ?? null;
+    res.json({ task, reason, ...(deadline_warning ? { deadline_warning } : {}) });
   } catch (err) {
     next(err);
   }

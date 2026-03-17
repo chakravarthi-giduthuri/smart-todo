@@ -45,6 +45,14 @@ const CATEGORY_COLORS: Record<string, string> = {
   Errand:   'bg-pink-100 dark:bg-pink-500/20 text-pink-600 dark:text-pink-400',
 };
 
+function streakLabel(days: number): string {
+  if (days === 0) return 'Get started';
+  if (days <= 2) return 'Building';
+  if (days <= 6) return 'Going strong';
+  if (days <= 13) return 'On fire 🔥';
+  return 'Unstoppable';
+}
+
 function getGreeting() {
   const h = new Date().getHours();
   if (h < 12) return 'Good Morning';
@@ -311,7 +319,7 @@ export function HomeScreen() {
             <div className="bg-white dark:bg-slate-900 p-5 rounded-xl border border-amber-200 dark:border-amber-500/30 shadow-sm animate-fade-in">
               <div className="flex justify-between items-start mb-3">
                 <div className="p-2 bg-amber-50 dark:bg-amber-500/10 rounded-lg"><span className="text-xl">🔥</span></div>
-                <span className="text-xs font-bold text-amber-600 bg-amber-50 dark:bg-amber-500/10 px-2 py-1 rounded-full">Strong</span>
+                <span className="text-xs font-bold text-amber-600 bg-amber-50 dark:bg-amber-500/10 px-2 py-1 rounded-full">{streakLabel(stats?.streak_days ?? 0)}</span>
               </div>
               <p className="text-slate-500 dark:text-slate-400 text-sm font-semibold">Day Streak</p>
               <h3 className="text-2xl font-bold text-slate-900 dark:text-white mt-1">{stats?.streak_days ?? 0} days</h3>
@@ -351,7 +359,7 @@ export function HomeScreen() {
           <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
             <div className="flex justify-between items-start mb-4">
               <div className="p-2 bg-amber-50 dark:bg-amber-500/10 rounded-lg"><span className="text-xl">🔥</span></div>
-              <span className="text-xs font-bold text-amber-600 bg-amber-50 dark:bg-amber-500/10 px-2 py-1 rounded-full">Strong</span>
+              <span className="text-xs font-bold text-amber-600 bg-amber-50 dark:bg-amber-500/10 px-2 py-1 rounded-full">{streakLabel(stats?.streak_days ?? 0)}</span>
             </div>
             <p className="text-slate-500 dark:text-slate-400 text-sm font-semibold">Day Streak</p>
             <h3 className="text-2xl font-bold text-slate-900 dark:text-white mt-1">{stats?.streak_days ?? 0} days</h3>

@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { listTasks, createTask, completeTask, deleteTask, archiveTask, getSubtasks, addSubtask, completeSubtask, deleteSubtask, snoozeTask, rescheduleTask, updateTaskNote, getDependencies, addDependency, removeDependency, setTaskNag, scheduleTask } from '../api/tasks';
 import type { Task, Subtask } from '../types/task';
-import type { DependencyItem } from '../api/tasks';
+import type { DependencyItem, RescheduleResult } from '../api/tasks';
 
 export function useTasks(filters?: { category?: string }) {
   const query = useQuery({
@@ -140,7 +140,7 @@ export function useSnoozeTask() {
 
 export function useRescheduleTask() {
   const qc = useQueryClient();
-  return useMutation({
+  return useMutation<RescheduleResult, Error, string>({
     mutationFn: (id: string) => {
       const now = new Date();
       const pad = (n: number) => String(n).padStart(2, '0');
