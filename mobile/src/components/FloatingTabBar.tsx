@@ -157,8 +157,6 @@ const styles = StyleSheet.create({
     shadowRadius: 24,
     shadowOffset: { width: 0, height: 8 },
     elevation: 14,
-    // Clip the rounded corners properly
-    overflow: 'hidden',
   },
   tab: {
     flex: 1,

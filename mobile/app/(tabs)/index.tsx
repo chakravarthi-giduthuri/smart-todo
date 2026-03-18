@@ -411,7 +411,6 @@ export default function HomeScreen() {
               />
             ) : null
           }
-          removeClippedSubviews
           maxToRenderPerBatch={10}
           windowSize={5}
           ItemSeparatorComponent={() => <View style={styles.separator} />}

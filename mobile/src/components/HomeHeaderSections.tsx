@@ -1,11 +1,7 @@
 import { useEffect } from 'react';
-import { View, Text, Pressable, StyleSheet, LayoutAnimation, Platform, UIManager } from 'react-native';
+import { View, Text, Pressable, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import ReAnimated, { useSharedValue, useAnimatedStyle, withTiming } from 'react-native-reanimated';
-
-if (Platform.OS === 'android') {
-  UIManager.setLayoutAnimationEnabledExperimental?.(true);
-}
 
 // ─── helpers ──────────────────────────────────────────────────────────────────
 
@@ -316,7 +312,6 @@ export function FutureTasksSection({ tasks, expanded, onToggle, isDark }: Future
   }, [expanded]);
 
   function handleToggle() {
-    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
     onToggle();
   }
 

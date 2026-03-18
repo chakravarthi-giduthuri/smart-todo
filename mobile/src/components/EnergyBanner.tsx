@@ -1,15 +1,11 @@
 import { useState } from 'react';
-import { View, Text, Pressable, StyleSheet, LayoutAnimation, Platform, UIManager } from 'react-native';
+import { View, Text, Pressable, StyleSheet } from 'react-native';
 import * as Haptics from 'expo-haptics';
 import { Ionicons } from '@expo/vector-icons';
 import ReAnimated, { useSharedValue, useAnimatedStyle, withTiming } from 'react-native-reanimated';
 import { useTodayEnergy, useSubmitEnergy } from '@smart-todo/shared';
 import type { EnergyLevel } from '@smart-todo/shared';
 import { useTheme } from '../contexts/ThemeContext';
-
-if (Platform.OS === 'android') {
-  UIManager.setLayoutAnimationEnabledExperimental?.(true);
-}
 
 const LEVELS: { level: EnergyLevel; label: string; emoji: string; sub: string }[] = [
   { level: 'high',   label: 'High',   emoji: '⚡', sub: 'Deep focus' },
@@ -38,7 +34,6 @@ export function EnergyBanner() {
   const unselectedBg = isDark ? '#27272a' : '#ffffff';
 
   function handleToggle() {
-    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
     const next = !collapsed;
     chevronRotation.value = withTiming(next ? 0 : 180, { duration: 280 });
     setCollapsed(next);
@@ -46,7 +41,7 @@ export function EnergyBanner() {
 
   return (
     <View style={[styles.container, { backgroundColor: containerBg, borderColor }]}>
-      <Pressable style={styles.headingRow} onPress={handleToggle}>
+      <Pressable style={[styles.headingRow, collapsed && { marginBottom: 0 }]} onPress={handleToggle}>
         <Text style={[styles.heading, { color: labelColor }]}>
           TODAY'S ENERGY{selected ? ` · ${selected.charAt(0).toUpperCase() + selected.slice(1)}` : ''}
         </Text>

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import {
-  View, Text, TextInput, Pressable, KeyboardAvoidingView,
-  Platform, ActivityIndicator, Alert, ScrollView,
+  View, Text, TextInput, TouchableOpacity, KeyboardAvoidingView,
+  Platform, ActivityIndicator, Alert, StyleSheet,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { supabase } from '../../src/lib/supabase';
@@ -13,8 +13,10 @@ export default function LoginScreen() {
   const [isLoading, setIsLoading] = useState(false);
   const [isSignUp, setIsSignUp] = useState(false);
 
+  const isDisabled = isLoading || !email.trim() || !password.trim();
+
   async function handleSubmit() {
-    if (!email.trim() || !password.trim()) return;
+    if (isDisabled) return;
     setIsLoading(true);
     try {
       if (isSignUp) {
@@ -36,89 +38,115 @@ export default function LoginScreen() {
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      style={{ flex: 1, backgroundColor: '#080810' }}
+      style={styles.root}
     >
-      <ScrollView
-        contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', padding: 24 }}
-        keyboardShouldPersistTaps="handled"
-      >
+      <View style={styles.inner}>
         {/* Logo */}
-        <View style={{ alignItems: 'center', marginBottom: 48 }}>
-          <View style={{
-            width: 64, height: 64, borderRadius: 20,
-            backgroundColor: '#ec5b13', alignItems: 'center', justifyContent: 'center',
-            marginBottom: 16,
-          }}>
-            <Text style={{ fontSize: 28 }}>✓</Text>
+        <View style={styles.logoWrap}>
+          <View style={styles.logoBox}>
+            <Text style={styles.logoCheck}>✓</Text>
           </View>
-          <Text style={{ fontSize: 28, fontWeight: '900', color: '#fff', letterSpacing: -0.5 }}>
-            Smart To-Do
-          </Text>
-          <Text style={{ color: 'rgba(255,255,255,0.4)', marginTop: 6, fontSize: 15 }}>
-            AI-powered task manager
-          </Text>
+          <Text style={styles.appName}>Smart To-Do</Text>
+          <Text style={styles.appSub}>AI-powered task manager</Text>
         </View>
 
-        {/* Form */}
-        <View style={{ gap: 12 }}>
-          <TextInput
-            value={email}
-            onChangeText={setEmail}
-            placeholder="Email"
-            placeholderTextColor="rgba(255,255,255,0.3)"
-            keyboardType="email-address"
-            autoCapitalize="none"
-            autoComplete="email"
-            style={{
-              backgroundColor: 'rgba(255,255,255,0.06)',
-              borderRadius: 14, padding: 16,
-              color: '#fff', fontSize: 16,
-              borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)',
-            }}
-          />
-          <TextInput
-            value={password}
-            onChangeText={setPassword}
-            placeholder="Password"
-            placeholderTextColor="rgba(255,255,255,0.3)"
-            secureTextEntry
-            autoCapitalize="none"
-            style={{
-              backgroundColor: 'rgba(255,255,255,0.06)',
-              borderRadius: 14, padding: 16,
-              color: '#fff', fontSize: 16,
-              borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)',
-            }}
-          />
-          <Pressable
-            onPress={handleSubmit}
-            disabled={isLoading || !email.trim() || !password.trim()}
-            style={({ pressed }) => ({
-              backgroundColor: pressed ? '#d4520f' : '#ec5b13',
-              borderRadius: 14, padding: 16,
-              alignItems: 'center', justifyContent: 'center',
-              flexDirection: 'row', marginTop: 4, alignSelf: 'stretch',
-              opacity: isLoading || !email.trim() || !password.trim() ? 0.5 : 1,
-            })}
-          >
-            {isLoading
-              ? <ActivityIndicator color="#fff" />
-              : <Text style={{ color: '#fff', fontWeight: '700', fontSize: 16 }}>
-                  {isSignUp ? 'Create Account' : 'Sign In'}
-                </Text>
-            }
-          </Pressable>
-        </View>
+        {/* Inputs */}
+        <TextInput
+          value={email}
+          onChangeText={setEmail}
+          placeholder="Email"
+          placeholderTextColor="rgba(255,255,255,0.3)"
+          keyboardType="email-address"
+          autoCapitalize="none"
+          autoComplete="email"
+          style={styles.input}
+        />
+        <TextInput
+          value={password}
+          onChangeText={setPassword}
+          placeholder="Password"
+          placeholderTextColor="rgba(255,255,255,0.3)"
+          secureTextEntry
+          autoCapitalize="none"
+          style={[styles.input, styles.inputSpacing]}
+        />
 
-        <Pressable onPress={() => setIsSignUp(v => !v)} style={{ marginTop: 20, alignItems: 'center' }}>
-          <Text style={{ color: 'rgba(255,255,255,0.4)', fontSize: 14 }}>
+        {/* Submit button */}
+        <TouchableOpacity
+          onPress={handleSubmit}
+          disabled={isDisabled}
+          activeOpacity={0.8}
+          style={[styles.btn, isDisabled && styles.btnDisabled]}
+        >
+          {isLoading
+            ? <ActivityIndicator color="#fff" />
+            : <Text style={styles.btnText}>{isSignUp ? 'Create Account' : 'Sign In'}</Text>
+          }
+        </TouchableOpacity>
+
+        {/* Toggle sign-in / sign-up */}
+        <TouchableOpacity onPress={() => setIsSignUp(v => !v)} style={styles.toggleBtn}>
+          <Text style={styles.toggleText}>
             {isSignUp ? 'Already have an account? ' : "Don't have an account? "}
-            <Text style={{ color: '#ec5b13', fontWeight: '600' }}>
-              {isSignUp ? 'Sign In' : 'Sign Up'}
-            </Text>
+            <Text style={styles.toggleLink}>{isSignUp ? 'Sign In' : 'Sign Up'}</Text>
           </Text>
-        </Pressable>
-      </ScrollView>
+        </TouchableOpacity>
+      </View>
     </KeyboardAvoidingView>
   );
 }
+
+const styles = StyleSheet.create({
+  root: {
+    flex: 1,
+    backgroundColor: '#080810',
+  },
+  inner: {
+    flex: 1,
+    justifyContent: 'center',
+    paddingHorizontal: 24,
+  },
+  // Logo
+  logoWrap: {
+    alignItems: 'center',
+    marginBottom: 48,
+  },
+  logoBox: {
+    width: 64,
+    height: 64,
+    borderRadius: 20,
+    backgroundColor: '#ec5b13',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 16,
+  },
+  logoCheck: { fontSize: 28, color: '#fff' },
+  appName: { fontSize: 28, fontWeight: '900', color: '#fff', letterSpacing: -0.5 },
+  appSub: { color: 'rgba(255,255,255,0.4)', marginTop: 6, fontSize: 15 },
+  // Inputs
+  input: {
+    backgroundColor: 'rgba(255,255,255,0.06)',
+    borderRadius: 14,
+    padding: 16,
+    color: '#fff',
+    fontSize: 16,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.1)',
+  },
+  inputSpacing: { marginTop: 12 },
+  // Button
+  btn: {
+    backgroundColor: '#ec5b13',
+    borderRadius: 14,
+    padding: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 16,
+  },
+  btnDisabled: { backgroundColor: 'rgba(236,91,19,0.4)' },
+  btnText: { color: '#fff', fontWeight: '700', fontSize: 16 },
+  // Toggle
+  toggleBtn: { marginTop: 20, alignItems: 'center' },
+  toggleText: { color: 'rgba(255,255,255,0.4)', fontSize: 14 },
+  toggleLink: { color: '#ec5b13', fontWeight: '600' },
+});
