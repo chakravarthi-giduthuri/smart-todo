@@ -1,5 +1,8 @@
 import { Router } from 'express';
-import { setActiveSubscription, getActiveSubscription, clearSubscription, runReminderJob } from '../services/reminders';
+import {
+  setActiveSubscription, getActiveSubscription, clearSubscription, runReminderJob,
+  setExpoToken, getExpoToken, clearExpoToken, sendExpoPush,
+} from '../services/reminders';
 import webPush from 'web-push';
 
 const router = Router();
@@ -23,19 +26,53 @@ router.delete('/subscribe', async (req, res) => {
   }
 });
 
-// Test endpoint — sends an immediate push to verify the whole chain works
-router.post('/test', async (req, res) => {
-  const sub = getActiveSubscription();
-  if (!sub) {
-    res.status(400).json({ error: 'No push subscription registered. Enable notifications in Settings first.' });
+// ── Expo push token (mobile app) ──────────────────────────────────────────────
+
+router.post('/register-expo', async (req, res) => {
+  const { expo_token } = req.body as { expo_token?: string };
+  if (!expo_token || !expo_token.startsWith('ExponentPushToken[')) {
+    res.status(400).json({ error: 'Invalid expo_token' });
     return;
   }
   try {
-    await webPush.sendNotification(sub, JSON.stringify({
-      title: 'Test notification',
-      body: 'Push notifications are working!',
-      data: { url: '/' },
-    }));
+    await setExpoToken(expo_token);
+    console.log('[push] expo token registered:', expo_token.slice(0, 30) + '...');
+    res.status(201).json({ ok: true });
+  } catch (err) {
+    res.status(500).json({ error: String(err) });
+  }
+});
+
+router.delete('/register-expo', async (req, res) => {
+  try {
+    await clearExpoToken();
+    res.status(204).send();
+  } catch (err) {
+    res.status(500).json({ error: String(err) });
+  }
+});
+
+// Test endpoint — sends an immediate push to verify the whole chain works
+router.post('/test', async (req, res) => {
+  const expoToken = getExpoToken();
+  const webSub = getActiveSubscription();
+
+  if (!expoToken && !webSub) {
+    res.status(400).json({ error: 'No push subscription registered. Enable notifications in Settings first.' });
+    return;
+  }
+
+  try {
+    if (expoToken) {
+      await sendExpoPush(expoToken, 'Test notification', 'Push notifications are working! 🎉', {});
+    }
+    if (webSub) {
+      await webPush.sendNotification(webSub, JSON.stringify({
+        title: 'Test notification',
+        body: 'Push notifications are working!',
+        data: { url: '/' },
+      }));
+    }
     res.json({ ok: true });
   } catch (err) {
     res.status(500).json({ error: String(err) });

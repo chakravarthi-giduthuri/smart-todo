@@ -55,11 +55,15 @@
     ],
     "extra": {
       "eas": {
-        "projectId": "your-project-id-here"
+        "projectId": "81ae98e3-80ab-4c36-b9b1-62ad6a8a097c"
+      },
+      "router": {
+        "origin": false
       }
     },
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "owner": "chakravarthigiduthuri"
   }
 }

@@ -8,19 +8,24 @@ import { supabase } from '../../src/lib/supabase';
 
 export default function LoginScreen() {
   const router = useRouter();
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isSignUp, setIsSignUp] = useState(false);
 
-  const isDisabled = isLoading || !email.trim() || !password.trim();
+  const isDisabled = isLoading || !email.trim() || !password.trim() || (isSignUp && !name.trim());
 
   async function handleSubmit() {
     if (isDisabled) return;
     setIsLoading(true);
     try {
       if (isSignUp) {
-        const { error } = await supabase.auth.signUp({ email, password });
+        const { error } = await supabase.auth.signUp({
+          email,
+          password,
+          options: { data: { display_name: name.trim() } },
+        });
         if (error) throw error;
         Alert.alert('Check your email', 'Confirm your email to continue.');
       } else {
@@ -51,6 +56,17 @@ export default function LoginScreen() {
         </View>
 
         {/* Inputs */}
+        {isSignUp && (
+          <TextInput
+            value={name}
+            onChangeText={setName}
+            placeholder="Full name"
+            placeholderTextColor="rgba(255,255,255,0.3)"
+            autoCapitalize="words"
+            autoComplete="name"
+            style={[styles.input, styles.inputSpacing]}
+          />
+        )}
         <TextInput
           value={email}
           onChangeText={setEmail}
@@ -59,7 +75,7 @@ export default function LoginScreen() {
           keyboardType="email-address"
           autoCapitalize="none"
           autoComplete="email"
-          style={styles.input}
+          style={[styles.input, isSignUp && styles.inputSpacing]}
         />
         <TextInput
           value={password}
@@ -85,7 +101,7 @@ export default function LoginScreen() {
         </TouchableOpacity>
 
         {/* Toggle sign-in / sign-up */}
-        <TouchableOpacity onPress={() => setIsSignUp(v => !v)} style={styles.toggleBtn}>
+        <TouchableOpacity onPress={() => { setIsSignUp(v => !v); setName(''); }} style={styles.toggleBtn}>
           <Text style={styles.toggleText}>
             {isSignUp ? 'Already have an account? ' : "Don't have an account? "}
             <Text style={styles.toggleLink}>{isSignUp ? 'Sign In' : 'Sign Up'}</Text>

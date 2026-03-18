@@ -3,6 +3,7 @@ import {
   View,
   Text,
   Pressable,
+  TouchableOpacity,
   ScrollView,
   Switch,
   StyleSheet,
@@ -465,13 +466,14 @@ export default function SettingsScreen() {
                 <Text style={[styles.hintText, { color: subText }]}>
                   Enable notifications to receive task reminders 15 minutes before they're due.
                 </Text>
-                <Pressable
+                <TouchableOpacity
                   onPress={handleEnableNotifications}
-                  style={({ pressed }) => [styles.enableNotifBtn, pressed && { opacity: 0.8 }]}
+                  activeOpacity={0.8}
+                  style={styles.enableNotifBtn}
                 >
                   <Ionicons name="notifications-outline" size={16} color="#fff" />
                   <Text style={styles.enableNotifBtnText}>Enable Notifications</Text>
-                </Pressable>
+                </TouchableOpacity>
               </>
             )}
           </View>
@@ -514,20 +516,20 @@ export default function SettingsScreen() {
                     {pwMsg.text}
                   </Text>
                 )}
-                <Pressable
+                <TouchableOpacity
                   onPress={handleChangePassword}
                   disabled={pwSaving || !pwNew || !pwConfirm || pwNew !== pwConfirm}
-                  style={({ pressed }) => [
+                  activeOpacity={0.8}
+                  style={[
                     styles.submitBtn,
                     (pwSaving || !pwNew || !pwConfirm || pwNew !== pwConfirm) && styles.submitBtnDisabled,
-                    pressed && { opacity: 0.8 },
                   ]}
                 >
                   {pwSaving
                     ? <ActivityIndicator size="small" color="#fff" />
                     : <Text style={styles.submitBtnText}>Update Password</Text>
                   }
-                </Pressable>
+                </TouchableOpacity>
               </View>
             </View>
           </View>
@@ -800,7 +802,7 @@ const styles = StyleSheet.create({
     minHeight: 48,
   },
   submitBtnDisabled: {
-    opacity: 0.4,
+    backgroundColor: 'rgba(236,91,19,0.4)',
   },
   submitBtnText: {
     color: '#fff',

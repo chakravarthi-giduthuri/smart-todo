@@ -7,6 +7,7 @@ import {
   StyleSheet,
   SafeAreaView,
   Pressable,
+  TouchableOpacity,
   TextInput,
   Modal,
   KeyboardAvoidingView,
@@ -140,13 +141,14 @@ function QuickCreateModal({
             <Pressable onPress={() => { setTitle(''); onClose(); }} style={[st.cancelBtn, { borderColor: border }]}>
               <Text style={[st.cancelText, { color: subText }]}>Cancel</Text>
             </Pressable>
-            <Pressable
+            <TouchableOpacity
               onPress={handleCreate}
               disabled={create.isPending || !title.trim()}
-              style={[st.confirmBtn, (!title.trim() || create.isPending) && { opacity: 0.5 }]}
+              activeOpacity={0.8}
+              style={[st.confirmBtn, (!title.trim() || create.isPending) && st.confirmBtnDisabled]}
             >
               {create.isPending ? <ActivityIndicator size="small" color="#fff" /> : <Text style={st.confirmText}>Add Task</Text>}
-            </Pressable>
+            </TouchableOpacity>
           </View>
         </View>
       </KeyboardAvoidingView>
@@ -599,5 +601,6 @@ const st = StyleSheet.create({
   cancelBtn: { flex: 1, borderWidth: 1, borderRadius: 10, paddingVertical: 12, alignItems: 'center', minHeight: 44, justifyContent: 'center' },
   cancelText: { fontSize: 15, fontWeight: '500' },
   confirmBtn: { flex: 2, backgroundColor: '#ec5b13', borderRadius: 10, paddingVertical: 12, alignItems: 'center', minHeight: 44, justifyContent: 'center' },
+  confirmBtnDisabled: { backgroundColor: 'rgba(236,91,19,0.4)' },
   confirmText: { color: '#fff', fontSize: 15, fontWeight: '600' },
 });

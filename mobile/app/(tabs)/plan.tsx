@@ -5,6 +5,7 @@ import {
   Text,
   FlatList,
   Pressable,
+  TouchableOpacity,
   StyleSheet,
   SafeAreaView,
   ActivityIndicator,
@@ -311,17 +312,18 @@ export default function PlanScreen() {
           <Animated.View
             style={[styles.saveBar, { backgroundColor: bg, borderTopColor: borderColor, bottom: saveBarBottom }]}
           >
-            <Pressable
+            <TouchableOpacity
               onPress={savePlan}
               disabled={upsertDailyPlan.isPending}
-              style={[styles.saveBtn, { backgroundColor: orange, opacity: upsertDailyPlan.isPending ? 0.6 : 1 }]}
+              activeOpacity={0.8}
+              style={[styles.saveBtn, upsertDailyPlan.isPending && styles.saveBtnPending]}
             >
               {upsertDailyPlan.isPending ? (
                 <ActivityIndicator color="#fff" size="small" />
               ) : (
                 <Text style={styles.saveBtnText}>Save Plan</Text>
               )}
-            </Pressable>
+            </TouchableOpacity>
           </Animated.View>
         </>
       )}
@@ -439,10 +441,12 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
   },
   saveBtn: {
+    backgroundColor: '#ec5b13',
     borderRadius: 12,
     paddingVertical: 14,
     alignItems: 'center',
     justifyContent: 'center',
   },
+  saveBtnPending: { backgroundColor: 'rgba(236,91,19,0.4)' },
   saveBtnText: { color: '#fff', fontSize: 16, fontWeight: '700' },
 });

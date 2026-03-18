@@ -5,6 +5,75 @@ import type { Task } from '../types/task';
 
 // In-memory cache — populated from Supabase on startup
 let activeSubscription: webPush.PushSubscription | null = null;
+let activeExpoToken: string | null = null;
+
+// ── Expo Push helpers ──────────────────────────────────────────────────────────
+
+export async function sendExpoPush(
+  token: string,
+  title: string,
+  body: string,
+  data: Record<string, unknown>,
+): Promise<void> {
+  const response = await fetch('https://exp.host/--/api/v2/push/send', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'Accept-Encoding': 'gzip, deflate',
+    },
+    body: JSON.stringify({ to: token, title, body, data, sound: 'default', priority: 'high' }),
+  });
+  const result = await response.json() as { data?: { status: string; message?: string } };
+  if (result?.data?.status === 'error') {
+    console.error('[Expo push] error:', result.data.message);
+    // DeviceNotRegistered — token is stale
+    if (result.data.message?.includes('DeviceNotRegistered')) {
+      activeExpoToken = null;
+      await supabase.from('expo_push_tokens').delete().eq('id', 1);
+    }
+  }
+}
+
+export async function setExpoToken(token: string): Promise<void> {
+  activeExpoToken = token;
+  await supabase
+    .from('expo_push_tokens')
+    .upsert({ id: 1, token, updated_at: new Date().toISOString() }, { onConflict: 'id' })
+    .then(({ error }) => {
+      if (error) console.warn('[Expo push] Could not persist token:', error.message);
+    });
+}
+
+export function getExpoToken(): string | null {
+  return activeExpoToken;
+}
+
+export async function clearExpoToken(): Promise<void> {
+  activeExpoToken = null;
+  await supabase.from('expo_push_tokens').delete().eq('id', 1);
+}
+
+export async function loadExpoTokenFromDb(): Promise<void> {
+  try {
+    const { data, error } = await supabase
+      .from('expo_push_tokens')
+      .select('token')
+      .eq('id', 1)
+      .single();
+    if (!error && data?.token) {
+      activeExpoToken = data.token as string;
+      console.log('[Expo push] Token loaded from database');
+    }
+  } catch {
+    // Table may not exist yet — run the SQL migration in Supabase dashboard:
+    // CREATE TABLE IF NOT EXISTS expo_push_tokens (
+    //   id integer PRIMARY KEY DEFAULT 1,
+    //   token text NOT NULL,
+    //   updated_at timestamptz DEFAULT now()
+    // );
+  }
+}
 
 function initWebPush() {
   const publicKey = process.env.VAPID_PUBLIC_KEY;
@@ -72,30 +141,39 @@ async function getHighPriorityIncompleteCount(): Promise<number> {
 }
 
 export async function sendPushNotification(task: Task): Promise<void> {
-  if (!vapidReady || !activeSubscription) return;
-
   const reminderMin = task.reminder_minutes_before ?? 15;
+  const title = `Reminder: ${task.title}`;
   const bodyText = reminderMin === 0
     ? `Starting now · ${task.category}`
     : `Starting in ${reminderMin} min · ${task.category}`;
 
   const badgeCount = await getHighPriorityIncompleteCount();
 
-  const payload = JSON.stringify({
-    title: `Reminder: ${task.title}`,
-    body: bodyText,
-    data: { taskId: task.id, url: '/' },
-    badgeCount,
-  });
+  // Send to Expo (mobile)
+  if (activeExpoToken) {
+    try {
+      await sendExpoPush(activeExpoToken, title, bodyText, { taskId: task.id });
+    } catch (err) {
+      console.error(`[Reminders] Expo push failed for task ${task.id}:`, err);
+    }
+  }
 
-  try {
-    await webPush.sendNotification(activeSubscription, payload);
-  } catch (err) {
-    console.error(`[Reminders] Push failed for task ${task.id}:`, err);
-    if ((err as { statusCode?: number }).statusCode === 410) {
-      // Subscription expired — clear from DB and memory
-      activeSubscription = null;
-      await supabase.from('push_subscriptions').delete().eq('id', 1);
+  // Send to web-push (browser)
+  if (vapidReady && activeSubscription) {
+    const payload = JSON.stringify({
+      title,
+      body: bodyText,
+      data: { taskId: task.id, url: '/' },
+      badgeCount,
+    });
+    try {
+      await webPush.sendNotification(activeSubscription, payload);
+    } catch (err) {
+      console.error(`[Reminders] Web push failed for task ${task.id}:`, err);
+      if ((err as { statusCode?: number }).statusCode === 410) {
+        activeSubscription = null;
+        await supabase.from('push_subscriptions').delete().eq('id', 1);
+      }
     }
   }
 }
@@ -103,7 +181,8 @@ export async function sendPushNotification(task: Task): Promise<void> {
 export async function runNagJob(): Promise<void> {
   try {
     if (!activeSubscription) await loadSubscriptionFromDb();
-    if (!activeSubscription) return;
+    if (!activeExpoToken) await loadExpoTokenFromDb();
+    if (!activeSubscription && !activeExpoToken) return;
 
     const now = new Date();
     const todayStr = now.toISOString().slice(0, 10);
@@ -132,26 +211,43 @@ export async function runNagJob(): Promise<void> {
       const isDue = lastSent === null || (now.getTime() - lastSent) >= intervalMs;
       if (!isDue) continue;
 
-      const payload = JSON.stringify({
-        title: `⚠️ Overdue: ${task.title as string}`,
-        body: `${nagCount + 1}x reminder — still pending`,
-        data: { taskId: task.id, url: '/' },
-      });
+      const nagTitle = `⚠️ Overdue: ${task.title as string}`;
+      const nagBody = `${nagCount + 1}x reminder — still pending`;
+      let sent = false;
 
-      try {
-        await webPush.sendNotification(activeSubscription, payload);
+      if (activeExpoToken) {
+        try {
+          await sendExpoPush(activeExpoToken, nagTitle, nagBody, { taskId: task.id });
+          sent = true;
+        } catch (err) {
+          console.error(`[Nag] Expo push failed for task ${task.id as string}:`, err);
+        }
+      }
+
+      if (vapidReady && activeSubscription) {
+        try {
+          await webPush.sendNotification(activeSubscription, JSON.stringify({
+            title: nagTitle,
+            body: nagBody,
+            data: { taskId: task.id, url: '/' },
+          }));
+          sent = true;
+        } catch (err) {
+          console.error(`[Nag] Web push failed for task ${task.id as string}:`, err);
+          if ((err as { statusCode?: number }).statusCode === 410) {
+            activeSubscription = null;
+            await supabase.from('push_subscriptions').delete().eq('id', 1);
+            break;
+          }
+        }
+      }
+
+      if (sent) {
         await supabase
           .from('tasks')
           .update({ nag_last_sent_at: now.toISOString(), nag_count: nagCount + 1 })
           .eq('id', task.id);
         console.log(`[Nag] Sent nag #${nagCount + 1} for task "${task.title as string}"`);
-      } catch (err) {
-        console.error(`[Nag] Push failed for task ${task.id as string}:`, err);
-        if ((err as { statusCode?: number }).statusCode === 410) {
-          activeSubscription = null;
-          await supabase.from('push_subscriptions').delete().eq('id', 1);
-          break;
-        }
       }
     }
   } catch (err) {
@@ -161,11 +257,12 @@ export async function runNagJob(): Promise<void> {
 
 export async function runReminderJob(): Promise<void> {
   try {
-    console.log(`[Reminders] Cron tick — vapidReady=${vapidReady} hasSubscription=${!!activeSubscription}`);
+    console.log(`[Reminders] Cron tick — vapidReady=${vapidReady} hasWebSub=${!!activeSubscription} hasExpoToken=${!!activeExpoToken}`);
     if (!activeSubscription) await loadSubscriptionFromDb();
+    if (!activeExpoToken) await loadExpoTokenFromDb();
 
-    if (!activeSubscription) {
-      console.log('[Reminders] No push subscription registered — skipping');
+    if (!activeSubscription && !activeExpoToken) {
+      console.log('[Reminders] No push subscriptions registered — skipping');
       return;
     }
 
