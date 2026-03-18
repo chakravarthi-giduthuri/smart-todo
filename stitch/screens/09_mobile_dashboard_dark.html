@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Smart To-Do Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#0d6cf2",
+                        "background-light": "#f5f7f8",
+                        "background-dark": "#101722",
+                    },
+                    fontFamily: {
+                        "display": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .filled-icon {
+            font-variation-settings: 'FILL' 1;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 antialiased">
+<div class="relative flex min-h-screen w-full flex-col overflow-x-hidden">
+<!-- Header Section -->
+<header class="flex items-center bg-background-light dark:bg-background-dark p-4 sticky top-0 z-10 border-b border-slate-200 dark:border-slate-800">
+<div class="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary/10 mr-3">
+<img alt="Profile" class="rounded-full size-10" data-alt="User profile avatar with friendly face" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAF71NmaiWxfFb8upcw30LppZSEN43Oa0dQx2VV9BTsLfw5apC0nLd4jhZUtgWurBZ3DDuG8pOzPVZcBFc_NH0EG3ydQlpjvdglk8q50Zfkyuyw8Y1GeAB4SQxPdc5OnkMRhCtsHemAxLzUonsxCxLqcds2gc3dO1X52D66HlOthxvlAYpGmiNMISIcGg9IKz3DhTVVXaki1aLV4rRgnHHl3gjWU4_kv9NChw6w2akCkm7xqxILzL60FpUMxURHP2g-aLn7ZMoaf88"/>
+</div>
+<div class="flex-1">
+<h2 class="text-slate-900 dark:text-slate-100 text-lg font-bold leading-tight tracking-tight">Smart To-Do</h2>
+<p class="text-xs text-slate-500 dark:text-slate-400">Monday, Oct 24</p>
+</div>
+<div class="flex items-center gap-2">
+<button class="flex size-10 items-center justify-center rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+<span class="material-symbols-outlined text-slate-600 dark:text-slate-300">search</span>
+</button>
+<button class="flex size-10 items-center justify-center rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+<span class="material-symbols-outlined text-slate-600 dark:text-slate-300">notifications</span>
+</button>
+</div>
+</header>
+<!-- Main Content -->
+<main class="flex-1 pb-24">
+<!-- Stats Cards -->
+<div class="flex flex-wrap gap-4 p-4">
+<div class="flex min-w-[150px] flex-1 flex-col gap-2 rounded-xl p-5 bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800 shadow-sm">
+<div class="flex items-center justify-between mb-1">
+<span class="material-symbols-outlined text-green-500 filled-icon">check_circle</span>
+<span class="text-green-500 text-xs font-semibold">+15%</span>
+</div>
+<p class="text-slate-500 dark:text-slate-400 text-sm font-medium">Completed</p>
+<p class="text-slate-900 dark:text-slate-100 text-2xl font-bold">24</p>
+</div>
+<div class="flex min-w-[150px] flex-1 flex-col gap-2 rounded-xl p-5 bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800 shadow-sm">
+<div class="flex items-center justify-between mb-1">
+<span class="material-symbols-outlined text-amber-500 filled-icon">pending_actions</span>
+<span class="text-amber-500 text-xs font-semibold">-5%</span>
+</div>
+<p class="text-slate-500 dark:text-slate-400 text-sm font-medium">Pending</p>
+<p class="text-slate-900 dark:text-slate-100 text-2xl font-bold">12</p>
+</div>
+</div>
+<!-- Progress Section -->
+<div class="px-4 py-2">
+<h3 class="text-slate-900 dark:text-slate-100 text-lg font-bold mb-4">Today's Progress</h3>
+<div class="flex flex-col gap-3 p-5 rounded-xl bg-primary/5 dark:bg-primary/10 border border-primary/20">
+<div class="flex justify-between items-end">
+<div>
+<p class="text-primary text-sm font-semibold uppercase tracking-wider">Daily Goal</p>
+<p class="text-slate-900 dark:text-slate-100 text-xl font-bold">8 of 12 tasks done</p>
+</div>
+<p class="text-primary text-2xl font-bold">66%</p>
+</div>
+<div class="h-3 w-full rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden">
+<div class="h-full rounded-full bg-primary" style="width: 66%;"></div>
+</div>
+<p class="text-slate-500 dark:text-slate-400 text-xs italic">Keep it up! You're almost at your daily target.</p>
+</div>
+</div>
+<!-- Task List -->
+<div class="px-4 py-6">
+<div class="flex items-center justify-between mb-4">
+<h3 class="text-slate-900 dark:text-slate-100 text-lg font-bold">Active Tasks</h3>
+<button class="text-primary text-sm font-semibold">View all</button>
+</div>
+<div class="flex flex-col gap-3">
+<!-- Task Item 1 -->
+<div class="flex items-center gap-4 p-4 rounded-xl bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800 shadow-sm transition-all active:scale-[0.98]">
+<div class="size-6 border-2 border-primary rounded flex items-center justify-center shrink-0">
+<!-- Empty for pending -->
+</div>
+<div class="flex-1">
+<p class="text-slate-900 dark:text-slate-100 font-semibold">Finalize Q4 Marketing Plan</p>
+<p class="text-slate-500 dark:text-slate-400 text-xs flex items-center gap-1 mt-1">
+<span class="material-symbols-outlined text-xs">schedule</span> 09:30 AM • High Priority
+                            </p>
+</div>
+<div class="flex size-8 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-700">
+<span class="material-symbols-outlined text-slate-500 dark:text-slate-400 text-sm">more_vert</span>
+</div>
+</div>
+<!-- Task Item 2 -->
+<div class="flex items-center gap-4 p-4 rounded-xl bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800 shadow-sm opacity-70">
+<div class="size-6 bg-primary rounded flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-white text-sm font-bold">check</span>
+</div>
+<div class="flex-1">
+<p class="text-slate-500 dark:text-slate-400 font-semibold line-through">Review team stand-up notes</p>
+<p class="text-slate-400 dark:text-slate-500 text-xs flex items-center gap-1 mt-1">
+<span class="material-symbols-outlined text-xs">done_all</span> Completed 2h ago
+                            </p>
+</div>
+</div>
+<!-- Task Item 3 -->
+<div class="flex items-center gap-4 p-4 rounded-xl bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800 shadow-sm transition-all active:scale-[0.98]">
+<div class="size-6 border-2 border-slate-300 dark:border-slate-600 rounded flex items-center justify-center shrink-0">
+</div>
+<div class="flex-1">
+<p class="text-slate-900 dark:text-slate-100 font-semibold">Call David - Project Sync</p>
+<p class="text-slate-500 dark:text-slate-400 text-xs flex items-center gap-1 mt-1">
+<span class="material-symbols-outlined text-xs">schedule</span> 02:00 PM • Work
+                            </p>
+</div>
+<div class="flex size-8 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-700">
+<span class="material-symbols-outlined text-slate-500 dark:text-slate-400 text-sm">more_vert</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Upcoming Section -->
+<div class="px-4 py-2">
+<h3 class="text-slate-900 dark:text-slate-100 text-lg font-bold mb-4">Upcoming Event</h3>
+<div class="relative overflow-hidden rounded-xl p-5 bg-gradient-to-br from-primary to-blue-700 text-white shadow-lg">
+<div class="relative z-10">
+<div class="flex items-center justify-between mb-4">
+<span class="px-3 py-1 bg-white/20 rounded-full text-xs font-bold backdrop-blur-md">MEETING</span>
+<span class="material-symbols-outlined">video_call</span>
+</div>
+<h4 class="text-xl font-bold mb-1">Product Roadmap Sync</h4>
+<p class="text-white/80 text-sm flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">calendar_month</span> Tomorrow, 10:00 AM
+                        </p>
+</div>
+<!-- Abstract Background Pattern -->
+<div class="absolute top-0 right-0 -mr-8 -mt-8 size-48 bg-white/10 rounded-full blur-3xl"></div>
+</div>
+</div>
+</main>
+<!-- Floating Action Button -->
+<button class="fixed bottom-24 right-6 size-14 bg-primary text-white rounded-full shadow-2xl flex items-center justify-center z-20 hover:scale-105 active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-3xl">add</span>
+</button>
+<!-- Bottom Navigation Bar -->
+<nav class="fixed bottom-0 left-0 right-0 border-t border-slate-200 dark:border-slate-800 bg-white/95 dark:bg-slate-900/95 backdrop-blur-lg px-2 pb-6 pt-2 z-30">
+<div class="flex justify-around items-center">
+<a class="flex flex-1 flex-col items-center justify-center gap-1 text-primary" href="#">
+<span class="material-symbols-outlined filled-icon">check_box</span>
+<p class="text-[10px] font-bold uppercase tracking-tighter">Tasks</p>
+</a>
+<a class="flex flex-1 flex-col items-center justify-center gap-1 text-slate-400 dark:text-slate-500" href="#">
+<span class="material-symbols-outlined">calendar_today</span>
+<p class="text-[10px] font-bold uppercase tracking-tighter">Calendar</p>
+</a>
+<a class="flex flex-1 flex-col items-center justify-center gap-1 text-slate-400 dark:text-slate-500" href="#">
+<span class="material-symbols-outlined">timer</span>
+<p class="text-[10px] font-bold uppercase tracking-tighter">Focus</p>
+</a>
+<a class="flex flex-1 flex-col items-center justify-center gap-1 text-slate-400 dark:text-slate-500" href="#">
+<span class="material-symbols-outlined">settings</span>
+<p class="text-[10px] font-bold uppercase tracking-tighter">Settings</p>
+</a>
+</div>
+</nav>
+</div>
+</body></html>

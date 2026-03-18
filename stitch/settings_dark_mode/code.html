@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Settings - Smart To-Do</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#ec5b13",
+                        "background-light": "#f8f6f6",
+                        "background-dark": "#221610",
+                    },
+                    fontFamily: {
+                        "display": ["Public Sans"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Public Sans', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 font-display">
+<div class="relative flex h-auto min-h-screen w-full flex-col overflow-x-hidden">
+<div class="layout-container flex h-full grow flex-col">
+<!-- Main Wrapper with Sidebar and Content -->
+<div class="flex flex-1 flex-col md:flex-row">
+<!-- Sidebar Navigation -->
+<aside class="w-full md:w-64 border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-zinc-900/50 p-4 flex flex-col gap-8">
+<div class="flex items-center gap-3 px-2">
+<div class="bg-primary p-2 rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-white">check_circle</span>
+</div>
+<h2 class="text-xl font-bold tracking-tight">SmartTask</h2>
+</div>
+<nav class="flex flex-col gap-1">
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-zinc-800 transition-colors" href="#">
+<span class="material-symbols-outlined text-slate-500 dark:text-slate-400">dashboard</span>
+<span class="text-sm font-medium">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-zinc-800 transition-colors" href="#">
+<span class="material-symbols-outlined text-slate-500 dark:text-slate-400">task_alt</span>
+<span class="text-sm font-medium">Tasks</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-zinc-800 transition-colors" href="#">
+<span class="material-symbols-outlined text-slate-500 dark:text-slate-400">calendar_today</span>
+<span class="text-sm font-medium">Calendar</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-zinc-800 transition-colors" href="#">
+<span class="material-symbols-outlined text-slate-500 dark:text-slate-400">hub</span>
+<span class="text-sm font-medium">Integrations</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-primary/10 dark:bg-primary/20 text-primary transition-colors" href="#">
+<span class="material-symbols-outlined font-fill">settings</span>
+<span class="text-sm font-semibold">Settings</span>
+</a>
+</nav>
+<div class="mt-auto p-4 bg-slate-100 dark:bg-zinc-800 rounded-2xl flex flex-col gap-3">
+<div class="flex items-center gap-3">
+<div class="size-10 rounded-full bg-cover bg-center" data-alt="Professional male user portrait avatar" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDwQx8X1A6BaPyfQDkYEkgAomuUNqucebPzM1SFplh2aPDWS59CGCm6lGhXe478etIWe0nJe_P5knoDpc1eJ8WlAa9du2GRxKCNDe_9qlETiM5fOtwLxiMmWz7lhF3cCbStZkQQ3qdt-M-7fDIchtFybCh8Ngp01vQNtobo_pfPpAgutjw9h8X8PxkLbTHJYxHECacA1BQpViztToyAgH1_4fb2DhzkZYirZjbzOrKwKZnaV7QAUDawAnIox21hvbxmKK0oksYjeNk')"></div>
+<div class="flex flex-col overflow-hidden">
+<p class="text-sm font-bold truncate">Alex Johnson</p>
+<p class="text-xs text-slate-500 dark:text-slate-400">Pro Plan</p>
+</div>
+</div>
+<button class="w-full py-2 bg-white dark:bg-zinc-700 text-xs font-bold rounded-lg border border-slate-200 dark:border-zinc-600 shadow-sm">
+                        Upgrade
+                    </button>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 flex flex-col bg-background-light dark:bg-background-dark">
+<!-- Top Header -->
+<header class="flex items-center justify-between px-8 py-4 border-b border-slate-200 dark:border-slate-800 bg-white/50 dark:bg-zinc-900/50 backdrop-blur-md sticky top-0 z-10">
+<h1 class="text-xl font-bold">Settings</h1>
+<div class="flex items-center gap-3">
+<button class="p-2 rounded-xl bg-slate-100 dark:bg-zinc-800 hover:bg-slate-200 dark:hover:bg-zinc-700 transition-colors">
+<span class="material-symbols-outlined text-slate-600 dark:text-slate-300">notifications</span>
+</button>
+<button class="p-2 rounded-xl bg-slate-100 dark:bg-zinc-800 hover:bg-slate-200 dark:hover:bg-zinc-700 transition-colors">
+<span class="material-symbols-outlined text-slate-600 dark:text-slate-300">help_outline</span>
+</button>
+</div>
+</header>
+<div class="max-w-4xl mx-auto w-full p-8 flex flex-col gap-10">
+<!-- Profile Section -->
+<section>
+<h3 class="text-lg font-bold mb-6 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">account_circle</span>
+                            Profile Information
+                        </h3>
+<div class="bg-white dark:bg-zinc-900 rounded-2xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm">
+<div class="flex flex-col md:flex-row items-center gap-8">
+<div class="relative group">
+<div class="size-24 rounded-full bg-cover bg-center border-4 border-primary/20" data-alt="User profile picture in settings" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDi1j-Y5iE65eUEziKe6u7OXjqSMmN3fWTtwL3R2KZsv-UzZ6wLY3twrpMRYAw5dnVyY00Rwe6c8qCfAOQ7G3alRLEzb6vDjs4xuQD1hpDY7ESNv2xgwI29Fm2jO6RmSl_24Sc07LwtARzqZOeNoki77lVuFyvoqeh5CjUcB06kCOuf8mzhPMvLLPznTRZdaJbN2zitzFUKG1qpAhoRRMhdu_EOU6f-HgPkqyZSO992riuKiwrLz8EzGfn7C4IovO0qiObqSKaJtiA')"></div>
+<button class="absolute bottom-0 right-0 bg-primary text-white p-1.5 rounded-full shadow-lg border-2 border-white dark:border-zinc-900">
+<span class="material-symbols-outlined text-sm">edit</span>
+</button>
+</div>
+<div class="flex-1 grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
+<div class="flex flex-col gap-1">
+<label class="text-xs font-bold text-slate-500 uppercase tracking-wider">Full Name</label>
+<input class="w-full bg-slate-50 dark:bg-zinc-800 border-slate-200 dark:border-zinc-700 rounded-xl px-4 py-2.5 focus:ring-primary focus:border-primary" type="text" value="Alex Johnson"/>
+</div>
+<div class="flex flex-col gap-1">
+<label class="text-xs font-bold text-slate-500 uppercase tracking-wider">Email Address</label>
+<input class="w-full bg-slate-50 dark:bg-zinc-800 border-slate-200 dark:border-zinc-700 rounded-xl px-4 py-2.5 focus:ring-primary focus:border-primary" type="email" value="alex.johnson@example.com"/>
+</div>
+<div class="flex flex-col gap-1">
+<label class="text-xs font-bold text-slate-500 uppercase tracking-wider">Location</label>
+<input class="w-full bg-slate-50 dark:bg-zinc-800 border-slate-200 dark:border-zinc-700 rounded-xl px-4 py-2.5 focus:ring-primary focus:border-primary" type="text" value="San Francisco, CA"/>
+</div>
+<div class="flex flex-col gap-1">
+<label class="text-xs font-bold text-slate-500 uppercase tracking-wider">Job Title</label>
+<input class="w-full bg-slate-50 dark:bg-zinc-800 border-slate-200 dark:border-zinc-700 rounded-xl px-4 py-2.5 focus:ring-primary focus:border-primary" type="text" value="Product Designer"/>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Notifications Section -->
+<section>
+<h3 class="text-lg font-bold mb-6 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">notifications_active</span>
+                            Notifications
+                        </h3>
+<div class="bg-white dark:bg-zinc-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+<div class="divide-y divide-slate-100 dark:divide-zinc-800">
+<div class="p-4 flex items-center justify-between hover:bg-slate-50 dark:hover:bg-zinc-800/50 transition-colors">
+<div>
+<p class="font-semibold">Push Notifications</p>
+<p class="text-sm text-slate-500 dark:text-slate-400">Alerts for upcoming deadlines and reminders</p>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-slate-200 dark:bg-zinc-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+<div class="p-4 flex items-center justify-between hover:bg-slate-50 dark:hover:bg-zinc-800/50 transition-colors">
+<div>
+<p class="font-semibold">Email Digest</p>
+<p class="text-sm text-slate-500 dark:text-slate-400">Weekly summary of your completed tasks</p>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-slate-200 dark:bg-zinc-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+<div class="p-4 flex items-center justify-between hover:bg-slate-50 dark:hover:bg-zinc-800/50 transition-colors">
+<div>
+<p class="font-semibold">Smart Reminders</p>
+<p class="text-sm text-slate-500 dark:text-slate-400">AI-powered nudges based on your productivity patterns</p>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-slate-200 dark:bg-zinc-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+</div>
+</div>
+</section>
+<!-- Appearance & Theme -->
+<section>
+<h3 class="text-lg font-bold mb-6 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">palette</span>
+                            Appearance
+                        </h3>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="bg-white dark:bg-zinc-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+<p class="font-bold mb-4">Interface Theme</p>
+<div class="grid grid-cols-2 gap-4">
+<button class="flex flex-col gap-2 group">
+<div class="aspect-video w-full rounded-xl bg-slate-100 border-2 flex p-2 gap-1 overflow-hidden border-transparent">
+<div class="w-1/3 h-full bg-white rounded-md shadow-sm"></div>
+<div class="flex-1 flex flex-col gap-1">
+<div class="h-2 w-full bg-slate-200 rounded"></div>
+<div class="h-2 w-2/3 bg-slate-200 rounded"></div>
+</div>
+</div>
+<span class="text-sm font-semibold text-slate-500">Light Mode</span>
+</button>
+<button class="flex flex-col gap-2 group">
+<div class="aspect-video w-full rounded-xl bg-zinc-800 border-2 flex p-2 gap-1 overflow-hidden border-primary ring-4 ring-primary/10">
+<div class="w-1/3 h-full bg-zinc-700 rounded-md shadow-sm"></div>
+<div class="flex-1 flex flex-col gap-1">
+<div class="h-2 w-full bg-zinc-600 rounded"></div>
+<div class="h-2 w-2/3 bg-zinc-600 rounded"></div>
+</div>
+</div>
+<span class="text-sm font-semibold">Dark Mode</span>
+</button>
+</div>
+</div>
+<div class="bg-white dark:bg-zinc-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+<p class="font-bold mb-4">Accent Color</p>
+<div class="flex flex-wrap gap-3">
+<button class="size-8 rounded-full bg-[#ec5b13] border-4 border-white dark:border-zinc-900 ring-2 ring-primary"></button>
+<button class="size-8 rounded-full bg-blue-500"></button>
+<button class="size-8 rounded-full bg-emerald-500"></button>
+<button class="size-8 rounded-full bg-purple-500"></button>
+<button class="size-8 rounded-full bg-pink-500"></button>
+<button class="size-8 rounded-full bg-yellow-500"></button>
+<button class="size-8 rounded-full bg-slate-800 dark:bg-slate-200"></button>
+</div>
+<p class="mt-6 text-sm text-slate-500 dark:text-slate-400">Customizes primary buttons, icons, and highlights across the app.</p>
+</div>
+</div>
+</section>
+<!-- Integrations Section -->
+<section>
+<h3 class="text-lg font-bold mb-6 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">extension</span>
+                            Integrations
+                        </h3>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+<!-- Slack -->
+<div class="bg-white dark:bg-zinc-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 flex flex-col gap-4">
+<div class="flex items-start justify-between">
+<div class="size-12 rounded-xl bg-slate-50 dark:bg-zinc-800 flex items-center justify-center">
+<svg class="size-8" viewbox="0 0 122.8 122.8"><path d="M25.8 77.6c0 7.1-5.8 12.9-12.9 12.9S0 84.7 0 77.6s5.8-12.9 12.9-12.9h12.9v12.9zm6.4 0c0-7.1 5.8-12.9 12.9-12.9s12.9 5.8 12.9 12.9v32.3c0 7.1-5.8 12.9-12.9 12.9s-12.9-5.8-12.9-12.9V77.6z" fill="#E01E5A"></path><path d="M45.2 25.8c-7.1 0-12.9-5.8-12.9-12.9S38.1 0 45.2 0s12.9 5.8 12.9 12.9v12.9H45.2zm0 6.4c7.1 0 12.9 5.8 12.9 12.9s-5.8 12.9-12.9 12.9H12.9C5.8 58 0 52.2 0 45.2s5.8-12.9 12.9-12.9h32.3z" fill="#36C5F0"></path><path d="M97 45.2c0-7.1 5.8-12.9 12.9-12.9s12.9 5.8 12.9 12.9-5.8 12.9-12.9 12.9H97V45.2zm-6.4 0c0 7.1-5.8 12.9-12.9 12.9s-12.9-5.8-12.9-12.9V12.9c0-7.1 5.8-12.9 12.9-12.9s12.9 5.8 12.9 12.9v32.3z" fill="#2EB67D"></path><path d="M77.6 97c7.1 0 12.9 5.8 12.9 12.9s-5.8 12.9-12.9 12.9-12.9-5.8-12.9-12.9V97h12.9zm0-6.4c-7.1 0-12.9-5.8-12.9-12.9s5.8-12.9 12.9-12.9h32.3c7.1 0 12.9 5.8 12.9 12.9s-5.8 12.9-12.9 12.9H77.6z" fill="#ECB22E"></path></svg>
+</div>
+<span class="px-2 py-1 bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 text-[10px] font-bold rounded uppercase">Active</span>
+</div>
+<div>
+<p class="font-bold">Slack</p>
+<p class="text-xs text-slate-500 dark:text-slate-400">Sync tasks to channels</p>
+</div>
+<button class="w-full py-2 bg-slate-100 dark:bg-zinc-800 text-xs font-bold rounded-lg hover:bg-slate-200 transition-colors">Manage</button>
+</div>
+<!-- Google Calendar -->
+<div class="bg-white dark:bg-zinc-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 flex flex-col gap-4">
+<div class="flex items-start justify-between">
+<div class="size-12 rounded-xl bg-slate-50 dark:bg-zinc-800 flex items-center justify-center">
+<svg class="size-8" viewbox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7v-5z" fill="#4285F4"></path></svg>
+</div>
+<span class="px-2 py-1 bg-slate-100 text-slate-600 dark:bg-zinc-800 dark:text-zinc-400 text-[10px] font-bold rounded uppercase">Not Connected</span>
+</div>
+<div>
+<p class="font-bold">Google Calendar</p>
+<p class="text-xs text-slate-500 dark:text-slate-400">Auto-schedule your deep work</p>
+</div>
+<button class="w-full py-2 bg-primary text-white text-xs font-bold rounded-lg hover:bg-primary/90 transition-colors">Connect</button>
+</div>
+<!-- GitHub -->
+<div class="bg-white dark:bg-zinc-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 flex flex-col gap-4">
+<div class="flex items-start justify-between">
+<div class="size-12 rounded-xl bg-slate-50 dark:bg-zinc-800 flex items-center justify-center">
+<svg class="size-8" fill="currentColor" viewbox="0 0 24 24"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"></path></svg>
+</div>
+<span class="px-2 py-1 bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 text-[10px] font-bold rounded uppercase">Active</span>
+</div>
+<div>
+<p class="font-bold">GitHub</p>
+<p class="text-xs text-slate-500 dark:text-slate-400">Link PRs to your to-do list</p>
+</div>
+<button class="w-full py-2 bg-slate-100 dark:bg-zinc-800 text-xs font-bold rounded-lg hover:bg-slate-200 transition-colors">Manage</button>
+</div>
+</div>
+</section>
+<!-- Danger Zone -->
+<section class="border-t border-slate-200 dark:border-slate-800 pt-10">
+<div class="bg-red-50 dark:bg-red-900/10 border border-red-200 dark:border-red-900/30 rounded-2xl p-6 flex flex-col md:flex-row items-center justify-between gap-6">
+<div class="flex items-start gap-4">
+<span class="material-symbols-outlined text-red-500 size-8 mt-1">warning</span>
+<div>
+<p class="font-bold text-red-900 dark:text-red-400">Delete Account</p>
+<p class="text-sm text-red-700/70 dark:text-red-400/60">Permanently delete your account and all associated data. This action cannot be undone.</p>
+</div>
+</div>
+<button class="bg-red-600 hover:bg-red-700 text-white font-bold py-2.5 px-6 rounded-xl text-sm transition-colors whitespace-nowrap">
+                                Delete Permanently
+                            </button>
+</div>
+</section>
+<!-- Action Footer -->
+<div class="flex items-center justify-end gap-4 py-8">
+<button class="px-6 py-2.5 rounded-xl font-bold text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-zinc-800 transition-colors">
+                            Cancel
+                        </button>
+<button class="bg-primary text-white px-8 py-2.5 rounded-xl font-bold shadow-lg shadow-primary/25 hover:bg-primary/90 transition-all">
+                            Save Changes
+                        </button>
+</div>
+</div>
+</main>
+</div>
+</div>
+</div>
+</body></html>

@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Smart To-Do | Statistics Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#0d6cf2",
+                        "background-light": "#f5f7f8",
+                        "background-dark": "#101722",
+                    },
+                    fontFamily: {
+                        "display": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .active-nav {
+            background-color: rgba(13, 108, 242, 0.2);
+            border-left: 4px solid #0d6cf2;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 font-display">
+<div class="flex h-screen overflow-hidden">
+<!-- Sidebar Navigation -->
+<aside class="w-64 flex-shrink-0 border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-background-dark hidden md:flex flex-col">
+<div class="p-6 flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-primary flex items-center justify-center text-white">
+<span class="material-symbols-outlined">task_alt</span>
+</div>
+<div>
+<h1 class="text-slate-900 dark:text-white font-bold text-lg leading-tight">Smart To-Do</h1>
+<p class="text-slate-500 dark:text-slate-400 text-xs">Pro Plan</p>
+</div>
+</div>
+<nav class="flex-1 px-4 space-y-1">
+<a class="flex items-center gap-3 px-3 py-2 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="text-sm font-medium">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined">check_box</span>
+<span class="text-sm font-medium">Tasks</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-primary bg-primary/10 rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">bar_chart</span>
+<span class="text-sm font-semibold">Statistics</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined">calendar_today</span>
+<span class="text-sm font-medium">Calendar</span>
+</a>
+<div class="pt-4 pb-2 px-3">
+<p class="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-600">Preferences</p>
+</div>
+<a class="flex items-center gap-3 px-3 py-2 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="text-sm font-medium">Settings</span>
+</a>
+</nav>
+<div class="p-4 mt-auto">
+<button class="w-full py-2.5 bg-primary hover:bg-primary/90 text-white rounded-lg font-bold text-sm transition-all shadow-lg shadow-primary/20 flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-sm">add</span>
+<span>Create Task</span>
+</button>
+</div>
+</aside>
+<!-- Main Content -->
+<main class="flex-1 flex flex-col min-w-0 overflow-y-auto">
+<!-- Header -->
+<header class="h-16 flex-shrink-0 border-b border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-background-dark/80 backdrop-blur-md sticky top-0 z-10 px-8 flex items-center justify-between">
+<div class="flex items-center gap-2 text-slate-900 dark:text-white">
+<span class="material-symbols-outlined text-primary">analytics</span>
+<h2 class="text-lg font-bold tracking-tight">Statistics Overview</h2>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative hidden sm:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xl">search</span>
+<input class="pl-10 pr-4 py-2 bg-slate-100 dark:bg-slate-800 border-none rounded-lg text-sm w-64 focus:ring-2 focus:ring-primary text-slate-900 dark:text-slate-100" placeholder="Search insights..." type="text"/>
+</div>
+<button class="p-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-white dark:border-background-dark"></span>
+</button>
+<button class="p-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors">
+<span class="material-symbols-outlined">dark_mode</span>
+</button>
+<div class="h-8 w-8 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden border border-slate-300 dark:border-slate-600">
+<img class="w-full h-full object-cover" data-alt="User profile avatar circle" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB7cNL82tROg8APjpCSLBuLVO2P0t_66HgXrGDXFa40_QTkhWak6lYi43Gkrh5uQ1W9hPvG2A4EvStlxIS51vuBzoBK36zUug43rPbGO-5ekxH-69HyNIOZjE9lIRTAckANnHdxOka5lu8JtlUtOwps8K8TAXZoP-ng3onTX1ectz8WuyUNzbBxQRUmfVHQ__AxWrzOxoOJHUITsChwi-X3dDOcXw-deO-QUaXHuvY5pxUSE5ItAVaz1_IlXVl8ZduaF4ztj2gUwDc"/>
+</div>
+</div>
+</header>
+<div class="p-8 max-w-7xl mx-auto w-full">
+<!-- Page Title Section -->
+<div class="mb-8">
+<h3 class="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">Activity Insights</h3>
+<p class="text-slate-500 dark:text-slate-400 mt-1">Track your productivity trends and task completion rates across your workspaces.</p>
+</div>
+<!-- Stats Grid -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+<div class="bg-white dark:bg-slate-800/50 p-6 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
+<div class="flex justify-between items-start mb-4">
+<span class="text-slate-500 dark:text-slate-400 text-sm font-medium">Total Completed</span>
+<span class="p-2 bg-green-500/10 text-green-500 rounded-lg">
+<span class="material-symbols-outlined text-sm">task_alt</span>
+</span>
+</div>
+<div class="flex items-end justify-between">
+<div>
+<p class="text-2xl font-bold text-slate-900 dark:text-white">128</p>
+<p class="text-xs text-green-500 font-semibold flex items-center gap-1 mt-1">
+<span class="material-symbols-outlined text-xs">trending_up</span> +12% this week
+                                </p>
+</div>
+</div>
+</div>
+<div class="bg-white dark:bg-slate-800/50 p-6 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
+<div class="flex justify-between items-start mb-4">
+<span class="text-slate-500 dark:text-slate-400 text-sm font-medium">Focus Hours</span>
+<span class="p-2 bg-primary/10 text-primary rounded-lg">
+<span class="material-symbols-outlined text-sm">timer</span>
+</span>
+</div>
+<div class="flex items-end justify-between">
+<div>
+<p class="text-2xl font-bold text-slate-900 dark:text-white">42h</p>
+<p class="text-xs text-green-500 font-semibold flex items-center gap-1 mt-1">
+<span class="material-symbols-outlined text-xs">trending_up</span> +5.2% vs last month
+                                </p>
+</div>
+</div>
+</div>
+<div class="bg-white dark:bg-slate-800/50 p-6 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
+<div class="flex justify-between items-start mb-4">
+<span class="text-slate-500 dark:text-slate-400 text-sm font-medium">Efficiency</span>
+<span class="p-2 bg-orange-500/10 text-orange-500 rounded-lg">
+<span class="material-symbols-outlined text-sm">bolt</span>
+</span>
+</div>
+<div class="flex items-end justify-between">
+<div>
+<p class="text-2xl font-bold text-slate-900 dark:text-white">85%</p>
+<p class="text-xs text-orange-500 font-semibold flex items-center gap-1 mt-1">
+<span class="material-symbols-outlined text-xs">trending_down</span> -2% late tasks
+                                </p>
+</div>
+</div>
+</div>
+<div class="bg-white dark:bg-slate-800/50 p-6 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
+<div class="flex justify-between items-start mb-4">
+<span class="text-slate-500 dark:text-slate-400 text-sm font-medium">Active Streak</span>
+<span class="p-2 bg-red-500/10 text-red-500 rounded-lg">
+<span class="material-symbols-outlined text-sm">local_fire_department</span>
+</span>
+</div>
+<div class="flex items-end justify-between">
+<div>
+<p class="text-2xl font-bold text-slate-900 dark:text-white">12 Days</p>
+<p class="text-xs text-green-500 font-semibold flex items-center gap-1 mt-1">
+<span class="material-symbols-outlined text-xs">emoji_events</span> Personal record!
+                                </p>
+</div>
+</div>
+</div>
+</div>
+<!-- Charts Section -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+<!-- Bar Chart: Weekly Completion -->
+<div class="bg-white dark:bg-slate-800/50 p-8 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
+<div class="flex justify-between items-center mb-6">
+<div>
+<h4 class="text-lg font-bold text-slate-900 dark:text-white">Weekly Task Completion</h4>
+<p class="text-slate-500 dark:text-slate-400 text-sm">Last 7 days activity</p>
+</div>
+<div class="text-right">
+<p class="text-3xl font-black text-primary">842</p>
+<p class="text-xs text-green-500 font-bold uppercase tracking-wider">+15% performance</p>
+</div>
+</div>
+<div class="flex items-end justify-between h-48 gap-4 px-2">
+<div class="flex flex-col items-center flex-1 gap-3 h-full justify-end">
+<div class="w-full bg-primary/20 rounded-t-lg relative group" style="height: 60%;">
+<div class="absolute -top-10 left-1/2 -translate-x-1/2 bg-slate-900 text-white text-[10px] py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity">112</div>
+<div class="absolute inset-0 bg-primary rounded-t-lg opacity-80"></div>
+</div>
+<span class="text-xs font-bold text-slate-400">MON</span>
+</div>
+<div class="flex flex-col items-center flex-1 gap-3 h-full justify-end">
+<div class="w-full bg-primary/20 rounded-t-lg relative group" style="height: 75%;">
+<div class="absolute -top-10 left-1/2 -translate-x-1/2 bg-slate-900 text-white text-[10px] py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity">140</div>
+<div class="absolute inset-0 bg-primary rounded-t-lg opacity-80"></div>
+</div>
+<span class="text-xs font-bold text-slate-400">TUE</span>
+</div>
+<div class="flex flex-col items-center flex-1 gap-3 h-full justify-end">
+<div class="w-full bg-primary/20 rounded-t-lg relative group" style="height: 50%;">
+<div class="absolute -top-10 left-1/2 -translate-x-1/2 bg-slate-900 text-white text-[10px] py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity">95</div>
+<div class="absolute inset-0 bg-primary rounded-t-lg opacity-80"></div>
+</div>
+<span class="text-xs font-bold text-slate-400">WED</span>
+</div>
+<div class="flex flex-col items-center flex-1 gap-3 h-full justify-end">
+<div class="w-full bg-primary/20 rounded-t-lg relative group" style="height: 40%;">
+<div class="absolute -top-10 left-1/2 -translate-x-1/2 bg-slate-900 text-white text-[10px] py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity">78</div>
+<div class="absolute inset-0 bg-primary rounded-t-lg opacity-80"></div>
+</div>
+<span class="text-xs font-bold text-slate-400">THU</span>
+</div>
+<div class="flex flex-col items-center flex-1 gap-3 h-full justify-end">
+<div class="w-full bg-primary/20 rounded-t-lg relative group" style="height: 90%;">
+<div class="absolute -top-10 left-1/2 -translate-x-1/2 bg-slate-900 text-white text-[10px] py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity">168</div>
+<div class="absolute inset-0 bg-primary rounded-t-lg opacity-80"></div>
+</div>
+<span class="text-xs font-bold text-slate-400">FRI</span>
+</div>
+<div class="flex flex-col items-center flex-1 gap-3 h-full justify-end">
+<div class="w-full bg-primary/20 rounded-t-lg relative group" style="height: 25%;">
+<div class="absolute -top-10 left-1/2 -translate-x-1/2 bg-slate-900 text-white text-[10px] py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity">45</div>
+<div class="absolute inset-0 bg-primary rounded-t-lg opacity-80"></div>
+</div>
+<span class="text-xs font-bold text-slate-400">SAT</span>
+</div>
+<div class="flex flex-col items-center flex-1 gap-3 h-full justify-end">
+<div class="w-full bg-primary/20 rounded-t-lg relative group" style="height: 55%;">
+<div class="absolute -top-10 left-1/2 -translate-x-1/2 bg-slate-900 text-white text-[10px] py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity">104</div>
+<div class="absolute inset-0 bg-primary rounded-t-lg opacity-80"></div>
+</div>
+<span class="text-xs font-bold text-slate-400">SUN</span>
+</div>
+</div>
+</div>
+<!-- Line Chart: Productivity Trend -->
+<div class="bg-white dark:bg-slate-800/50 p-8 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
+<div class="flex justify-between items-center mb-6">
+<div>
+<h4 class="text-lg font-bold text-slate-900 dark:text-white">Productivity Trend</h4>
+<p class="text-slate-500 dark:text-slate-400 text-sm">Avg. performance over 30 days</p>
+</div>
+<div class="text-right">
+<p class="text-3xl font-black text-slate-900 dark:text-white">92%</p>
+<p class="text-xs text-green-500 font-bold uppercase tracking-wider">+4.1% increase</p>
+</div>
+</div>
+<div class="relative h-48 w-full">
+<svg class="w-full h-full" preserveaspectratio="none" viewbox="0 0 400 100">
+<defs>
+<lineargradient id="gradient" x1="0%" x2="0%" y1="0%" y2="100%">
+<stop offset="0%" stop-color="#0d6cf2" stop-opacity="0.3"></stop>
+<stop offset="100%" stop-color="#0d6cf2" stop-opacity="0"></stop>
+</lineargradient>
+</defs>
+<path d="M0,80 Q50,20 100,50 T200,30 T300,70 T400,10 L400,100 L0,100 Z" fill="url(#gradient)"></path>
+<path d="M0,80 Q50,20 100,50 T200,30 T300,70 T400,10" fill="none" stroke="#0d6cf2" stroke-linecap="round" stroke-width="3"></path>
+<circle cx="100" cy="50" fill="#0d6cf2" r="4"></circle>
+<circle cx="200" cy="30" fill="#0d6cf2" r="4"></circle>
+<circle cx="400" cy="10" fill="#0d6cf2" r="4"></circle>
+</svg>
+</div>
+<div class="flex justify-between mt-4">
+<span class="text-xs font-bold text-slate-400">Week 1</span>
+<span class="text-xs font-bold text-slate-400">Week 2</span>
+<span class="text-xs font-bold text-slate-400">Week 3</span>
+<span class="text-xs font-bold text-slate-400">Week 4</span>
+</div>
+</div>
+</div>
+<!-- Recent History Table -->
+<div class="mt-8 bg-white dark:bg-slate-800/50 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
+<div class="p-6 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center">
+<h4 class="font-bold text-slate-900 dark:text-white">Recent Task Velocity</h4>
+<button class="text-primary text-sm font-semibold hover:underline">View All</button>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead>
+<tr class="bg-slate-50 dark:bg-slate-900/50 text-slate-500 dark:text-slate-400 text-xs uppercase font-bold tracking-wider">
+<th class="px-6 py-4">Task Category</th>
+<th class="px-6 py-4">Completion Rate</th>
+<th class="px-6 py-4">Time Spent</th>
+<th class="px-6 py-4">Status</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-slate-200 dark:divide-slate-700">
+<tr>
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<span class="w-2 h-2 rounded-full bg-blue-500"></span>
+<span class="font-medium text-slate-900 dark:text-slate-100">Development</span>
+</div>
+</td>
+<td class="px-6 py-4 text-sm">94%</td>
+<td class="px-6 py-4 text-sm text-slate-500 dark:text-slate-400">12h 30m</td>
+<td class="px-6 py-4">
+<span class="px-2 py-1 bg-green-500/10 text-green-500 text-[10px] font-bold rounded uppercase">Optimal</span>
+</td>
+</tr>
+<tr>
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<span class="w-2 h-2 rounded-full bg-purple-500"></span>
+<span class="font-medium text-slate-900 dark:text-slate-100">UI Design</span>
+</div>
+</td>
+<td class="px-6 py-4 text-sm">78%</td>
+<td class="px-6 py-4 text-sm text-slate-500 dark:text-slate-400">8h 15m</td>
+<td class="px-6 py-4">
+<span class="px-2 py-1 bg-primary/10 text-primary text-[10px] font-bold rounded uppercase">Active</span>
+</td>
+</tr>
+<tr>
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<span class="w-2 h-2 rounded-full bg-orange-500"></span>
+<span class="font-medium text-slate-900 dark:text-slate-100">Marketing</span>
+</div>
+</td>
+<td class="px-6 py-4 text-sm">62%</td>
+<td class="px-6 py-4 text-sm text-slate-500 dark:text-slate-400">4h 45m</td>
+<td class="px-6 py-4">
+<span class="px-2 py-1 bg-orange-500/10 text-orange-500 text-[10px] font-bold rounded uppercase">Warning</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>

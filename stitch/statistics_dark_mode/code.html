@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#ec5b13",
+                        "background-light": "#f8f6f6",
+                        "background-dark": "#221610",
+                    },
+                    fontFamily: {
+                        "display": ["Public Sans"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Public Sans', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .chart-gradient-primary {
+            background: linear-gradient(180deg, rgba(236, 91, 19, 0.2) 0%, rgba(236, 91, 19, 0) 100%);
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 transition-colors duration-300">
+<div class="flex h-screen overflow-hidden">
+<aside class="w-64 border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-background-dark flex flex-col">
+<div class="p-6 flex items-center gap-3">
+<div class="bg-primary rounded-lg p-1 text-white">
+<span class="material-symbols-outlined">analytics</span>
+</div>
+<h2 class="text-xl font-bold tracking-tight text-primary">SmartFlow</h2>
+</div>
+<nav class="flex-1 px-4 space-y-1 overflow-y-auto">
+<a class="flex items-center gap-3 px-3 py-2 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="text-sm font-medium leading-normal">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg" href="#">
+<span class="material-symbols-outlined">check_circle</span>
+<span class="text-sm font-medium leading-normal">Tasks</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 bg-primary/10 text-primary rounded-lg" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">insights</span>
+<span class="text-sm font-bold leading-normal">Analytics</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg" href="#">
+<span class="material-symbols-outlined">center_focus_strong</span>
+<span class="text-sm font-medium leading-normal">Focus Mode</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="text-sm font-medium leading-normal">Settings</span>
+</a>
+</nav>
+<div class="p-4 border-t border-slate-200 dark:border-slate-800">
+<div class="flex items-center gap-3 p-2 bg-slate-100 dark:bg-slate-800/50 rounded-xl">
+<div class="bg-primary/20 rounded-full h-10 w-10 flex items-center justify-center overflow-hidden">
+<img alt="Profile" data-alt="Close up portrait of a professional smiling man" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDgQJm3pk2GffZ83NmY3LHvLqP7-lmvuZV7eoI7ANALJDCLcQ4c2IBdNOtPrvM1etcYE5lJUhnwlpdS2ixxoD2JkD8pfMnb-U9B_XfigM55gq6s3TeXeJgAIBnU6rDDK7QVWRxaKhVRzmqq3bzIUUPbq2ZBUy4BdEryZMC3DdcbepqiScBrZXWkfvhKDpACtOM6w9dLzOaPa4N62nvlztcFpAdatYwAvAEwxpPSIDytJxxWLGF87BhXi0Ghq3mqKbvHHl05hzsusnw"/>
+</div>
+<div class="flex flex-col">
+<span class="text-sm font-bold truncate">Alex Rivers</span>
+<span class="text-xs text-slate-500 dark:text-slate-400">Pro Member</span>
+</div>
+</div>
+</div>
+</aside>
+<main class="flex-1 flex flex-col overflow-y-auto">
+<header class="h-16 border-b border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-background-dark/80 backdrop-blur-md sticky top-0 z-10 flex items-center justify-between px-8">
+<h1 class="text-lg font-bold">Productivity Insights</h1>
+<div class="flex items-center gap-4">
+<button class="p-2 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="bg-primary text-white px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">download</span>
+                        Export Report
+                    </button>
+</div>
+</header>
+<div class="p-8 space-y-8 max-w-7xl mx-auto w-full">
+<section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+<div class="bg-white dark:bg-slate-800 p-6 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
+<p class="text-slate-500 dark:text-slate-400 text-sm font-medium">Tasks Completed</p>
+<div class="flex items-end justify-between mt-2">
+<h3 class="text-3xl font-black">128</h3>
+<span class="text-emerald-500 text-sm font-bold flex items-center mb-1">
+<span class="material-symbols-outlined text-xs">arrow_upward</span> 12%
+                            </span>
+</div>
+<div class="w-full bg-slate-100 dark:bg-slate-700 h-1 mt-4 rounded-full overflow-hidden">
+<div class="bg-primary h-full w-3/4"></div>
+</div>
+</div>
+<div class="bg-white dark:bg-slate-800 p-6 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
+<p class="text-slate-500 dark:text-slate-400 text-sm font-medium">Avg. Focus Score</p>
+<div class="flex items-end justify-between mt-2">
+<h3 class="text-3xl font-black">84<span class="text-sm text-slate-400 font-normal">/100</span></h3>
+<span class="text-rose-500 text-sm font-bold flex items-center mb-1">
+<span class="material-symbols-outlined text-xs">arrow_downward</span> 2%
+                            </span>
+</div>
+<div class="flex gap-1 mt-4">
+<div class="h-2 flex-1 rounded-full bg-primary/20"></div>
+<div class="h-2 flex-1 rounded-full bg-primary/40"></div>
+<div class="h-2 flex-1 rounded-full bg-primary/60"></div>
+<div class="h-2 flex-1 rounded-full bg-primary"></div>
+<div class="h-2 flex-1 rounded-full bg-slate-100 dark:bg-slate-700"></div>
+</div>
+</div>
+<div class="bg-white dark:bg-slate-800 p-6 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
+<p class="text-slate-500 dark:text-slate-400 text-sm font-medium">Peak Energy Time</p>
+<div class="flex items-end justify-between mt-2">
+<h3 class="text-3xl font-black">10:45</h3>
+<span class="text-primary text-xs font-bold bg-primary/10 px-2 py-1 rounded">AM</span>
+</div>
+<p class="text-slate-400 text-xs mt-4 italic">High focus potential detected</p>
+</div>
+<div class="bg-white dark:bg-slate-800 p-6 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
+<p class="text-slate-500 dark:text-slate-400 text-sm font-medium">Active Streaks</p>
+<div class="flex items-end justify-between mt-2">
+<h3 class="text-3xl font-black">14 <span class="text-sm text-slate-400 font-normal">days</span></h3>
+<span class="material-symbols-outlined text-primary">local_fire_department</span>
+</div>
+<div class="flex justify-between mt-4">
+<div class="size-2 rounded-full bg-primary"></div>
+<div class="size-2 rounded-full bg-primary"></div>
+<div class="size-2 rounded-full bg-primary"></div>
+<div class="size-2 rounded-full bg-primary"></div>
+<div class="size-2 rounded-full bg-primary"></div>
+<div class="size-2 rounded-full bg-slate-100 dark:bg-slate-700"></div>
+<div class="size-2 rounded-full bg-slate-100 dark:bg-slate-700"></div>
+</div>
+</div>
+</section>
+<section class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+<div class="bg-white dark:bg-slate-800 p-6 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col">
+<div class="flex items-center justify-between mb-8">
+<div>
+<h4 class="font-bold text-lg">Weekly Task Distribution</h4>
+<p class="text-slate-500 dark:text-slate-400 text-sm">Tasks completed per category</p>
+</div>
+<select class="text-sm border-none bg-slate-100 dark:bg-slate-700 rounded-lg px-3 py-2 outline-none">
+<option>Last 7 Days</option>
+<option>Last Month</option>
+</select>
+</div>
+<div class="flex-1 grid grid-cols-7 gap-4 items-end min-h-[240px] px-2">
+<div class="flex flex-col items-center gap-2 group">
+<div class="w-full bg-primary/20 dark:bg-primary/10 rounded-t-lg transition-all duration-300 group-hover:bg-primary" style="height: 60%"></div>
+<span class="text-xs font-bold text-slate-400">Mon</span>
+</div>
+<div class="flex flex-col items-center gap-2 group">
+<div class="w-full bg-primary/20 dark:bg-primary/10 rounded-t-lg transition-all duration-300 group-hover:bg-primary" style="height: 45%"></div>
+<span class="text-xs font-bold text-slate-400">Tue</span>
+</div>
+<div class="flex flex-col items-center gap-2 group">
+<div class="w-full bg-primary/20 dark:bg-primary/10 rounded-t-lg transition-all duration-300 group-hover:bg-primary" style="height: 85%"></div>
+<span class="text-xs font-bold text-slate-400">Wed</span>
+</div>
+<div class="flex flex-col items-center gap-2 group">
+<div class="w-full bg-primary rounded-t-lg shadow-lg shadow-primary/20" style="height: 100%"></div>
+<span class="text-xs font-bold text-primary">Thu</span>
+</div>
+<div class="flex flex-col items-center gap-2 group">
+<div class="w-full bg-primary/20 dark:bg-primary/10 rounded-t-lg transition-all duration-300 group-hover:bg-primary" style="height: 70%"></div>
+<span class="text-xs font-bold text-slate-400">Fri</span>
+</div>
+<div class="flex flex-col items-center gap-2 group">
+<div class="w-full bg-primary/20 dark:bg-primary/10 rounded-t-lg transition-all duration-300 group-hover:bg-primary" style="height: 30%"></div>
+<span class="text-xs font-bold text-slate-400">Sat</span>
+</div>
+<div class="flex flex-col items-center gap-2 group">
+<div class="w-full bg-primary/20 dark:bg-primary/10 rounded-t-lg transition-all duration-300 group-hover:bg-primary" style="height: 25%"></div>
+<span class="text-xs font-bold text-slate-400">Sun</span>
+</div>
+</div>
+</div>
+<div class="bg-white dark:bg-slate-800 p-6 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
+<div class="mb-8">
+<h4 class="font-bold text-lg">Focus Score Trend</h4>
+<p class="text-slate-500 dark:text-slate-400 text-sm">Real-time attention span analysis</p>
+</div>
+<div class="relative h-[240px] w-full">
+<svg class="w-full h-full" preserveaspectratio="none" viewbox="0 0 100 100">
+<path class="opacity-30" d="M 0 80 Q 15 75, 25 50 T 50 40 T 75 20 T 100 30 V 100 H 0 Z" fill="url(#focusGradient)"></path>
+<path d="M 0 80 Q 15 75, 25 50 T 50 40 T 75 20 T 100 30" fill="none" stroke="#ec5b13" stroke-linecap="round" stroke-width="2"></path>
+<defs>
+<lineargradient id="focusGradient" x1="0%" x2="0%" y1="0%" y2="100%">
+<stop offset="0%" style="stop-color:#ec5b13;stop-opacity:1"></stop>
+<stop offset="100%" style="stop-color:#ec5b13;stop-opacity:0"></stop>
+</lineargradient>
+</defs>
+<circle cx="75" cy="20" fill="#ec5b13" r="2"></circle>
+<rect class="opacity-90" fill="#ec5b13" height="10" rx="2" width="20" x="70" y="5"></rect>
+<text fill="#ffffff" font-size="6" font-weight="bold" x="73" y="13">92%</text>
+</svg>
+<div class="flex justify-between mt-4 border-t border-slate-100 dark:border-slate-700 pt-2">
+<span class="text-xs font-bold text-slate-400">8 AM</span>
+<span class="text-xs font-bold text-slate-400">12 PM</span>
+<span class="text-xs font-bold text-slate-400">4 PM</span>
+<span class="text-xs font-bold text-slate-400">8 PM</span>
+</div>
+</div>
+</div>
+</section>
+<section class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+<div class="bg-white dark:bg-slate-800 p-6 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col">
+<h4 class="font-bold text-lg mb-6">Task Categories</h4>
+<div class="flex-1 flex flex-col justify-center gap-6">
+<div class="flex items-center gap-8">
+<div class="relative size-32">
+<svg class="w-full h-full transform -rotate-90">
+<circle class="text-slate-100 dark:text-slate-700" cx="64" cy="64" fill="transparent" r="50" stroke="currentColor" stroke-width="12"></circle>
+<circle class="text-primary" cx="64" cy="64" fill="transparent" r="50" stroke="currentColor" stroke-dasharray="314.159" stroke-dashoffset="100" stroke-width="12"></circle>
+<circle class="text-primary/40" cx="64" cy="64" fill="transparent" r="50" stroke="currentColor" stroke-dasharray="314.159" stroke-dashoffset="240" stroke-width="12"></circle>
+</svg>
+<div class="absolute inset-0 flex flex-col items-center justify-center">
+<span class="text-2xl font-black">128</span>
+<span class="text-[10px] text-slate-400 uppercase font-bold tracking-widest">Total</span>
+</div>
+</div>
+<div class="space-y-3">
+<div class="flex items-center gap-2">
+<div class="size-3 rounded-full bg-primary"></div>
+<span class="text-sm font-medium">Work</span>
+<span class="text-sm font-bold ml-auto text-slate-400 dark:text-slate-300">65%</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="size-3 rounded-full bg-primary/40"></div>
+<span class="text-sm font-medium">Personal</span>
+<span class="text-sm font-bold ml-auto text-slate-400 dark:text-slate-300">25%</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="size-3 rounded-full bg-slate-200 dark:bg-slate-600"></div>
+<span class="text-sm font-medium">Others</span>
+<span class="text-sm font-bold ml-auto text-slate-400 dark:text-slate-300">10%</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="lg:col-span-2 bg-white dark:bg-slate-800 p-6 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
+<h4 class="font-bold text-lg mb-6">Energy vs. Productivity Matrix</h4>
+<div class="space-y-6">
+<div class="grid grid-cols-4 gap-4">
+<div class="col-span-1 py-1">
+<span class="text-sm font-bold text-slate-500">Morning</span>
+<p class="text-xs text-slate-400 italic">Deep Work Phase</p>
+</div>
+<div class="col-span-3">
+<div class="flex items-center gap-4">
+<div class="flex-1 h-8 rounded-lg bg-primary relative overflow-hidden flex items-center px-3">
+<span class="text-xs text-white font-bold z-10">Energy: 92%</span>
+<div class="absolute right-0 top-0 bottom-0 w-12 bg-white/20 -skew-x-12"></div>
+</div>
+<div class="flex-1 h-8 rounded-lg border-2 border-primary/20 bg-primary/5 flex items-center px-3">
+<span class="text-xs text-primary font-bold">Output: High</span>
+</div>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-4 gap-4">
+<div class="col-span-1 py-1">
+<span class="text-sm font-bold text-slate-500">Afternoon</span>
+<p class="text-xs text-slate-400 italic">Slump Period</p>
+</div>
+<div class="col-span-3">
+<div class="flex items-center gap-4">
+<div class="flex-1 h-8 rounded-lg bg-primary/40 relative overflow-hidden flex items-center px-3">
+<span class="text-xs text-slate-900 dark:text-white font-bold z-10">Energy: 45%</span>
+</div>
+<div class="flex-1 h-8 rounded-lg border-2 border-primary/10 bg-primary/5 flex items-center px-3"><span class="text-xs text-slate-300 font-bold">Output: Med</span></div>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-4 gap-4">
+<div class="col-span-1 py-1">
+<span class="text-sm font-bold text-slate-500">Evening</span>
+<p class="text-xs text-slate-400 italic">Review Phase</p>
+</div>
+<div class="col-span-3">
+<div class="flex items-center gap-4">
+<div class="flex-1 h-8 rounded-lg bg-primary/70 relative overflow-hidden flex items-center px-3">
+<span class="text-xs text-white font-bold z-10">Energy: 75%</span>
+</div>
+<div class="flex-1 h-8 rounded-lg border-2 border-primary/15 bg-primary/5 flex items-center px-3">
+<span class="text-xs text-primary/70 font-bold">Output: Stable</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="mt-8 p-4 bg-primary/5 rounded-xl border border-primary/10 flex gap-4 items-start">
+<span class="material-symbols-outlined text-primary">lightbulb</span>
+<p class="text-sm text-slate-600 dark:text-slate-300">
+<strong>Smart Suggestion:</strong> Your productivity peaks 2 hours after your first coffee. Schedule your most complex tasks for <span class="text-primary font-bold">10:30 AM - 12:30 PM</span>.
+                            </p>
+</div>
+</div>
+</section>
+</div>
+</main>
+</div>
+</body></html>

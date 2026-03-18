@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Smart To-Do Settings</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#0d6cf2",
+                        "background-light": "#f5f7f8",
+                        "background-dark": "#101722",
+                    },
+                    fontFamily: {
+                        "display": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-fill {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 font-display">
+<div class="relative flex min-h-screen w-full flex-col bg-background-light dark:bg-background-dark overflow-x-hidden pb-20">
+<!-- Header -->
+<div class="flex items-center bg-background-light dark:bg-background-dark p-4 pb-2 justify-between sticky top-0 z-10 border-b border-slate-200 dark:border-slate-800">
+<div class="text-slate-900 dark:text-slate-100 flex size-10 shrink-0 items-center justify-center cursor-pointer">
+<span class="material-symbols-outlined text-2xl">arrow_back</span>
+</div>
+<h2 class="text-slate-900 dark:text-slate-100 text-lg font-bold leading-tight tracking-tight flex-1 ml-2">Settings</h2>
+<div class="text-slate-900 dark:text-slate-100 flex size-10 shrink-0 items-center justify-center">
+<span class="material-symbols-outlined text-2xl">search</span>
+</div>
+</div>
+<!-- Scrollable Content -->
+<div class="flex flex-col gap-1">
+<!-- Account Section -->
+<h3 class="text-primary text-sm font-bold uppercase tracking-wider px-4 pb-2 pt-6">Account</h3>
+<div class="flex items-center gap-4 bg-white dark:bg-slate-900/50 px-4 py-3 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+<div class="flex items-center gap-4 flex-1">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full h-12 w-12 border-2 border-primary/20" data-alt="User profile picture with a smiling face" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuC1HcVqRwSFyTI6-GEze2Dv2LyAwCvtsQhu29-1lSx7bP7ChH4XuEgqJek3nUIDUDNl7kQdqXAfh6CUt7KIGJImSiDHas89KbIHh10D-k5XkFhf_2vTK0mmur_07PCiEGXnvnxzQIGUVynF_2ZJndD1O28A-WnPEYsnMOtqDgUoKWzoprOpFcKGXsAt9OkjS1eVSQz5WvHiVpKm0EAAGKZhVG7Kv2aw3oG3ruAngfO4bGdNCa_D0J9495G7kO26IYC3vkXM7JDxcAg");'></div>
+<div class="flex flex-col">
+<p class="text-slate-900 dark:text-slate-100 text-base font-semibold leading-tight">Alex Harrison</p>
+<p class="text-slate-500 dark:text-slate-400 text-xs">alex.h@smarttodo.com</p>
+</div>
+</div>
+<div class="shrink-0">
+<span class="material-symbols-outlined text-slate-400">chevron_right</span>
+</div>
+</div>
+<div class="flex items-center gap-4 bg-white dark:bg-slate-900/50 px-4 py-3 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+<div class="flex items-center gap-4 flex-1">
+<div class="text-primary flex items-center justify-center rounded-lg bg-primary/10 shrink-0 size-10">
+<span class="material-symbols-outlined material-symbols-fill">workspace_premium</span>
+</div>
+<p class="text-slate-900 dark:text-slate-100 text-base font-medium">Subscription</p>
+</div>
+<div class="shrink-0">
+<span class="inline-flex items-center rounded-full bg-primary/20 px-2.5 py-0.5 text-xs font-medium text-primary">Pro Plan</span>
+</div>
+</div>
+<!-- Preferences Section -->
+<h3 class="text-primary text-sm font-bold uppercase tracking-wider px-4 pb-2 pt-6">Preferences</h3>
+<div class="flex items-center gap-4 bg-white dark:bg-slate-900/50 px-4 py-3 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+<div class="flex items-center gap-4 flex-1">
+<div class="text-slate-600 dark:text-slate-400 flex items-center justify-center rounded-lg bg-slate-100 dark:bg-slate-800 shrink-0 size-10">
+<span class="material-symbols-outlined">notifications</span>
+</div>
+<p class="text-slate-900 dark:text-slate-100 text-base font-medium">Notifications</p>
+</div>
+<div class="shrink-0">
+<div class="relative inline-flex h-6 w-11 items-center rounded-full bg-primary">
+<span class="inline-block h-4 w-4 translate-x-6 transform rounded-full bg-white transition"></span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-4 bg-white dark:bg-slate-900/50 px-4 py-3 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+<div class="flex items-center gap-4 flex-1">
+<div class="text-slate-600 dark:text-slate-400 flex items-center justify-center rounded-lg bg-slate-100 dark:bg-slate-800 shrink-0 size-10">
+<span class="material-symbols-outlined">dark_mode</span>
+</div>
+<p class="text-slate-900 dark:text-slate-100 text-base font-medium">Dark Mode</p>
+</div>
+<div class="shrink-0">
+<p class="text-slate-500 dark:text-slate-400 text-sm">On</p>
+</div>
+</div>
+<div class="flex items-center gap-4 bg-white dark:bg-slate-900/50 px-4 py-3 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors border-b border-slate-200 dark:border-slate-800">
+<div class="flex items-center gap-4 flex-1">
+<div class="text-slate-600 dark:text-slate-400 flex items-center justify-center rounded-lg bg-slate-100 dark:bg-slate-800 shrink-0 size-10">
+<span class="material-symbols-outlined">language</span>
+</div>
+<p class="text-slate-900 dark:text-slate-100 text-base font-medium">Language</p>
+</div>
+<div class="shrink-0 flex items-center gap-1">
+<p class="text-slate-500 dark:text-slate-400 text-sm">English (US)</p>
+<span class="material-symbols-outlined text-slate-400">chevron_right</span>
+</div>
+</div>
+<!-- Support Section -->
+<h3 class="text-primary text-sm font-bold uppercase tracking-wider px-4 pb-2 pt-6">Support &amp; About</h3>
+<div class="flex items-center gap-4 bg-white dark:bg-slate-900/50 px-4 py-3 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+<div class="flex items-center gap-4 flex-1">
+<div class="text-slate-600 dark:text-slate-400 flex items-center justify-center rounded-lg bg-slate-100 dark:bg-slate-800 shrink-0 size-10">
+<span class="material-symbols-outlined">help</span>
+</div>
+<p class="text-slate-900 dark:text-slate-100 text-base font-medium">Help Center</p>
+</div>
+<span class="material-symbols-outlined text-slate-400">open_in_new</span>
+</div>
+<div class="flex items-center gap-4 bg-white dark:bg-slate-900/50 px-4 py-3 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+<div class="flex items-center gap-4 flex-1">
+<div class="text-slate-600 dark:text-slate-400 flex items-center justify-center rounded-lg bg-slate-100 dark:bg-slate-800 shrink-0 size-10">
+<span class="material-symbols-outlined">security</span>
+</div>
+<p class="text-slate-900 dark:text-slate-100 text-base font-medium">Privacy Policy</p>
+</div>
+<span class="material-symbols-outlined text-slate-400">chevron_right</span>
+</div>
+<div class="px-4 py-8 flex flex-col items-center gap-4">
+<button class="w-full py-3 px-4 rounded-xl border border-red-500/50 text-red-500 font-semibold hover:bg-red-500/10 transition-colors flex items-center justify-center gap-2">
+<span class="material-symbols-outlined">logout</span>
+                    Log Out
+                </button>
+<p class="text-slate-500 dark:text-slate-500 text-xs">Smart To-Do Version 2.4.1 (Build 892)</p>
+</div>
+</div>
+<!-- Bottom Navigation Bar -->
+<div class="fixed bottom-0 left-0 right-0 flex gap-2 border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 pb-4 pt-2 shadow-lg">
+<a class="flex flex-1 flex-col items-center justify-end gap-1 text-slate-500 dark:text-slate-400" href="#">
+<div class="flex h-8 items-center justify-center">
+<span class="material-symbols-outlined">check_box</span>
+</div>
+<p class="text-xs font-medium leading-normal">Tasks</p>
+</a>
+<a class="flex flex-1 flex-col items-center justify-end gap-1 text-slate-500 dark:text-slate-400" href="#">
+<div class="flex h-8 items-center justify-center">
+<span class="material-symbols-outlined">calendar_today</span>
+</div>
+<p class="text-xs font-medium leading-normal">Calendar</p>
+</a>
+<a class="flex flex-1 flex-col items-center justify-end gap-1 text-slate-500 dark:text-slate-400" href="#">
+<div class="flex h-8 items-center justify-center">
+<span class="material-symbols-outlined">timer</span>
+</div>
+<p class="text-xs font-medium leading-normal">Focus</p>
+</a>
+<a class="flex flex-1 flex-col items-center justify-end gap-1 text-primary" href="#">
+<div class="flex h-8 items-center justify-center">
+<span class="material-symbols-outlined material-symbols-fill">settings</span>
+</div>
+<p class="text-xs font-medium leading-normal">Settings</p>
+</a>
+</div>
+</div>
+</body></html>

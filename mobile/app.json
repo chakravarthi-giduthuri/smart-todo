@@ -1,0 +1,65 @@
+{
+  "expo": {
+    "name": "Smart To-Do",
+    "slug": "smart-todo",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "scheme": "smarttodo",
+    "userInterfaceStyle": "automatic",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#080810"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.smarttodo.app",
+      "infoPlist": {
+        "NSUserNotificationUsageDescription": "Smart To-Do sends reminders for your upcoming tasks.",
+        "NSCameraUsageDescription": "Used for profile photo.",
+        "NSMicrophoneUsageDescription": "Smart To-Do uses the microphone to let you add tasks by voice.",
+        "NSSpeechRecognitionUsageDescription": "Smart To-Do transcribes your voice to create tasks."
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#ec5b13"
+      },
+      "package": "com.smarttodo.app",
+      "permissions": [
+        "RECEIVE_BOOT_COMPLETED",
+        "VIBRATE",
+        "POST_NOTIFICATIONS",
+        "RECORD_AUDIO"
+      ]
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-font",
+      [
+        "expo-notifications",
+        {
+          "color": "#ec5b13",
+          "sounds": [],
+          "mode": "production"
+        }
+      ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "your-project-id-here"
+      }
+    },
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}

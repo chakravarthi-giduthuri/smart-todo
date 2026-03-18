@@ -195,7 +195,7 @@ export default function DashboardScreen() {
                   yAxisTextStyle={{ color: mutedStrong, fontSize: 9 }}
                   xAxisLabelTextStyle={{ color: mutedStrong, fontSize: 11 }}
                   noOfSections={noOfSections} stepValue={stepValue} maxValue={chartMax} barBorderRadius={5}
-                  height={110} width={SW - 80}
+                  height={110} width={SW - 120}
                   isAnimated animationDuration={800}
                   backgroundColor="transparent"
                 />
@@ -219,7 +219,7 @@ export default function DashboardScreen() {
                   yAxisTextStyle={{ color: mutedStrong, fontSize: 9 }}
                   xAxisLabelTextStyle={{ color: mutedStrong, fontSize: 11 }}
                   noOfSections={noOfSections} stepValue={stepValue} maxValue={chartMax}
-                  height={110} width={SW - 80}
+                  height={110} width={SW - 120}
                   thickness={2}
                   isAnimated animationDuration={800}
                   backgroundColor="transparent"

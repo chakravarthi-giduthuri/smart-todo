@@ -1,0 +1,9 @@
+{
+  "name": "smart-todo",
+  "private": true,
+  "workspaces": [
+    "packages/shared",
+    "frontend",
+    "mobile"
+  ]
+}

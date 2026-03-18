@@ -1,0 +1,664 @@
+╔══════════════════════════════════════════════════════════════╗
+║   Smart To-Do — 10 User × 10 Day Live Database Simulation   ║
+╚══════════════════════════════════════════════════════════════╝
+Backend: https://smart-todo-production-24df.up.railway.app
+Supabase: https://vwlkpqivxzsbfxojybqm.supabase.co
+Started: 2026-03-18T00:24:17.407Z
+
+
+────────────────────────────────────────────────────────────
+👤 Priya Nair (Software Engineer)
+  [Day 1] Signup...
+  ✓ Signup OK — userId: 5e79bc71-66f4-4e21-8680-06b9e57dd397
+  [Day 1] Login...
+  ✓ Login OK
+  [Day 1] Energy check-in (high)...
+  ✓ Energy POST → 201
+  ✓ Energy GET → 200 level=high
+  [Day 1] Creating 7 tasks via AI...
+    ✓ "Deploy payment gateway timeout hotfix" → Work P1 2026-03-17 08:30:00
+    ✓ "Code review: Arjun's auth module PR" → Work P2 2026-03-17 19:00:00
+    ✓ "Weekly sync with product team" → Work P3 2026-03-23 11:00:00
+    ✓ "Run 5K at the park" → Health P3 2026-03-17 18:45:00
+    ✓ "Renew gym membership" → Personal P2 2026-03-17 18:30:00
+    ✓ "Deep dive into GraphQL subscriptions" → Study P3 2026-03-18 09:00:00
+    ✓ "Call mom" → Personal P2 2026-03-17 18:45:00
+  ✓ List tasks → 7 tasks
+  ✗ Calendar → 404
+  ✓ Dashboard → 200
+  ✓ Preferences → 200
+  ✓ Template create → 201
+  ✓ Template list → 200 (undefined templates)
+  [Day 2]
+    ✓ Complete "Deploy payment gateway timeout hotfix" → 200
+    ✓ Complete "Code review: Arjun's auth module PR" → 200
+  [Day 3]
+    ✓ Complete "Code review: Arjun's auth module PR" → 200
+    ✓ Complete "Weekly sync with product team" → 200
+    ✓ Override priority → 200
+  [Day 4]
+    ✓ Complete "Weekly sync with product team" → 200
+    ✓ Complete "Run 5K at the park" → 200
+    ✓ Reschedule → 200 new=2026-03-18 07:00:00 reason="Health category tasks are best scheduled in the early morning window (06:00–08:00), and tomorrow morning at 7:00 AM provides an ideal time for a 5K run within the medium priority 2-3 day window."
+  [Day 5]
+    ✓ Complete "Run 5K at the park" → 200
+    ✓ Complete "Renew gym membership" → 200
+    ✓ Snooze → 200
+  [Day 6]
+    ✓ Complete "Renew gym membership" → 200
+    ✓ Complete "Deep dive into GraphQL subscriptions" → 200
+    ✗ Subtasks added → 500
+  [Day 7]
+    ✓ Complete "Deep dive into GraphQL subscriptions" → 200
+    ✓ Complete "Call mom" → 200
+    ✓ Note added → 200
+  [Day 8]
+    ✓ Complete "Call mom" → 200
+    ✓ New task Day 8 → "Weekly review and planning"
+  [Day 9]
+    ✓ Complete "Weekly review and planning" → 200
+    ✓ Nag set → 200
+    ✓ Daily plan → 200
+  [Day 10]
+    ✓ Dashboard Day 10 → 200
+    ✓ Archive → 200
+    ✗ Focus session → 404
+  ✅ Priya Nair done — 8 tasks, 0 bugs, overall 9/10
+
+────────────────────────────────────────────────────────────
+👤 Marcus Webb (Cardiothoracic Surgeon)
+  [Day 1] Signup...
+  ✓ Signup OK — userId: 1039f2bd-fc17-4b6d-9583-9704b2c0815e
+  [Day 1] Login...
+  ✓ Login OK
+  [Day 1] Energy check-in (medium)...
+  ✓ Energy POST → 201
+  ✓ Energy GET → 200 level=medium
+  [Day 1] Creating 7 tasks via AI...
+    ✓ "Pre-op rounds" → Work P1 2026-03-18 06:30:00
+    ✓ "Review patient charts: Kowalczyk & Henderson" → Work P2 2026-03-17 19:00:00
+    ✓ "Call insurance company about billing dispute #44721" → Work P2 2026-03-17 10:00:00
+    ✓ "Prepare journal club presentation" → Work P2 2026-03-20 09:00:00
+    ✓ "Order replacement surgical gloves (medium)" → Errand P3 2026-03-17 19:00:00
+    ✓ "Gym session - back health workout" → Health P3 2026-03-18 06:30:00
+    ✓ "Pick up prescription from CVS" → Errand P2 2026-03-17 18:45:00
+  ✓ List tasks → 7 tasks
+  ✗ Calendar → 404
+  ✓ Dashboard → 200
+  ✓ Preferences → 200
+  ✓ Template create → 201
+  ✓ Template list → 200 (undefined templates)
+  [Day 2]
+    ✓ Complete "Pre-op rounds" → 200
+    ✓ Complete "Review patient charts: Kowalczyk & Henderson" → 200
+  [Day 3]
+    ✓ Complete "Review patient charts: Kowalczyk & Henderson" → 200
+    ✓ Complete "Call insurance company about billing dispute #44721" → 200
+    ✓ Override priority → 200
+  [Day 4]
+    ✓ Complete "Call insurance company about billing dispute #44721" → 200
+    ✓ Complete "Prepare journal club presentation" → 200
+    ✓ Reschedule → 200 new=2026-03-18 09:00:00 reason="High priority work task requiring deep focus is best scheduled for tomorrow morning at 09:00, which aligns with optimal deep work hours and provides adequate preparation time before the original Friday deadline."
+  [Day 5]
+    ✓ Complete "Prepare journal club presentation" → 200
+    ✓ Complete "Order replacement surgical gloves (medium)" → 200
+    ✓ Snooze → 200
+  [Day 6]
+    ✓ Complete "Order replacement surgical gloves (medium)" → 200
+    ✓ Complete "Gym session - back health workout" → 200
+    ✗ Subtasks added → 500
+  [Day 7]
+    ✓ Complete "Gym session - back health workout" → 200
+    ✓ Complete "Pick up prescription from CVS" → 200
+    ✓ Note added → 200
+  [Day 8]
+    ✓ Complete "Pick up prescription from CVS" → 200
+    ✓ New task Day 8 → "Weekly review and planning for Marcus"
+  [Day 9]
+    ✓ Complete "Weekly review and planning for Marcus" → 200
+    ✓ Nag set → 200
+    ✓ Daily plan → 200
+  [Day 10]
+    ✓ Dashboard Day 10 → 200
+    ✓ Archive → 200
+    ✗ Focus session → 404
+  ✅ Marcus Webb done — 8 tasks, 0 bugs, overall 9/10
+
+────────────────────────────────────────────────────────────
+👤 Leila Ahmadi (Freelance Graphic Designer)
+  [Day 1] Signup...
+  ✓ Signup OK — userId: 894b5996-bca8-4061-ba29-51b49edb833b
+  [Day 1] Login...
+  ✓ Login OK
+  [Day 1] Energy check-in (low)...
+  ✓ Energy POST → 201
+  ✓ Energy GET → 200 level=low
+  [Day 1] Creating 6 tasks via AI...
+    ✓ "Finish logo concepts for TechBridge client" → Work P1 2026-03-17 18:30:00
+    ✓ "Reply to Abdullah's brand guide feedback" → Work P2 2026-03-17 17:00:00
+    ✓ "Pick up art supplies from art store" → Errand P3 2026-03-17 18:30:00
+    ✓ "Meditate for 15 minutes" → Health P3 2026-03-17 06:00:00
+    ✓ "Review Sona Media contract before signing" → Work P2 2026-03-17 19:00:00
+    ✓ "Update portfolio website with latest case studies" → Work P3 2026-03-18 09:00:00
+  ✓ List tasks → 6 tasks
+  ✗ Calendar → 404
+  ✓ Dashboard → 200
+  ✓ Preferences → 200
+  ✓ Template create → 201
+  ✓ Template list → 200 (undefined templates)
+  [Day 2]
+    ✓ Complete "Finish logo concepts for TechBridge client" → 200
+    ✓ Complete "Reply to Abdullah's brand guide feedback" → 200
+  [Day 3]
+    ✓ Complete "Reply to Abdullah's brand guide feedback" → 200
+    ✓ Complete "Pick up art supplies from art store" → 200
+    ✓ Override priority → 200
+  [Day 4]
+    ✓ Complete "Pick up art supplies from art store" → 200
+    ✓ Complete "Meditate for 15 minutes" → 200
+    ✓ Reschedule → 200 new=2026-03-18 06:30:00 reason="Health/meditation tasks are best scheduled early morning (06:00-08:00), and tomorrow morning provides the next available slot within the 2-3 day window for medium priority tasks."
+  [Day 5]
+    ✓ Complete "Meditate for 15 minutes" → 200
+    ✓ Complete "Review Sona Media contract before signing" → 200
+    ✓ Snooze → 200
+  [Day 6]
+    ✓ Complete "Review Sona Media contract before signing" → 200
+    ✓ Complete "Update portfolio website with latest case studies" → 200
+    ✗ Subtasks added → 500
+  [Day 7]
+    ✓ Complete "Update portfolio website with latest case studies" → 200
+    ✓ Note added → 200
+  [Day 8]
+    ✓ New task Day 8 → "Weekly review and planning"
+  [Day 9]
+    ✓ Nag set → 200
+    ✓ Daily plan → 200
+  [Day 10]
+    ✓ Dashboard Day 10 → 200
+    ✓ Archive → 200
+    ✗ Focus session → 404
+  ✅ Leila Ahmadi done — 7 tasks, 0 bugs, overall 9/10
+
+────────────────────────────────────────────────────────────
+👤 James Okonkwo (High School Science Teacher)
+  [Day 1] Signup...
+  ✓ Signup OK — userId: 6c6571f6-0b38-4796-81cd-d479732d2291
+  [Day 1] Login...
+  ✓ Login OK
+  [Day 1] Energy check-in (medium)...
+  ✓ Energy POST → 201
+  ✓ Energy GET → 200 level=medium
+  [Day 1] Creating 6 tasks via AI...
+    ✓ "Grade Period 3 Chemistry Lab Reports" → Work P2 2026-03-19 14:00:00
+    ✓ "Email parents about field trip permission slips" → Work P2 2026-03-17 17:30:00
+    ✓ "Prepare Friday physics lecture slides" → Work P2 2026-03-19 09:00:00
+    ✓ "Order safety goggles for lab" → Work P2 2026-03-17 17:30:00
+    ✓ "Schedule dentist appointment" → Health P2 2026-03-18 09:00:00
+    ✓ "Soccer coaching session with Daniel" → Personal P3 2026-03-17 16:30:00
+  ✓ List tasks → 6 tasks
+  ✗ Calendar → 404
+  ✓ Dashboard → 200
+  ✓ Preferences → 200
+  ✓ Template create → 201
+  ✓ Template list → 200 (undefined templates)
+  [Day 2]
+    ✓ Complete "Grade Period 3 Chemistry Lab Reports" → 200
+    ✓ Complete "Email parents about field trip permission slips" → 200
+  [Day 3]
+    ✓ Complete "Email parents about field trip permission slips" → 200
+    ✓ Complete "Prepare Friday physics lecture slides" → 200
+    ✓ Override priority → 200
+  [Day 4]
+    ✓ Complete "Prepare Friday physics lecture slides" → 200
+    ✓ Complete "Order safety goggles for lab" → 200
+    ✓ Reschedule → 200 new=2026-03-18 10:00:00 reason="High priority work task with @phone context is best scheduled for tomorrow morning during the optimal work calls window of 10:00-12:00."
+  [Day 5]
+    ✓ Complete "Order safety goggles for lab" → 200
+    ✓ Complete "Schedule dentist appointment" → 200
+    ✓ Snooze → 200
+  [Day 6]
+    ✓ Complete "Schedule dentist appointment" → 200
+    ✓ Complete "Soccer coaching session with Daniel" → 200
+    ✗ Subtasks added → 500
+  [Day 7]
+    ✓ Complete "Soccer coaching session with Daniel" → 200
+    ✓ Note added → 200
+  [Day 8]
+    ✓ New task Day 8 → "Weekly review and planning for James"
+  [Day 9]
+    ✓ Nag set → 200
+    ✓ Daily plan → 200
+  [Day 10]
+    ✓ Dashboard Day 10 → 200
+    ✓ Archive → 200
+    ✗ Focus session → 404
+  ✅ James Okonkwo done — 7 tasks, 0 bugs, overall 9/10
+
+────────────────────────────────────────────────────────────
+👤 Sofia Reyes (PhD Candidate Neuroscience)
+  [Day 1] Signup...
+  ✓ Signup OK — userId: 099f542b-767f-49a5-9423-db0a48b1d960
+  [Day 1] Login...
+  ✓ Login OK
+  [Day 1] Energy check-in (high)...
+  ✓ Energy POST → 201
+  ✓ Energy GET → 200 level=high
+  [Day 1] Creating 7 tasks via AI...
+    ✓ "Run statistical analysis on experiment 3 in R" → Work P2 2026-03-18 09:00:00
+    ✓ "Write introduction section of dissertation chapter 2" → Study P2 2026-03-18 09:00:00
+    ✓ "Lab meeting presentation practice" → Work P2 2026-03-17 19:00:00
+    ✓ "Reply to Prof Martinez about timeline extension" → Work P2 2026-03-17 19:00:00
+    ✓ "Read Liu 2024 paper on default mode network" → Study P3 2026-03-18 09:00:00
+    ✓ "Go for a walk to clear head" → Health P3 2026-03-17 19:00:00
+    ✓ "Weekly meal prep" → Personal P3 2026-03-22 14:00:00
+  ✓ List tasks → 7 tasks
+  ✗ Calendar → 404
+  ✓ Dashboard → 200
+  ✓ Preferences → 200
+  ✓ Template create → 201
+  ✓ Template list → 200 (undefined templates)
+  [Day 2]
+    ✓ Complete "Run statistical analysis on experiment 3 in R" → 200
+    ✓ Complete "Write introduction section of dissertation chapter 2" → 200
+  [Day 3]
+    ✓ Complete "Write introduction section of dissertation chapter 2" → 200
+    ✓ Complete "Lab meeting presentation practice" → 200
+    ✓ Override priority → 200
+  [Day 4]
+    ✓ Complete "Lab meeting presentation practice" → 200
+    ✓ Complete "Reply to Prof Martinez about timeline extension" → 200
+    ✓ Reschedule → 200 new=2026-03-18 10:00:00 reason="High priority phone call to professor scheduled for tomorrow morning during optimal work meeting hours (10:00-12:00) to ensure timely communication about the timeline extension."
+  [Day 5]
+    ✓ Complete "Reply to Prof Martinez about timeline extension" → 200
+    ✓ Complete "Read Liu 2024 paper on default mode network" → 200
+    ✓ Snooze → 200
+  [Day 6]
+    ✓ Complete "Read Liu 2024 paper on default mode network" → 200
+    ✓ Complete "Go for a walk to clear head" → 200
+    ✗ Subtasks added → 500
+  [Day 7]
+    ✓ Complete "Go for a walk to clear head" → 200
+    ✓ Complete "Weekly meal prep" → 200
+    ✓ Note added → 200
+  [Day 8]
+    ✓ Complete "Weekly meal prep" → 200
+    ✓ New task Day 8 → "Weekly review and planning for Sofia"
+  [Day 9]
+    ✓ Complete "Weekly review and planning for Sofia" → 200
+    ✓ Nag set → 200
+    ✓ Daily plan → 200
+  [Day 10]
+    ✓ Dashboard Day 10 → 200
+    ✓ Archive → 200
+    ✗ Focus session → 404
+  ✅ Sofia Reyes done — 8 tasks, 0 bugs, overall 9/10
+
+────────────────────────────────────────────────────────────
+👤 David Park (Real Estate Agent)
+  [Day 1] Signup...
+  ✓ Signup OK — userId: 01dc63df-d6f2-4e96-aabe-3d0773f7bf2c
+  [Day 1] Login...
+  ✓ Login OK
+  [Day 1] Energy check-in (medium)...
+  ✓ Energy POST → 201
+  ✓ Energy GET → 200 level=medium
+  [Day 1] Creating 6 tasks via AI...
+    ✓ "Show property at 47 Maple Street to Johnsons" → Work P2 2026-03-17 14:00:00
+    ✓ "Follow up with mortgage broker re: pre-approval" → Work P2 2026-03-18 10:00:00
+    ✓ "Submit offer paperwork for 112 Oak Ave" → Work P1 2026-03-17 16:30:00
+    ✓ "Lunch meeting with Rebecca Chen" → Work P2 2026-03-17 12:00:00
+    ✓ "File deed transfer docs at county office" → Errand P1 2026-03-17 15:30:00
+    ✓ "Update CRM notes for yesterday's showings" → Work P2 2026-03-17 18:45:00
+  ✓ List tasks → 6 tasks
+  ✗ Calendar → 404
+  ✓ Dashboard → 200
+  ✓ Preferences → 200
+  ✓ Template create → 201
+  ✓ Template list → 200 (undefined templates)
+  [Day 2]
+    ✓ Complete "Show property at 47 Maple Street to Johnsons" → 200
+    ✓ Complete "Follow up with mortgage broker re: pre-approval" → 200
+  [Day 3]
+    ✓ Complete "Follow up with mortgage broker re: pre-approval" → 200
+    ✓ Complete "Submit offer paperwork for 112 Oak Ave" → 200
+    ✓ Override priority → 200
+  [Day 4]
+    ✓ Complete "Submit offer paperwork for 112 Oak Ave" → 200
+    ✓ Complete "Lunch meeting with Rebecca Chen" → 200
+    ✓ Reschedule → 200 new=2026-03-18 12:00:00 reason="Rescheduled to tomorrow at noon, which is the optimal time slot for work meetings and allows sufficient time for high-priority tasks to be completed promptly."
+  [Day 5]
+    ✓ Complete "Lunch meeting with Rebecca Chen" → 200
+    ✓ Complete "File deed transfer docs at county office" → 200
+    ✓ Snooze → 200
+  [Day 6]
+    ✓ Complete "File deed transfer docs at county office" → 200
+    ✓ Complete "Update CRM notes for yesterday's showings" → 200
+    ✗ Subtasks added → 500
+  [Day 7]
+    ✓ Complete "Update CRM notes for yesterday's showings" → 200
+    ✓ Note added → 200
+  [Day 8]
+    ✓ New task Day 8 → "Weekly review and planning for David"
+  [Day 9]
+    ✓ Nag set → 200
+    ✓ Daily plan → 200
+  [Day 10]
+    ✓ Dashboard Day 10 → 200
+    ✓ Archive → 200
+    ✗ Focus session → 404
+  ✅ David Park done — 7 tasks, 0 bugs, overall 9/10
+
+────────────────────────────────────────────────────────────
+👤 Nadia Kowalski (Yoga Instructor)
+  [Day 1] Signup...
+  ✓ Signup OK — userId: 91504f74-93ad-4afe-b899-c6781a052c4b
+  [Day 1] Login...
+  ✓ Login OK
+  [Day 1] Energy check-in (high)...
+  ✓ Energy POST → 201
+  ✓ Energy GET → 200 level=high
+  [Day 1] Creating 6 tasks via AI...
+    ✓ "Morning yoga class at studio" → Health P3 2026-03-18 07:00:00
+    ✓ "Film Instagram reel: breathing exercises tutorial" → Work P3 2026-03-18 10:00:00
+    ✓ "Message clients about next month bookings" → Work P2 2026-03-18 10:00:00
+    ✓ "Buy protein powder and vitamins" → Errand P3 2026-03-17 18:45:00
+    ✓ "Read meditation chapter in mindfulness book" → Personal P3 2026-03-18 07:00:00
+    ✓ "Meal prep clean eating bowls for week" → Personal P3 2026-03-21 10:00:00
+  ✓ List tasks → 6 tasks
+  ✗ Calendar → 404
+  ✓ Dashboard → 200
+  ✓ Preferences → 200
+  ✓ Template create → 201
+  ✓ Template list → 200 (undefined templates)
+  [Day 2]
+    ✓ Complete "Morning yoga class at studio" → 200
+    ✓ Complete "Film Instagram reel: breathing exercises tutorial" → 200
+  [Day 3]
+    ✓ Complete "Film Instagram reel: breathing exercises tutorial" → 200
+    ✓ Complete "Message clients about next month bookings" → 200
+    ✓ Override priority → 200
+  [Day 4]
+    ✓ Complete "Message clients about next month bookings" → 200
+    ✓ Complete "Buy protein powder and vitamins" → 200
+    ✓ Reschedule → 200 new=2026-03-18 18:00:00 reason="Medium priority errand scheduled for tomorrow evening during the optimal shopping window (18:00-19:30) to allow adequate time for the 45-minute task."
+  [Day 5]
+    ✓ Complete "Buy protein powder and vitamins" → 200
+    ✓ Complete "Read meditation chapter in mindfulness book" → 200
+    ✓ Snooze → 200
+  [Day 6]
+    ✓ Complete "Read meditation chapter in mindfulness book" → 200
+    ✓ Complete "Meal prep clean eating bowls for week" → 200
+    ✗ Subtasks added → 500
+  [Day 7]
+    ✓ Complete "Meal prep clean eating bowls for week" → 200
+    ✓ Note added → 200
+  [Day 8]
+    ✓ New task Day 8 → "Weekly review and planning"
+  [Day 9]
+    ✓ Nag set → 200
+    ✓ Daily plan → 200
+  [Day 10]
+    ✓ Dashboard Day 10 → 200
+    ✓ Archive → 200
+    ✗ Focus session → 404
+  ✅ Nadia Kowalski done — 7 tasks, 0 bugs, overall 9/10
+
+────────────────────────────────────────────────────────────
+👤 Raymond Chen (CPA Accountant)
+  [Day 1] Signup...
+  ✓ Signup OK — userId: 979ff1a8-5862-44a1-976e-67e66ac765a9
+  [Day 1] Login...
+  ✓ Login OK
+  [Day 1] Energy check-in (high)...
+  ✓ Energy POST → 201
+  ✓ Energy GET → 200 level=high
+  [Day 1] Creating 6 tasks via AI...
+    ✓ "Review amended 1040 for client Henderson" → Work P1 2026-03-17 19:00:00
+    ✓ "Call IRS practitioner hotline re: penalty abatement" → Work P2 2026-03-18 10:00:00
+    ✓ "File quarterly payroll taxes for 4 clients" → Work P1 2026-03-17 19:00:00
+    ✓ "Prepare depreciation schedules for Martinez LLC" → Work P2 2026-03-18 09:00:00
+    ✓ "Send March invoice to consulting client" → Work P2 2026-03-17 17:00:00
+    ✓ "Book CPE webinar for ethics credits" → Work P2 2026-03-18 10:00:00
+  ✓ List tasks → 6 tasks
+  ✗ Calendar → 404
+  ✓ Dashboard → 200
+  ✓ Preferences → 200
+  ✓ Template create → 201
+  ✓ Template list → 200 (undefined templates)
+  [Day 2]
+    ✓ Complete "Review amended 1040 for client Henderson" → 200
+    ✓ Complete "Call IRS practitioner hotline re: penalty abatement" → 200
+  [Day 3]
+    ✓ Complete "Call IRS practitioner hotline re: penalty abatement" → 200
+    ✓ Complete "File quarterly payroll taxes for 4 clients" → 200
+    ✓ Override priority → 200
+  [Day 4]
+    ✓ Complete "File quarterly payroll taxes for 4 clients" → 200
+    ✓ Complete "Prepare depreciation schedules for Martinez LLC" → 200
+    ✓ Reschedule → 200 new=2026-03-18 09:00:00 reason="High priority work task fits the original 09:00 slot tomorrow morning, which aligns with deep work guidelines and allows completion before noon."
+  [Day 5]
+    ✓ Complete "Prepare depreciation schedules for Martinez LLC" → 200
+    ✓ Complete "Send March invoice to consulting client" → 200
+    ✓ Snooze → 200
+  [Day 6]
+    ✓ Complete "Send March invoice to consulting client" → 200
+    ✓ Complete "Book CPE webinar for ethics credits" → 200
+    ✗ Subtasks added → 500
+  [Day 7]
+    ✓ Complete "Book CPE webinar for ethics credits" → 200
+    ✓ Note added → 200
+  [Day 8]
+    ✓ New task Day 8 → "Weekly review and planning for Raymond"
+  [Day 9]
+    ✓ Nag set → 200
+    ✓ Daily plan → 200
+  [Day 10]
+    ✓ Dashboard Day 10 → 200
+    ✓ Archive → 200
+    ✗ Focus session → 404
+  ✅ Raymond Chen done — 7 tasks, 0 bugs, overall 9/10
+
+────────────────────────────────────────────────────────────
+👤 Amara Diallo (Social Media Manager)
+  [Day 1] Signup...
+  ✓ Signup OK — userId: b6e9335b-8edb-4303-baa9-ce71776c740d
+  [Day 1] Login...
+  ✓ Login OK
+  [Day 1] Energy check-in (medium)...
+  ✓ Energy POST → 201
+  ✓ Energy GET → 200 level=medium
+  [Day 1] Creating 6 tasks via AI...
+    ✓ "Post IG carousel for spring collection launch" → Work P1 2026-03-17 12:00:00
+    ✓ "Reply to 47 DMs from viral post" → Work P2 2026-03-17 19:00:00
+    ✓ "Brief creative team on Q2 campaign direction" → Work P2 2026-03-17 15:00:00
+    ✓ "Check last week reels analytics" → Work P3 2026-03-17 17:00:00
+    ✓ "Set up TikTok ad campaign ($500 budget)" → Work P2 2026-03-18 10:00:00
+    ✓ "Draft monthly social media report" → Work P2 2026-03-18 09:00:00
+  ✓ List tasks → 6 tasks
+  ✗ Calendar → 404
+  ✓ Dashboard → 200
+  ✓ Preferences → 200
+  ✓ Template create → 201
+  ✓ Template list → 200 (undefined templates)
+  [Day 2]
+    ✓ Complete "Post IG carousel for spring collection launch" → 200
+    ✓ Complete "Reply to 47 DMs from viral post" → 200
+  [Day 3]
+    ✓ Complete "Reply to 47 DMs from viral post" → 200
+    ✓ Complete "Brief creative team on Q2 campaign direction" → 200
+    ✓ Override priority → 200
+  [Day 4]
+    ✓ Complete "Brief creative team on Q2 campaign direction" → 200
+    ✓ Complete "Check last week reels analytics" → 200
+    ✓ Reschedule → 200 new=2026-03-18 10:00:00 reason="Medium priority task rescheduled to tomorrow morning during optimal work call/meeting hours (10:00-12:00) for reviewing analytics."
+  [Day 5]
+    ✓ Complete "Check last week reels analytics" → 200
+    ✓ Complete "Set up TikTok ad campaign ($500 budget)" → 200
+    ✓ Snooze → 200
+  [Day 6]
+    ✓ Complete "Set up TikTok ad campaign ($500 budget)" → 200
+    ✓ Complete "Draft monthly social media report" → 200
+    ✗ Subtasks added → 500
+  [Day 7]
+    ✓ Complete "Draft monthly social media report" → 200
+    ✓ Note added → 200
+  [Day 8]
+    ✓ New task Day 8 → "Weekly review and planning for Amara"
+  [Day 9]
+    ✓ Nag set → 200
+    ✓ Daily plan → 200
+  [Day 10]
+    ✓ Dashboard Day 10 → 200
+    ✓ Archive → 200
+    ✗ Focus session → 404
+  ✅ Amara Diallo done — 7 tasks, 0 bugs, overall 9/10
+
+────────────────────────────────────────────────────────────
+👤 Tom Harrington (Retired Military Officer)
+  [Day 1] Signup...
+  ✓ Signup OK — userId: 15a6fb1a-5132-4c53-8917-5c3601c095e0
+  [Day 1] Login...
+  ✓ Login OK
+  [Day 1] Energy check-in (high)...
+  ✓ Energy POST → 201
+  ✓ Energy GET → 200 level=high
+  [Day 1] Creating 7 tasks via AI...
+    ✓ "Prepare consulting proposal for Henderson Industries" → Work P2 2026-03-19 09:00:00
+    ✓ "30-minute walk" → Health P3 2026-03-17 06:30:00
+    ✓ "Call VA about disability rating appeal" → Work P2 2026-03-18 10:00:00
+    ✓ "Update LinkedIn with consulting project" → Work P3 2026-03-18 11:00:00
+    ✓ "Mail property tax check" → Errand P2 2026-03-20 10:00:00
+    ✓ "Read 30 pages of leadership book" → Study P3 2026-03-17 19:00:00
+    ✓ "Make anniversary dinner reservation at Rosemary" → Personal P2 2026-03-17 19:00:00
+  ✓ List tasks → 7 tasks
+  ✗ Calendar → 404
+  ✓ Dashboard → 200
+  ✓ Preferences → 200
+  ✓ Template create → 201
+  ✓ Template list → 200 (undefined templates)
+  [Day 2]
+    ✓ Complete "Prepare consulting proposal for Henderson Industries" → 200
+    ✓ Complete "30-minute walk" → 200
+  [Day 3]
+    ✓ Complete "30-minute walk" → 200
+    ✓ Complete "Call VA about disability rating appeal" → 200
+    ✓ Override priority → 200
+  [Day 4]
+    ✓ Complete "Call VA about disability rating appeal" → 200
+    ✓ Complete "Update LinkedIn with consulting project" → 200
+    ✓ Reschedule → 200 new=2026-03-19 10:00:00 reason="Medium priority task scheduled within the 2-3 day window on Thursday morning, aligning with work call/admin time guidelines and allowing completion before the original Wednesday deadline becomes relevant."
+  [Day 5]
+    ✓ Complete "Update LinkedIn with consulting project" → 200
+    ✓ Complete "Mail property tax check" → 200
+    ✓ Snooze → 200
+  [Day 6]
+    ✓ Complete "Mail property tax check" → 200
+    ✓ Complete "Read 30 pages of leadership book" → 200
+    ✗ Subtasks added → 500
+  [Day 7]
+    ✓ Complete "Read 30 pages of leadership book" → 200
+    ✓ Complete "Make anniversary dinner reservation at Rosemary" → 200
+    ✓ Note added → 200
+  [Day 8]
+    ✓ Complete "Make anniversary dinner reservation at Rosemary" → 200
+    ✓ New task Day 8 → "Weekly review and planning for Tom"
+  [Day 9]
+    ✓ Complete "Weekly review and planning for Tom" → 200
+    ✓ Nag set → 200
+    ✓ Daily plan → 200
+  [Day 10]
+    ✓ Dashboard Day 10 → 200
+    ✓ Archive → 200
+    ✗ Focus session → 404
+  ✅ Tom Harrington done — 8 tasks, 0 bugs, overall 9/10
+
+
+
+╔══════════════════════════════════════════════════════════════╗
+║                    SIMULATION REPORT                        ║
+╚══════════════════════════════════════════════════════════════╝
+
+Completed: 2026-03-18T00:32:51.959Z
+Users simulated: 10
+Signups OK: 10 / Failed: 0
+Tasks created: 64 / Failed: 0
+Total bugs found: 0
+Average overall rating: 9.0/10
+
+──── USER RESULTS ────────────────────────────────────────────
+Priya Nair           Software Engineer            ✓signup ✓login  tasks=8  bugs=0  rating=9/10
+Marcus Webb          Cardiothoracic Surgeon       ✓signup ✓login  tasks=8  bugs=0  rating=9/10
+Leila Ahmadi         Freelance Graphic Designer   ✓signup ✓login  tasks=7  bugs=0  rating=9/10
+James Okonkwo        High School Science Teacher  ✓signup ✓login  tasks=7  bugs=0  rating=9/10
+Sofia Reyes          PhD Candidate Neuroscience   ✓signup ✓login  tasks=8  bugs=0  rating=9/10
+David Park           Real Estate Agent            ✓signup ✓login  tasks=7  bugs=0  rating=9/10
+Nadia Kowalski       Yoga Instructor              ✓signup ✓login  tasks=7  bugs=0  rating=9/10
+Raymond Chen         CPA Accountant               ✓signup ✓login  tasks=7  bugs=0  rating=9/10
+Amara Diallo         Social Media Manager         ✓signup ✓login  tasks=7  bugs=0  rating=9/10
+Tom Harrington       Retired Military Officer     ✓signup ✓login  tasks=8  bugs=0  rating=9/10
+
+──── AI TASK SAMPLES (first 3 per user) ──────────────────────
+
+Priya Nair (Software Engineer):
+  "Deploy hotfix for payment gateway timeout bug befo" → "Deploy payment gateway timeout hotfix" Work P1 2026-03-17 08:30:00
+  "Code review for Arjun's PR on auth module today" → "Code review: Arjun's auth module PR" Work P2 2026-03-17 19:00:00
+  "Weekly sync with product team at 11 AM" → "Weekly sync with product team" Work P3 2026-03-23 11:00:00
+
+Marcus Webb (Cardiothoracic Surgeon):
+  "Pre-op rounds tomorrow morning at 6:30 AM" → "Pre-op rounds" Work P1 2026-03-18 06:30:00
+  "Review patient charts for Mrs. Kowalczyk and Mr. H" → "Review patient charts: Kowalczyk & Henderson" Work P2 2026-03-17 19:00:00
+  "Call insurance company about billing dispute case " → "Call insurance company about billing dispute #44721" Work P2 2026-03-17 10:00:00
+
+Leila Ahmadi (Freelance Graphic Designer):
+  "Finish logo concepts for TechBridge client send 3 " → "Finish logo concepts for TechBridge client" Work P1 2026-03-17 18:30:00
+  "Reply to Abdullah feedback email on brand guide" → "Reply to Abdullah's brand guide feedback" Work P2 2026-03-17 17:00:00
+  "Pick up art supplies from art store canvas acrylic" → "Pick up art supplies from art store" Errand P3 2026-03-17 18:30:00
+
+James Okonkwo (High School Science Teacher):
+  "Grade period 3 chemistry lab reports by Thursday" → "Grade Period 3 Chemistry Lab Reports" Work P2 2026-03-19 14:00:00
+  "Email parents about field trip permission slips ne" → "Email parents about field trip permission slips" Work P2 2026-03-17 17:30:00
+  "Prepare Friday physics lecture slides on Newton's " → "Prepare Friday physics lecture slides" Work P2 2026-03-19 09:00:00
+
+Sofia Reyes (PhD Candidate Neuroscience):
+  "Run statistical analysis on experiment 3 dataset i" → "Run statistical analysis on experiment 3 in R" Work P2 2026-03-18 09:00:00
+  "Write introduction section of dissertation chapter" → "Write introduction section of dissertation chapter 2" Study P2 2026-03-18 09:00:00
+  "Lab meeting presentation practice 15 min run-throu" → "Lab meeting presentation practice" Work P2 2026-03-17 19:00:00
+
+David Park (Real Estate Agent):
+  "Show property at 47 Maple Street at 2 PM today to " → "Show property at 47 Maple Street to Johnsons" Work P2 2026-03-17 14:00:00
+  "Follow up with mortgage broker about pre-approval " → "Follow up with mortgage broker re: pre-approval" Work P2 2026-03-18 10:00:00
+  "Submit offer paperwork for 112 Oak Ave before 5 PM" → "Submit offer paperwork for 112 Oak Ave" Work P1 2026-03-17 16:30:00
+
+Nadia Kowalski (Yoga Instructor):
+  "Morning yoga class at the studio at 7 AM" → "Morning yoga class at studio" Health P3 2026-03-18 07:00:00
+  "Film new Instagram reel for breathing exercises tu" → "Film Instagram reel: breathing exercises tutorial" Work P3 2026-03-18 10:00:00
+  "Message clients who have not booked next month yet" → "Message clients about next month bookings" Work P2 2026-03-18 10:00:00
+
+Raymond Chen (CPA Accountant):
+  "Review amended 1040 for client Henderson deadline " → "Review amended 1040 for client Henderson" Work P1 2026-03-17 19:00:00
+  "Call IRS practitioner hotline about penalty abatem" → "Call IRS practitioner hotline re: penalty abatement" Work P2 2026-03-18 10:00:00
+  "File quarterly payroll taxes for four business cli" → "File quarterly payroll taxes for 4 clients" Work P1 2026-03-17 19:00:00
+
+Amara Diallo (Social Media Manager):
+  "Post IG carousel for spring collection launch need" → "Post IG carousel for spring collection launch" Work P1 2026-03-17 12:00:00
+  "Reply to 47 DMs from yesterday viral post" → "Reply to 47 DMs from viral post" Work P2 2026-03-17 19:00:00
+  "Brief the creative team on Q2 campaign direction a" → "Brief creative team on Q2 campaign direction" Work P2 2026-03-17 15:00:00
+
+Tom Harrington (Retired Military Officer):
+  "Prepare consulting proposal for Henderson Industri" → "Prepare consulting proposal for Henderson Industries" Work P2 2026-03-19 09:00:00
+  "30 minute walk this morning" → "30-minute walk" Health P3 2026-03-17 06:30:00
+  "Call VA about disability rating appeal allow 2 hou" → "Call VA about disability rating appeal" Work P2 2026-03-18 10:00:00
+
+──── DAY-BY-DAY HIGHLIGHTS ───────────────────────────────────
+Priya Nair — Reschedule: ✓ new=2026-03-18 reason="Health category tasks are best scheduled in the early morning window (06:00–08:00), and tomorrow morning at 7:00 AM provides an ideal time for a 5K run within the medium priority 2-3 day window."
+Marcus Webb — Reschedule: ✓ new=2026-03-18 reason="High priority work task requiring deep focus is best scheduled for tomorrow morning at 09:00, which aligns with optimal deep work hours and provides adequate preparation time before the original Friday deadline."
+Leila Ahmadi — Reschedule: ✓ new=2026-03-18 reason="Health/meditation tasks are best scheduled early morning (06:00-08:00), and tomorrow morning provides the next available slot within the 2-3 day window for medium priority tasks."
+James Okonkwo — Reschedule: ✓ new=2026-03-18 reason="High priority work task with @phone context is best scheduled for tomorrow morning during the optimal work calls window of 10:00-12:00."
+Sofia Reyes — Reschedule: ✓ new=2026-03-18 reason="High priority phone call to professor scheduled for tomorrow morning during optimal work meeting hours (10:00-12:00) to ensure timely communication about the timeline extension."
+David Park — Reschedule: ✓ new=2026-03-18 reason="Rescheduled to tomorrow at noon, which is the optimal time slot for work meetings and allows sufficient time for high-priority tasks to be completed promptly."
+Nadia Kowalski — Reschedule: ✓ new=2026-03-18 reason="Medium priority errand scheduled for tomorrow evening during the optimal shopping window (18:00-19:30) to allow adequate time for the 45-minute task."
+Raymond Chen — Reschedule: ✓ new=2026-03-18 reason="High priority work task fits the original 09:00 slot tomorrow morning, which aligns with deep work guidelines and allows completion before noon."
+Amara Diallo — Reschedule: ✓ new=2026-03-18 reason="Medium priority task rescheduled to tomorrow morning during optimal work call/meeting hours (10:00-12:00) for reviewing analytics."
+Tom Harrington — Reschedule: ✓ new=2026-03-19 reason="Medium priority task scheduled within the 2-3 day window on Thursday morning, aligning with work call/admin time guidelines and allowing completion before the original Wednesday deadline becomes relevant."
+
+✅ Full JSON report saved to: /Users/chakravarthigiduthuri/Desktop/Project C/Project TODO/scripts/simulation/simulation_report.json
