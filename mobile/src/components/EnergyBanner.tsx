@@ -15,7 +15,7 @@ const LEVELS: { level: EnergyLevel; label: string; emoji: string; sub: string }[
 
 export function EnergyBanner() {
   const { isDark } = useTheme();
-  const { data } = useTodayEnergy();
+  const { data, isLoading } = useTodayEnergy();
   const submit = useSubmitEnergy();
   const [collapsed, setCollapsed] = useState(false);
 
@@ -53,7 +53,14 @@ export function EnergyBanner() {
           />
         </ReAnimated.View>
       </Pressable>
-      {!collapsed && (
+      {!collapsed && isLoading && (
+        <View style={styles.row}>
+          {[0, 1, 2].map((i) => (
+            <View key={i} style={[styles.btn, styles.skeleton, { backgroundColor: isDark ? '#27272a' : '#e5e7eb' }]} />
+          ))}
+        </View>
+      )}
+      {!collapsed && !isLoading && (
         <View style={styles.row}>
           {LEVELS.map(({ level, label, emoji, sub }) => {
             const isSelected = selected === level;
@@ -137,5 +144,10 @@ const styles = StyleSheet.create({
   },
   sub: {
     fontSize: 10,
+  },
+  skeleton: {
+    height: 72,
+    borderRadius: 10,
+    opacity: 0.6,
   },
 });

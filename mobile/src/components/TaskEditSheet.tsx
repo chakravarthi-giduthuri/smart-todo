@@ -147,6 +147,7 @@ export function TaskEditSheet({ task, onClose }: Props) {
   const [isSharing, setIsSharing]           = useState(false);
   const [showFocusTimer, setShowFocusTimer] = useState(false);
   const [rescheduleReason, setRescheduleReason] = useState<string | null>(null);
+  const [rescheduleSuccess, setRescheduleSuccess] = useState(false);
 
   // BUG-003 / BUG-010: native picker visibility
   const [showDatePicker, setShowDatePicker] = useState(false);
@@ -289,7 +290,7 @@ export function TaskEditSheet({ task, onClose }: Props) {
             <DateTimePicker
               value={parseDateString(date)}
               mode="date"
-              display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+              display={Platform.OS === 'ios' ? 'spinner' : isDark ? 'spinner' : 'default'}
               onChange={handleDateChange}
             />
           )}
@@ -318,7 +319,7 @@ export function TaskEditSheet({ task, onClose }: Props) {
               value={parseTimeString(time)}
               mode="time"
               is24Hour={true}
-              display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+              display={Platform.OS === 'ios' ? 'spinner' : isDark ? 'spinner' : 'default'}
               onChange={handleTimeChange}
             />
           )}
@@ -378,7 +379,8 @@ export function TaskEditSheet({ task, onClose }: Props) {
                     ],
                   );
                 } else {
-                  onClose();
+                  setRescheduleSuccess(true);
+                  setTimeout(() => { setRescheduleSuccess(false); onClose(); }, 1500);
                 }
                 if (result.reason) {
                   setRescheduleReason(result.reason);
@@ -393,6 +395,12 @@ export function TaskEditSheet({ task, onClose }: Props) {
             {reschedule.isPending ? <ActivityIndicator size="small" color="#ec5b13" /> : <Ionicons name="refresh-outline" size={18} color="#ec5b13" />}
             <Text style={[s.actionTxt, { color: textC }]}>{reschedule.isPending ? 'Rescheduling...' : 'Reschedule with AI'}</Text>
           </Pressable>
+          {rescheduleSuccess ? (
+            <View style={[s.rescheduleSuccessRow, { borderColor: '#10B981' }]}>
+              <Ionicons name="checkmark-circle-outline" size={14} color="#10B981" />
+              <Text style={[s.rescheduleSuccessTxt, { color: '#10B981' }]}>Rescheduled!</Text>
+            </View>
+          ) : null}
           {rescheduleReason ? (
             <View style={[s.reasonRow, { borderColor: border }]}>
               <Ionicons name="information-circle-outline" size={14} color="#ec5b13" />
@@ -461,6 +469,8 @@ const s = StyleSheet.create({
   nagOn:      { backgroundColor: '#ec5b13', borderColor: '#ec5b13' },
   reasonRow:  { flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 8, paddingHorizontal: 12, paddingVertical: 8, borderRadius: 8, borderWidth: 1 },
   reasonTxt:  { fontSize: 12, flex: 1 },
+  rescheduleSuccessRow: { flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 8, paddingHorizontal: 12, paddingVertical: 8, borderRadius: 8, borderWidth: 1, backgroundColor: 'rgba(16,185,129,0.08)' },
+  rescheduleSuccessTxt: { fontSize: 12, fontWeight: '600', flex: 1 },
   // ── Native date/time picker trigger rows (BUG-003 / BUG-010) ───────────────
   pickerRow:  {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',

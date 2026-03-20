@@ -11,6 +11,7 @@ import {
   ActivityIndicator,
   StyleSheet,
   SafeAreaView,
+  StatusBar,
 } from 'react-native';
 import ReAnimated, {
   useSharedValue,
@@ -420,8 +421,8 @@ export default function HomeScreen() {
       {/* ── FAB or expanded chat panel ── */}
       {chatOpen ? (
         <KeyboardAvoidingView
-          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-          keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
+          behavior="padding"
+          keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : (StatusBar.currentHeight ?? 24)}
         >
           <ReAnimated.View style={chatPanelStyle}>
             <View style={[styles.chatPanel, { backgroundColor: inputBg, borderTopColor: borderColor }]}>
