@@ -5,5 +5,9 @@
     "packages/shared",
     "frontend",
     "mobile"
-  ]
+  ],
+  "devDependencies": {
+    "@types/react": "^18.2.48",
+    "@types/react-dom": "^18.2.18"
+  }
 }
