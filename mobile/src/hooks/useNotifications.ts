@@ -75,8 +75,9 @@ export async function registerForPushNotifications() {
   console.log('[push] token:', token.data);
 
   // Register with backend — let errors propagate so callers know if this fails
-  await apiFetch('/api/push/register-expo', {
+  const result = await apiFetch('/api/push/register-expo', {
     method: 'POST',
     body: JSON.stringify({ expo_token: token.data }),
   });
+  return result;
 }

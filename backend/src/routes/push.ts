@@ -5,6 +5,7 @@ import {
   setExpoToken, getExpoToken, clearExpoToken, sendExpoPush,
   loadExpoTokenFromDb, loadSubscriptionFromDb,
 } from '../services/reminders';
+import { supabase } from '../db/supabase';
 import webPush from 'web-push';
 
 const router = Router();
@@ -33,13 +34,26 @@ router.delete('/subscribe', async (req, res) => {
 router.post('/register-expo', async (req, res) => {
   const { expo_token } = req.body as { expo_token?: string };
   if (!expo_token || !expo_token.startsWith('ExponentPushToken[')) {
-    res.status(400).json({ error: 'Invalid expo_token' });
+    res.status(400).json({ error: `Invalid expo_token format. Got: ${String(expo_token).slice(0, 30)}` });
     return;
   }
   try {
+    // Set in-memory immediately
     await setExpoToken(expo_token);
-    console.log('[push] expo token registered:', expo_token.slice(0, 30) + '...');
-    res.status(201).json({ ok: true });
+
+    // Also attempt DB write directly and report the outcome
+    const { error: dbError } = await supabase
+      .from('expo_push_tokens')
+      .upsert({ id: 1, token: expo_token, updated_at: new Date().toISOString() }, { onConflict: 'id' });
+
+    console.log('[push] expo token registered:', expo_token.slice(0, 30) + '...',
+      dbError ? `DB ERROR: ${dbError.message}` : 'DB write OK');
+
+    res.status(201).json({
+      ok: true,
+      dbPersisted: !dbError,
+      dbError: dbError ? `${dbError.code}: ${dbError.message}` : null,
+    });
   } catch (err) {
     res.status(500).json({ error: String(err) });
   }
@@ -54,14 +68,28 @@ router.delete('/register-expo', async (req, res) => {
   }
 });
 
-// Diagnostic endpoint — shows current server-side push state
+// Diagnostic endpoint — shows current server-side push state + DB health
 router.get('/status', async (req, res) => {
+  // Try DB read directly
+  const { data: dbRow, error: dbError } = await supabase
+    .from('expo_push_tokens')
+    .select('token, updated_at')
+    .eq('id', 1)
+    .single();
+
+  // Also reload into memory
   if (!getExpoToken()) await loadExpoTokenFromDb();
   if (!getActiveSubscription()) await loadSubscriptionFromDb();
+
   res.json({
     hasExpoToken: !!getExpoToken(),
     expoTokenPreview: getExpoToken()?.slice(0, 40) ?? null,
     hasWebSubscription: !!getActiveSubscription(),
+    db: {
+      tokenInDb: dbRow?.token ? dbRow.token.slice(0, 40) + '…' : null,
+      updatedAt: dbRow?.updated_at ?? null,
+      error: dbError ? `${dbError.code}: ${dbError.message}` : null,
+    },
   });
 });
 

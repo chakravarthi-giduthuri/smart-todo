@@ -108,9 +108,14 @@ export default function SettingsScreen() {
   async function handleRegisterToken() {
     setTokenRegisteredMsg('Registering…');
     try {
-      await registerForPushNotifications();
-      setTokenRegistered('ok');
-      setTokenRegisteredMsg('Token sent to server');
+      const result = await registerForPushNotifications() as any;
+      if (result?.dbPersisted === false) {
+        setTokenRegistered('error');
+        setTokenRegisteredMsg(`Token sent but DB failed: ${result?.dbError ?? 'unknown'}`);
+      } else {
+        setTokenRegistered('ok');
+        setTokenRegisteredMsg('Token registered + saved to DB');
+      }
     } catch (err: any) {
       setTokenRegistered('error');
       setTokenRegisteredMsg(err?.message ?? 'Registration failed');
