@@ -3,6 +3,7 @@ import { requireAuth } from '../middleware/auth';
 import {
   setActiveSubscription, getActiveSubscription, clearSubscription, runReminderJob,
   setExpoToken, getExpoToken, clearExpoToken, sendExpoPush,
+  loadExpoTokenFromDb, loadSubscriptionFromDb,
 } from '../services/reminders';
 import webPush from 'web-push';
 
@@ -55,6 +56,10 @@ router.delete('/register-expo', async (req, res) => {
 
 // Test endpoint — sends an immediate push to verify the whole chain works
 router.post('/test', async (req, res) => {
+  // Reload from DB in case the server restarted since the token was registered
+  if (!getExpoToken()) await loadExpoTokenFromDb();
+  if (!getActiveSubscription()) await loadSubscriptionFromDb();
+
   const expoToken = getExpoToken();
   const webSub = getActiveSubscription();
 
