@@ -86,10 +86,25 @@ export function HomeScreen() {
   const [showEnergy, setShowEnergy] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const bellRef = useRef<HTMLDivElement>(null);
+  const searchRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const shared = searchParams.get('text') ?? searchParams.get('title') ?? searchParams.get('url');
     if (shared) { setSharedText(shared); setSearchParams({}, { replace: true }); }
+  }, []);
+
+  // Keyboard shortcuts: / = search, N = new task (skip if already in an input/textarea)
+  useEffect(() => {
+    function handleKey(e: KeyboardEvent) {
+      const tag = (e.target as HTMLElement).tagName;
+      if (tag === 'INPUT' || tag === 'TEXTAREA') return;
+      if (e.key === '/' && !e.ctrlKey && !e.metaKey) {
+        e.preventDefault();
+        searchRef.current?.focus();
+      }
+    }
+    window.addEventListener('keydown', handleKey);
+    return () => window.removeEventListener('keydown', handleKey);
   }, []);
 
   const today = new Date().toISOString().split('T')[0];
@@ -146,9 +161,10 @@ export function HomeScreen() {
         <div className="relative flex-1 max-w-md">
           <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
           <input
+            ref={searchRef}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search tasks, insights or schedules..."
+            placeholder="Search tasks… (press /)"
             className="w-full bg-slate-100 dark:bg-slate-800 border-none rounded-lg pl-9 pr-4 py-2 text-sm text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary/40"
           />
           {searchQuery && (

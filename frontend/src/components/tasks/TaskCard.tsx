@@ -1,5 +1,5 @@
 import { memo, useState, useRef, useEffect } from 'react';
-import { Calendar, Clock, Timer, PenLine, Plus, Pencil, Trash2, Repeat2, ChevronDown, RefreshCw, Share2, Link2, StickyNote, Check, X, BellRing } from 'lucide-react';
+import { Calendar, Clock, Timer, PenLine, Plus, Pencil, Trash2, Repeat2, ChevronDown, RefreshCw, Share2, Link2, StickyNote, Check, X, BellRing, Sparkles } from 'lucide-react';
 import type { Task, Priority, Category } from '../../types/task';
 import { CompletionToggle } from './CompletionToggle';
 import { OverrideDrawer, type OverrideField } from './OverrideDrawer';
@@ -46,6 +46,7 @@ export const TaskCard = memo(function TaskCard({ task, delay = 0 }: Props) {
   const [rescheduled, setRescheduled] = useState(false);
   const [showNagPicker, setShowNagPicker] = useState(false);
   const [showFocusTimer, setShowFocusTimer] = useState(false);
+  const [showReasoning, setShowReasoning] = useState(false);
   const { mutate: setNag } = useSetNag();
 
   const NAG_OPTIONS: { label: string; value: number | null }[] = [
@@ -230,6 +231,19 @@ export const TaskCard = memo(function TaskCard({ task, delay = 0 }: Props) {
                       <span>subtasks</span>
                     </button>
                   )}
+                  {task.ai_reasoning && (
+                    <button
+                      onClick={() => setShowReasoning((v) => !v)}
+                      className={`flex items-center gap-1 text-[11px] font-medium transition-colors cursor-pointer ${
+                        showReasoning
+                          ? 'text-violet-400 bg-violet-500/10 px-2 py-0.5 rounded-full'
+                          : 'text-gray-300 dark:text-white/20 hover:text-violet-400'
+                      }`}
+                    >
+                      <Sparkles size={9} />
+                      <span>Why?</span>
+                    </button>
+                  )}
                 </div>
               )}
 
@@ -238,6 +252,14 @@ export const TaskCard = memo(function TaskCard({ task, delay = 0 }: Props) {
                 <div className="flex items-center gap-1 mt-2">
                   <PenLine size={10} className="text-blue-500/60" />
                   <span className="text-[10px] text-blue-500/60 font-medium">Edited by you</span>
+                </div>
+              )}
+
+              {/* AI Reasoning */}
+              {showReasoning && task.ai_reasoning && (
+                <div className="mt-2 flex items-start gap-1.5 animate-fade-in">
+                  <Sparkles size={10} className="text-violet-400/70 mt-0.5 shrink-0" />
+                  <p className="text-xs text-violet-400/75 leading-relaxed">{task.ai_reasoning}</p>
                 </div>
               )}
 

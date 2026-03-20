@@ -368,6 +368,16 @@ export function TaskEditSheet({ task, onClose }: Props) {
             value={note} onChangeText={setNote} placeholder="Add a note..." placeholderTextColor={subText}
             multiline numberOfLines={3} textAlignVertical="top" />
 
+          {task.ai_reasoning ? (
+            <>
+              <Text style={[s.label, { color: subText }]}>AI Reasoning</Text>
+              <View style={[s.reasonRow, { borderColor: 'rgba(139,92,246,0.3)', backgroundColor: 'rgba(139,92,246,0.06)' }]}>
+                <Ionicons name="sparkles-outline" size={14} color="#8B5CF6" />
+                <Text style={[s.reasonTxt, { color: '#a78bfa' }]}>{task.ai_reasoning}</Text>
+              </View>
+            </>
+          ) : null}
+
           <Text style={[s.label, { color: subText }]}>Subtasks</Text>
           {(subtasks.data ?? []).map(sub => (
             <View key={sub.id} style={[s.stRow, { borderBottomColor: border }]}>
