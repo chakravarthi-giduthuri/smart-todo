@@ -175,6 +175,24 @@ export function TaskEditSheet({ task, onClose }: Props) {
   if (!task) return null;
   const keywords = getKeywords(task.title);
 
+  // BUG-24: discard-changes guard
+  function handleClose() {
+    const origDate = task!.scheduled_date ?? '';
+    const origTime = task!.scheduled_time ? task!.scheduled_time.slice(0, 5) : '';
+    const isDirty =
+      title !== task!.title ||
+      priority !== task!.priority ||
+      category !== task!.category ||
+      date !== origDate ||
+      time !== origTime ||
+      note !== (task!.note ?? '');
+    if (!isDirty) { onClose(); return; }
+    Alert.alert('Discard Changes?', 'You have unsaved changes.', [
+      { text: 'Keep Editing', style: 'cancel' },
+      { text: 'Discard', style: 'destructive', onPress: onClose },
+    ]);
+  }
+
   // ─── Picker change handlers ────────────────────────────────────────────────
 
   function handleDateChange(_event: DateTimePickerEvent, selected?: Date) {
@@ -230,7 +248,8 @@ export function TaskEditSheet({ task, onClose }: Props) {
   function handleAddSubtask() {
     const text = subtaskInput.trim();
     if (!text) return;
-    addSubtask.mutate(text, { onSuccess: () => setSubtaskInput('') });
+    setSubtaskInput(''); // BUG-38: clear immediately so keyboard doesn't show stale text
+    addSubtask.mutate(text);
   }
 
   const bg      = isDark ? '#1c1c28' : '#ffffff';
@@ -243,10 +262,10 @@ export function TaskEditSheet({ task, onClose }: Props) {
   const pickerRowStyle = [s.pickerRow, { backgroundColor: inputBg, borderColor: border }];
 
   return (
-    <Modal visible={task !== null} animationType="slide" presentationStyle="pageSheet" onRequestClose={onClose}>
+    <Modal visible={task !== null} animationType="slide" presentationStyle="pageSheet" onRequestClose={handleClose}>
       <View style={[s.sheet, { backgroundColor: bg }]}>
         <View style={[s.header, { borderBottomColor: border }]}>
-          <Pressable onPress={onClose} hitSlop={8} style={s.closeBtn}>
+          <Pressable onPress={handleClose} hitSlop={8} style={s.closeBtn}>
             <Ionicons name="close" size={22} color={subText} />
           </Pressable>
           <Text style={[s.title, { color: textC }]}>Edit Task</Text>
@@ -255,7 +274,7 @@ export function TaskEditSheet({ task, onClose }: Props) {
           </Pressable>
         </View>
 
-        <ScrollView contentContainerStyle={[s.scroll, { paddingBottom: 40 }]} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
+        <ScrollView contentContainerStyle={[s.scroll, { paddingBottom: Platform.OS === 'android' ? 80 : 40 }]} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
           <Text style={[s.label, { color: subText }]}>Title</Text>
           <AnimatedInput {...iProps} value={title} onChangeText={setTitle} placeholder="Task title" placeholderTextColor={subText} />
 

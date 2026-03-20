@@ -1,11 +1,14 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { View, Text, Pressable, StyleSheet } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Haptics from 'expo-haptics';
 import { Ionicons } from '@expo/vector-icons';
 import ReAnimated, { useSharedValue, useAnimatedStyle, withTiming } from 'react-native-reanimated';
 import { useTodayEnergy, useSubmitEnergy } from '@smart-todo/shared';
 import type { EnergyLevel } from '@smart-todo/shared';
 import { useTheme } from '../contexts/ThemeContext';
+
+const COLLAPSE_KEY = 'energy_banner_collapsed';
 
 const LEVELS: { level: EnergyLevel; label: string; emoji: string; sub: string }[] = [
   { level: 'high',   label: 'High',   emoji: '⚡', sub: 'Deep focus' },
@@ -30,13 +33,24 @@ export function EnergyBanner() {
   const containerBg = isDark ? '#1a1a2e' : '#f1f5f9';
   const borderColor = isDark ? '#27272a' : '#e5e7eb';
   const labelColor = isDark ? '#f4f4f5' : '#18181b';
-  const subColor = isDark ? 'rgba(255,255,255,0.4)' : 'rgba(0,0,0,0.4)';
+  const subColor = isDark ? 'rgba(255,255,255,0.4)' : 'rgba(0,0,0,0.65)';
   const unselectedBg = isDark ? '#27272a' : '#ffffff';
+
+  // BUG-56: restore persisted collapse state
+  useEffect(() => {
+    AsyncStorage.getItem(COLLAPSE_KEY).then((val) => {
+      if (val === '1') {
+        setCollapsed(true);
+        chevronRotation.value = 180;
+      }
+    });
+  }, []);
 
   function handleToggle() {
     const next = !collapsed;
-    chevronRotation.value = withTiming(next ? 0 : 180, { duration: 280 });
+    chevronRotation.value = withTiming(next ? 180 : 0, { duration: 280 }); // BUG-02 fix
     setCollapsed(next);
+    AsyncStorage.setItem(COLLAPSE_KEY, next ? '1' : '0');
   }
 
   return (

@@ -55,7 +55,7 @@ function AppRoutes() {
       </div>
 
       {/* Main content */}
-      <div className="flex-1 min-w-0 md:ml-64">
+      <div className="flex-1 min-w-0 md:ml-64 max-w-3xl">
         <Suspense fallback={<div style={{ minHeight: '100vh', background: 'var(--app-bg)' }} />}>
           <Routes>
             <Route path="/" element={<ProtectedRoute><HomeScreen /></ProtectedRoute>} />

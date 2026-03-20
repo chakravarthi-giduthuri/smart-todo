@@ -12,6 +12,7 @@ import {
   StyleSheet,
   SafeAreaView,
   StatusBar,
+  AppState,
 } from 'react-native';
 import ReAnimated, {
   useSharedValue,
@@ -124,6 +125,17 @@ export default function HomeScreen() {
     fabScale.value = withDelay(400, withSpring(1, { damping: 12, stiffness: 180 }));
   }, []);
 
+  // BUG-26: detect date change on app resume
+  useEffect(() => {
+    const sub = AppState.addEventListener('change', (state) => {
+      if (state === 'active') {
+        const newDay = getTodayStr();
+        setToday((prev) => (prev !== newDay ? newDay : prev));
+      }
+    });
+    return () => sub.remove();
+  }, []);
+
   useEffect(() => {
     if (chatOpen) {
       chatSlide.value = withSpring(1, { damping: 14, stiffness: 160 });
@@ -139,7 +151,7 @@ export default function HomeScreen() {
   const create = useCreateTask();
   const { data: energyData } = useTodayEnergy();
 
-  const today = getTodayStr();
+  const [today, setToday] = useState(getTodayStr);
   const tomorrow = getTomorrowStr();
   const { data: plan } = useDailyPlan(today);
 
@@ -151,26 +163,29 @@ export default function HomeScreen() {
   const todayTasks = tasks.filter((t) => !t.is_archived && t.scheduled_date === today);
   const todayDone = todayTasks.filter((t) => t.is_completed).length;
 
-  const now = new Date();
-  const upcomingNextHour = tasks
-    .filter((t) => {
-      if (t.is_completed || !t.scheduled_date || !t.scheduled_time) return false;
-      if (t.scheduled_date !== today) return false;
-      const [h, m] = t.scheduled_time.split(':').map(Number);
-      const taskTime = new Date();
-      taskTime.setHours(h, m, 0, 0);
-      const diffMin = (taskTime.getTime() - now.getTime()) / 60000;
-      return diffMin >= 0 && diffMin <= 60;
-    })
-    .sort((a, b) => (a.scheduled_time! < b.scheduled_time! ? -1 : 1));
+  // BUG-11: memoize derived slices to avoid redundant filter/sort on unrelated state changes
+  const upcomingNextHour = useMemo(() => {
+    const now = new Date();
+    return tasks
+      .filter((t) => {
+        if (t.is_completed || !t.scheduled_date || !t.scheduled_time) return false;
+        if (t.scheduled_date !== today) return false;
+        const [h, m] = t.scheduled_time.split(':').map(Number);
+        const taskTime = new Date();
+        taskTime.setHours(h, m, 0, 0);
+        const diffMin = (taskTime.getTime() - now.getTime()) / 60000;
+        return diffMin >= 0 && diffMin <= 60;
+      })
+      .sort((a, b) => (a.scheduled_time! < b.scheduled_time! ? -1 : 1));
+  }, [tasks, today]);
 
-  const futureTasks = tasks
+  const futureTasks = useMemo(() => tasks
     .filter((t) => !t.is_completed && !t.is_archived && t.scheduled_date && t.scheduled_date >= tomorrow)
     .sort((a, b) => {
       const da = `${a.scheduled_date ?? ''}${a.scheduled_time ?? ''}`;
       const db = `${b.scheduled_date ?? ''}${b.scheduled_time ?? ''}`;
       return da < db ? -1 : 1;
-    });
+    }), [tasks, tomorrow]);
 
   const baseFiltered = tasks.filter((t) =>
     filter === 'active' ? !t.is_completed && !t.is_archived : t.is_completed

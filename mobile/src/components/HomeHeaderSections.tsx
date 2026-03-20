@@ -26,6 +26,13 @@ function fmt12h(time: string | null): string {
   return `${h % 12 || 12}:${pad(m)} ${h >= 12 ? 'PM' : 'AM'}`;
 }
 
+function formatDuration(minutes: number): string {
+  if (minutes < 60) return `${minutes}m`;
+  const h = Math.floor(minutes / 60);
+  const m = minutes % 60;
+  return m > 0 ? `${h}h ${m}m` : `${h}h`;
+}
+
 function getRelativeTime(scheduledTime: string): string {
   const now = new Date();
   const [h, m] = scheduledTime.slice(0, 5).split(':').map(Number);
@@ -262,7 +269,7 @@ export function UpcomingNextHour({ tasks, isDark }: UpcomingNextHourProps) {
                 </View>
                 {task.duration_minutes ? (
                   <Text style={[st.metaText, { color: subColor }]}>
-                    {task.duration_minutes}m
+                    {formatDuration(task.duration_minutes)}
                   </Text>
                 ) : null}
               </View>

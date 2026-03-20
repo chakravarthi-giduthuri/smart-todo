@@ -1,4 +1,4 @@
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useCallback } from 'react';
 import { View, Text, Pressable, StyleSheet } from 'react-native';
 import Animated, {
   useSharedValue,
@@ -55,6 +55,7 @@ const ROW_HEIGHT = 72;
 
 export function SwipeableTaskItem({ task, onComplete, onDelete, onDeleteIntent, onPress, isDark, index = 0 }: Props) {
   const swipeRef = useRef<Swipeable>(null);
+  const deletedRef = useRef(false);
   const color = CATEGORY_COLORS[task.category] ?? '#6b7280';
   const priorityLabel = PRIORITY_LABELS[task.priority] ?? '';
   const overdue = isOverdue(task);
@@ -115,6 +116,8 @@ export function SwipeableTaskItem({ task, onComplete, onDelete, onDeleteIntent, 
   }
 
   function handleDelete() {
+    if (deletedRef.current) return; // BUG-10: guard against rapid double-swipe
+    deletedRef.current = true;
     // Use onDeleteIntent when provided (undo-toast flow); fall back to onDelete
     // for backward-compat callers that handle deletion directly.
     const callback = onDeleteIntent ?? onDelete;
