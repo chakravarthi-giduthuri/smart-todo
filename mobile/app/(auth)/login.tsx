@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import {
   View, Text, TextInput, TouchableOpacity, KeyboardAvoidingView,
   Platform, ActivityIndicator, Alert, StyleSheet,
 } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { supabase } from '../../src/lib/supabase';
 
@@ -13,6 +14,39 @@ export default function LoginScreen() {
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isSignUp, setIsSignUp] = useState(false);
+  const [awaitingConfirmation, setAwaitingConfirmation] = useState(false);
+  const [signUpEmail, setSignUpEmail] = useState('');
+  const [resendCooldown, setResendCooldown] = useState(0);
+  const [isResending, setIsResending] = useState(false);
+  const cooldownRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  useEffect(() => {
+    return () => { if (cooldownRef.current) clearInterval(cooldownRef.current); };
+  }, []);
+
+  function startCooldown() {
+    setResendCooldown(60);
+    cooldownRef.current = setInterval(() => {
+      setResendCooldown(prev => {
+        if (prev <= 1) { clearInterval(cooldownRef.current!); return 0; }
+        return prev - 1;
+      });
+    }, 1000);
+  }
+
+  async function handleResend() {
+    if (resendCooldown > 0 || isResending) return;
+    setIsResending(true);
+    try {
+      const { error } = await supabase.auth.resend({ type: 'signup', email: signUpEmail });
+      if (error) throw error;
+      startCooldown();
+    } catch (err: any) {
+      Alert.alert('Error', err.message ?? 'Could not resend email');
+    } finally {
+      setIsResending(false);
+    }
+  }
 
   const isDisabled = isLoading || !email.trim() || !password.trim() || (isSignUp && !name.trim());
 
@@ -27,7 +61,9 @@ export default function LoginScreen() {
           options: { data: { display_name: name.trim() } },
         });
         if (error) throw error;
-        Alert.alert('Check your email', 'Confirm your email to continue.');
+        setSignUpEmail(email);
+        setAwaitingConfirmation(true);
+        startCooldown();
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
@@ -38,6 +74,50 @@ export default function LoginScreen() {
     } finally {
       setIsLoading(false);
     }
+  }
+
+  // ── Email confirmation waiting screen ─────────────────────────────────────
+  if (awaitingConfirmation) {
+    return (
+      <View style={styles.root}>
+        <View style={styles.inner}>
+          <View style={styles.confirmIconWrap}>
+            <Ionicons name="mail-outline" size={48} color="#ec5b13" />
+          </View>
+          <Text style={styles.confirmTitle}>Check your email</Text>
+          <Text style={styles.confirmBody}>
+            We sent a confirmation link to{'\n'}
+            <Text style={styles.confirmEmail}>{signUpEmail}</Text>
+          </Text>
+          <Text style={styles.confirmHint}>
+            Open the link in your email to activate your account, then come back to sign in.
+          </Text>
+
+          <TouchableOpacity
+            onPress={handleResend}
+            disabled={resendCooldown > 0 || isResending}
+            activeOpacity={0.8}
+            style={[styles.btn, (resendCooldown > 0 || isResending) && styles.btnDisabled]}
+          >
+            {isResending
+              ? <ActivityIndicator color="#fff" />
+              : <Text style={styles.btnText}>
+                  {resendCooldown > 0 ? `Resend in ${resendCooldown}s` : 'Resend Email'}
+                </Text>
+            }
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            onPress={() => { setAwaitingConfirmation(false); setIsSignUp(false); }}
+            style={styles.toggleBtn}
+          >
+            <Text style={styles.toggleText}>
+              Already confirmed? <Text style={styles.toggleLink}>Sign In</Text>
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    );
   }
 
   return (
@@ -165,4 +245,41 @@ const styles = StyleSheet.create({
   toggleBtn: { marginTop: 20, alignItems: 'center' },
   toggleText: { color: 'rgba(255,255,255,0.4)', fontSize: 14 },
   toggleLink: { color: '#ec5b13', fontWeight: '600' },
+  // Confirmation screen
+  confirmIconWrap: {
+    width: 88,
+    height: 88,
+    borderRadius: 44,
+    backgroundColor: 'rgba(236,91,19,0.12)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    alignSelf: 'center',
+    marginBottom: 24,
+  },
+  confirmTitle: {
+    fontSize: 26,
+    fontWeight: '800',
+    color: '#fff',
+    textAlign: 'center',
+    marginBottom: 12,
+  },
+  confirmBody: {
+    fontSize: 15,
+    color: 'rgba(255,255,255,0.55)',
+    textAlign: 'center',
+    lineHeight: 22,
+    marginBottom: 8,
+  },
+  confirmEmail: {
+    color: '#fff',
+    fontWeight: '600',
+  },
+  confirmHint: {
+    fontSize: 13,
+    color: 'rgba(255,255,255,0.35)',
+    textAlign: 'center',
+    lineHeight: 18,
+    marginBottom: 28,
+    paddingHorizontal: 8,
+  },
 });

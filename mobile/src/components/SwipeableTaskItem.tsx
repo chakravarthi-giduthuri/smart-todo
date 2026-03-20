@@ -132,24 +132,24 @@ export function SwipeableTaskItem({ task, onComplete, onDelete, onDeleteIntent, 
         ref={swipeRef}
         renderLeftActions={() => (
           <View style={styles.swipeLeft}>
-            <Ionicons name="checkmark" size={28} color="#fff" />
-            <Text style={styles.swipeLabel}>Done</Text>
-          </View>
-        )}
-        renderRightActions={() => (
-          <View style={styles.swipeRight}>
             <Ionicons name="trash" size={24} color="#fff" />
             <Text style={styles.swipeLabel}>Delete</Text>
           </View>
         )}
+        renderRightActions={() => (
+          <View style={styles.swipeRight}>
+            <Ionicons name="checkmark" size={28} color="#fff" />
+            <Text style={styles.swipeLabel}>Done</Text>
+          </View>
+        )}
         onSwipeableLeftOpen={() => {
+          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
+          handleDelete();
+        }}
+        onSwipeableRightOpen={() => {
           Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
           handleComplete();
           swipeRef.current?.close();
-        }}
-        onSwipeableRightOpen={() => {
-          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
-          handleDelete();
         }}
         friction={2}
         leftThreshold={60}
@@ -225,7 +225,7 @@ export function SwipeableTaskItem({ task, onComplete, onDelete, onDeleteIntent, 
 
 const styles = StyleSheet.create({
   swipeLeft: {
-    backgroundColor: '#10B981',
+    backgroundColor: '#ef4444',
     justifyContent: 'center',
     alignItems: 'center',
     width: 80,
@@ -233,7 +233,7 @@ const styles = StyleSheet.create({
     marginRight: 4,
   },
   swipeRight: {
-    backgroundColor: '#ef4444',
+    backgroundColor: '#10B981',
     justifyContent: 'center',
     alignItems: 'center',
     width: 80,
