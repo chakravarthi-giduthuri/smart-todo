@@ -1,7 +1,7 @@
 import cron from 'node-cron';
 import { aggregateStats } from '../services/dashboard';
 import { buildWeeklyReviewPrompt, callClaude } from '../services/claude';
-import { getActiveSubscription, loadSubscriptionFromDb } from '../services/reminders';
+import { getActiveSubscription, loadSubscriptionFromDb, getExpoToken, loadExpoTokenFromDb, sendExpoPush } from '../services/reminders';
 import { supabase } from '../db/supabase';
 import webPush from 'web-push';
 
@@ -19,7 +19,9 @@ async function runWeeklyReviewJob(): Promise<void> {
     console.log('[WeeklyReview] Running weekly review job');
 
     if (!getActiveSubscription()) await loadSubscriptionFromDb();
+    if (!getExpoToken()) await loadExpoTokenFromDb();
     const subscription = getActiveSubscription();
+    const expoToken = getExpoToken();
 
     const stats = await aggregateStats();
     const currentDate = new Date().toISOString();
@@ -27,7 +29,13 @@ async function runWeeklyReviewJob(): Promise<void> {
 
     const rawText = await callClaude(prompt);
     const cleaned = rawText.replace(/```(?:json)?\n?/g, '').replace(/```$/g, '').trim();
-    const parsed = JSON.parse(cleaned) as WeeklyReviewParsed;
+    let parsed: WeeklyReviewParsed;
+    try {
+      parsed = JSON.parse(cleaned) as WeeklyReviewParsed;
+    } catch {
+      console.error('[WeeklyReview] Failed to parse Claude response as JSON');
+      return;
+    }
 
     console.log('[WeeklyReview] Structured review:', JSON.stringify(parsed, null, 2));
 
@@ -68,19 +76,29 @@ async function runWeeklyReviewJob(): Promise<void> {
       console.error('[WeeklyReview] DB save error:', saveErr);
     }
 
-    if (!subscription) {
+    if (!subscription && !expoToken) {
       console.log('[WeeklyReview] No push subscription — skipping notification');
       return;
     }
 
-    const payload = JSON.stringify({
-      title: 'Your weekly review is ready',
-      body: parsed.push_message,
-      data: { url: '/dashboard' },
-    });
+    if (expoToken) {
+      try {
+        await sendExpoPush(expoToken, 'Your weekly review is ready', parsed.push_message, { url: '/dashboard' });
+        console.log('[WeeklyReview] Weekly review sent via Expo push');
+      } catch (err) {
+        console.error('[WeeklyReview] Expo push failed:', err);
+      }
+    }
 
-    await webPush.sendNotification(subscription, payload);
-    console.log('[WeeklyReview] Weekly review sent');
+    if (subscription) {
+      const payload = JSON.stringify({
+        title: 'Your weekly review is ready',
+        body: parsed.push_message,
+        data: { url: '/dashboard' },
+      });
+      await webPush.sendNotification(subscription, payload);
+      console.log('[WeeklyReview] Weekly review sent via web push');
+    }
   } catch (err) {
     console.error('[WeeklyReview] Job failed:', err);
   }

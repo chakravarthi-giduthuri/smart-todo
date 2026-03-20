@@ -1,7 +1,7 @@
 import cron from 'node-cron';
 import { supabase } from '../db/supabase';
 import { buildMorningPlanPrompt, callClaude } from '../services/claude';
-import { getActiveSubscription, loadSubscriptionFromDb } from '../services/reminders';
+import { getActiveSubscription, loadSubscriptionFromDb, getExpoToken, loadExpoTokenFromDb, sendExpoPush } from '../services/reminders';
 import { spawnTasksFromTemplates } from '../services/templateSpawner';
 import webPush from 'web-push';
 import type { Task } from '../types/task';
@@ -30,7 +30,9 @@ async function runMorningPlanJob(): Promise<void> {
     );
 
     if (!getActiveSubscription()) await loadSubscriptionFromDb();
+    if (!getExpoToken()) await loadExpoTokenFromDb();
     const subscription = getActiveSubscription();
+    const expoToken = getExpoToken();
 
     const tasks = await getTodayTasks();
     const currentDate = new Date().toISOString();
@@ -38,22 +40,38 @@ async function runMorningPlanJob(): Promise<void> {
 
     const rawText = await callClaude(prompt);
     const cleaned = rawText.replace(/```(?:json)?\n?/g, '').replace(/```$/g, '').trim();
-    const parsed = JSON.parse(cleaned) as { briefing: string };
+    let parsed: { briefing: string };
+    try {
+      parsed = JSON.parse(cleaned) as { briefing: string };
+    } catch {
+      console.error('[MorningPlan] Failed to parse Claude response as JSON');
+      return;
+    }
 
-    if (!subscription) {
+    if (!subscription && !expoToken) {
       console.log('[MorningPlan] No push subscription registered — skipping notification');
       console.log('[MorningPlan] Briefing:', parsed.briefing);
       return;
     }
 
-    const payload = JSON.stringify({
-      title: 'Good morning! Here is your day plan',
-      body: parsed.briefing,
-      data: { url: '/' },
-    });
+    if (expoToken) {
+      try {
+        await sendExpoPush(expoToken, 'Good morning! Here is your day plan', parsed.briefing, { url: '/' });
+        console.log('[MorningPlan] Morning briefing sent via Expo push');
+      } catch (err) {
+        console.error('[MorningPlan] Expo push failed:', err);
+      }
+    }
 
-    await webPush.sendNotification(subscription, payload);
-    console.log('[MorningPlan] Morning briefing sent');
+    if (subscription) {
+      const payload = JSON.stringify({
+        title: 'Good morning! Here is your day plan',
+        body: parsed.briefing,
+        data: { url: '/' },
+      });
+      await webPush.sendNotification(subscription, payload);
+      console.log('[MorningPlan] Morning briefing sent via web push');
+    }
   } catch (err) {
     console.error('[MorningPlan] Job failed:', err);
   }

@@ -21,6 +21,7 @@ import userRouter from './routes/user';
 import dailyPlanRouter from './routes/dailyPlan';
 import focusSessionsRouter from './routes/focusSessions';
 import templatesRouter from './routes/templates';
+import transcribeRouter from './routes/transcribe';
 import { startReminderCron } from './cron/reminderJob';
 import { startMorningPlanCron } from './cron/morningPlanJob';
 import { startWeeklyReviewCron } from './cron/weeklyReviewJob';
@@ -57,6 +58,7 @@ app.use('/api/user', userRouter);
 app.use('/api/daily-plan', dailyPlanRouter);
 app.use('/api/focus-sessions', focusSessionsRouter);
 app.use('/api/templates', templatesRouter);
+app.use('/api/transcribe', transcribeRouter);
 
 app.get('/health', (req, res) => res.json({ ok: true }));
 

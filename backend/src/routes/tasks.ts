@@ -165,6 +165,9 @@ router.patch('/:id/snooze', async (req, res, next) => {
     if (typeof minutes !== 'number' || minutes < 1) {
       return res.status(400).json({ error: 'minutes must be a positive number' });
     }
+    if (minutes > 43200) {
+      return res.status(400).json({ error: 'Cannot snooze more than 30 days' });
+    }
     const snoozedUntil = new Date(Date.now() + minutes * 60_000).toISOString();
     const task = await snoozeTask(req.params.id, snoozedUntil, req.userSupabase);
     res.json({ task });

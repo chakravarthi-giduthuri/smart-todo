@@ -23,7 +23,12 @@ router.post('/', async (req, res, next) => {
     const prompt = buildConversationPrompt(messages, current_date ?? new Date().toISOString(), timezone);
     const rawText = await callClaude(prompt);
     const cleaned = rawText.replace(/```(?:json)?\n?/g, '').replace(/```$/g, '').trim();
-    const parsed = JSON.parse(cleaned) as Record<string, unknown>;
+    let parsed: Record<string, unknown>;
+    try {
+      parsed = JSON.parse(cleaned) as Record<string, unknown>;
+    } catch {
+      return res.status(422).json({ error: 'AI returned malformed response. Please try again.' });
+    }
 
     if (parsed.type === 'question') {
       return res.json({ type: 'question', content: String(parsed.content) });
@@ -47,7 +52,12 @@ router.post('/', async (req, res, next) => {
         duration_minutes: parsed.duration_minutes ? Number(parsed.duration_minutes) : null,
         ai_reasoning: String(parsed.reasoning ?? ''),
         reminder_minutes_before: parsed.reminder_minutes_before ? Number(parsed.reminder_minutes_before) : 15,
-        timezone_offset_minutes: 0,
+        timezone_offset_minutes: (() => {
+          const d = current_date ?? '';
+          const m = d.match(/([+-])(\d{2}):(\d{2})$/);
+          if (!m) return 0;
+          return (m[1] === '+' ? 1 : -1) * (parseInt(m[2]) * 60 + parseInt(m[3]));
+        })(),
         recurrence: (parsed.recurrence as string | null) ?? null,
         context_tags,
         note: parsed.note ? String(parsed.note) : null,

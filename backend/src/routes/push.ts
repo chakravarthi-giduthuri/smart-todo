@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { requireAuth } from '../middleware/auth';
 import {
   setActiveSubscription, getActiveSubscription, clearSubscription, runReminderJob,
   setExpoToken, getExpoToken, clearExpoToken, sendExpoPush,
@@ -79,8 +80,8 @@ router.post('/test', async (req, res) => {
   }
 });
 
-// Manually trigger the reminder job (for debugging)
-router.post('/trigger', async (req, res) => {
+// Manually trigger the reminder job (for debugging — auth required)
+router.post('/trigger', requireAuth, async (req, res) => {
   await runReminderJob();
   res.json({ ok: true });
 });
