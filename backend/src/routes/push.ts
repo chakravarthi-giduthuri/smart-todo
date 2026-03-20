@@ -54,6 +54,17 @@ router.delete('/register-expo', async (req, res) => {
   }
 });
 
+// Diagnostic endpoint — shows current server-side push state
+router.get('/status', async (req, res) => {
+  if (!getExpoToken()) await loadExpoTokenFromDb();
+  if (!getActiveSubscription()) await loadSubscriptionFromDb();
+  res.json({
+    hasExpoToken: !!getExpoToken(),
+    expoTokenPreview: getExpoToken()?.slice(0, 40) ?? null,
+    hasWebSubscription: !!getActiveSubscription(),
+  });
+});
+
 // Test endpoint — sends an immediate push to verify the whole chain works
 router.post('/test', async (req, res) => {
   // Reload from DB in case the server restarted since the token was registered

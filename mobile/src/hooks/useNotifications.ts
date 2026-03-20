@@ -17,7 +17,9 @@ export function useNotifications() {
   const responseListener = useRef<Notifications.Subscription>();
 
   useEffect(() => {
-    registerForPushNotifications();
+    registerForPushNotifications().catch((err) => {
+      console.warn('[push] auto-registration failed on launch:', err?.message ?? err);
+    });
 
     notificationListener.current = Notifications.addNotificationReceivedListener((notification) => {
       // notification received while app is open — no-op, could show banner
@@ -60,28 +62,21 @@ export async function registerForPushNotifications() {
     return;
   }
 
-  try {
-    const projectId = Constants.expoConfig?.extra?.eas?.projectId ?? Constants.easConfig?.projectId;
+  const projectId = Constants.expoConfig?.extra?.eas?.projectId ?? Constants.easConfig?.projectId;
 
-    // Validate that projectId is a real UUID before calling Expo's push service.
-    // Placeholder values like "your-project-id-here" cause a 400 from Expo.
-    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-    if (!projectId || !uuidRegex.test(projectId)) {
-      console.log('[push] skipping token registration — projectId missing or not a valid UUID');
-      return;
-    }
-    const token = await Notifications.getExpoPushTokenAsync({ projectId });
-    console.log('[push] token:', token.data);
-
-    // Register with backend
-    await apiFetch('/api/push/register-expo', {
-      method: 'POST',
-      body: JSON.stringify({ expo_token: token.data }),
-    }).catch((err) => {
-      console.error('[push] backend registration failed:', err);
-      throw err; // re-throw so callers can detect failure
-    });
-  } catch (err) {
-    console.log('[push] token error:', err);
+  // Validate that projectId is a real UUID before calling Expo's push service.
+  // Placeholder values like "your-project-id-here" cause a 400 from Expo.
+  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+  if (!projectId || !uuidRegex.test(projectId)) {
+    throw new Error('EAS projectId missing or not a valid UUID');
   }
+
+  const token = await Notifications.getExpoPushTokenAsync({ projectId });
+  console.log('[push] token:', token.data);
+
+  // Register with backend — let errors propagate so callers know if this fails
+  await apiFetch('/api/push/register-expo', {
+    method: 'POST',
+    body: JSON.stringify({ expo_token: token.data }),
+  });
 }

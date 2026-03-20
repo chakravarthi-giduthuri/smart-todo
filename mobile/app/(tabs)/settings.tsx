@@ -47,6 +47,7 @@ export default function SettingsScreen() {
   const [notifEnabled, setNotifEnabled] = useState(false);
   const [notifStatus, setNotifStatus] = useState<string>('unknown');
   const [tokenRegistered, setTokenRegistered] = useState<'unknown' | 'ok' | 'error'>('unknown');
+  const [tokenRegisteredMsg, setTokenRegisteredMsg] = useState<string>('');
   const [isSendingTest, setIsSendingTest] = useState(false);
   const [testResult, setTestResult] = useState<{ ok: boolean; msg: string } | null>(null);
 
@@ -105,11 +106,14 @@ export default function SettingsScreen() {
   }
 
   async function handleRegisterToken() {
+    setTokenRegisteredMsg('Registering…');
     try {
       await registerForPushNotifications();
       setTokenRegistered('ok');
-    } catch {
+      setTokenRegisteredMsg('Token sent to server');
+    } catch (err: any) {
       setTokenRegistered('error');
+      setTokenRegisteredMsg(err?.message ?? 'Registration failed');
     }
   }
 
@@ -527,8 +531,12 @@ export default function SettingsScreen() {
                       </View>
                       <View>
                         <Text style={[styles.rowLabel, { color: textColor }]}>Server Registration</Text>
-                        <Text style={[styles.rowSub, { color: tokenRegistered === 'ok' ? '#10b981' : tokenRegistered === 'error' ? '#ef4444' : subText }]}>
-                          {tokenRegistered === 'ok' ? 'Token registered' : tokenRegistered === 'error' ? 'Registration failed — tap Re-register' : 'Unknown'}
+                        <Text style={[styles.rowSub, { color: tokenRegistered === 'ok' ? '#10b981' : tokenRegistered === 'error' ? '#ef4444' : subText }]} numberOfLines={2}>
+                          {tokenRegistered === 'ok'
+                            ? (tokenRegisteredMsg || 'Token registered')
+                            : tokenRegistered === 'error'
+                              ? (tokenRegisteredMsg || 'Registration failed — tap Re-register')
+                              : 'Unknown'}
                         </Text>
                       </View>
                     </View>
