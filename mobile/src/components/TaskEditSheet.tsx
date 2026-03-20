@@ -29,6 +29,14 @@ const CAT_COLORS: Record<string, string> = {
 const PRI_COLORS: Record<number, string> = {
   1: '#ef4444', 2: '#f97316', 3: '#eab308', 4: '#3b82f6', 5: '#6b7280',
 };
+const RECURRENCE_OPTIONS: { label: string; value: string | null }[] = [
+  { label: 'None', value: null },
+  { label: 'Daily', value: 'daily' },
+  { label: 'Weekdays', value: 'weekdays' },
+  { label: 'Weekly', value: 'weekly' },
+  { label: 'Monthly', value: 'monthly' },
+];
+
 const NAG_OPTIONS: { label: string; value: number | null }[] = [
   { label: '15 min', value: 15 }, { label: '30 min', value: 30 },
   { label: '1 hr', value: 60 },   { label: 'Off', value: null },
@@ -142,6 +150,7 @@ export function TaskEditSheet({ task, onClose }: Props) {
   const [date, setDate]         = useState('');
   const [time, setTime]         = useState('');
   const [note, setNote]         = useState('');
+  const [recurrence, setRecurrence] = useState<string | null>(null);
   const [subtaskInput, setSubtaskInput] = useState('');
   const [isSaving, setIsSaving]             = useState(false);
   const [isSharing, setIsSharing]           = useState(false);
@@ -169,6 +178,7 @@ export function TaskEditSheet({ task, onClose }: Props) {
       setDate(task.scheduled_date ?? '');
       setTime(task.scheduled_time ? task.scheduled_time.slice(0, 5) : '');
       setNote(task.note ?? '');
+      setRecurrence(task.recurrence ?? null);
     }
   }, [task]);
 
@@ -185,7 +195,8 @@ export function TaskEditSheet({ task, onClose }: Props) {
       category !== task!.category ||
       date !== origDate ||
       time !== origTime ||
-      note !== (task!.note ?? '');
+      note !== (task!.note ?? '') ||
+      recurrence !== (task!.recurrence ?? null);
     if (!isDirty) { onClose(); return; }
     Alert.alert('Discard Changes?', 'You have unsaved changes.', [
       { text: 'Keep Editing', style: 'cancel' },
@@ -225,6 +236,8 @@ export function TaskEditSheet({ task, onClose }: Props) {
       ops.push(override.mutateAsync({ taskId: task.id, field_changed: 'scheduled_time', ai_value: origTime, user_value: time, reason: '', task_keywords: keywords }));
     if (note !== (task.note ?? ''))
       ops.push(updateNote.mutateAsync({ id: task.id, note }));
+    if (recurrence !== (task.recurrence ?? null))
+      ops.push(override.mutateAsync({ taskId: task.id, field_changed: 'recurrence', ai_value: task.recurrence ?? '', user_value: recurrence ?? '', reason: '', task_keywords: keywords }));
     try { await Promise.all(ops); } catch { /* individual mutations handle errors */ }
     finally { setIsSaving(false); onClose(); }
   }
@@ -426,6 +439,19 @@ export function TaskEditSheet({ task, onClose }: Props) {
               <Text style={[s.reasonTxt, { color: subText }]}>AI: {rescheduleReason}</Text>
             </View>
           ) : null}
+
+          <Text style={[s.label, { color: subText }]}>Recurrence</Text>
+          <View style={s.pillRow}>
+            {RECURRENCE_OPTIONS.map(({ label, value }) => {
+              const on = recurrence === value;
+              return (
+                <Pressable key={label} onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); setRecurrence(value); }}
+                  style={[s.catPill, { borderColor: on ? '#ec5b13' : border }, on && { backgroundColor: '#ec5b13' }]}>
+                  <Text style={[s.pillText, { color: on ? '#fff' : textC }]}>{label}</Text>
+                </Pressable>
+              );
+            })}
+          </View>
 
           <Text style={[s.label, { color: subText }]}>Nag Reminder</Text>
           <View style={s.pillRow}>
