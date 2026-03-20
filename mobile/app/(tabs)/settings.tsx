@@ -46,6 +46,9 @@ export default function SettingsScreen() {
   // Notifications tab
   const [notifEnabled, setNotifEnabled] = useState(false);
   const [notifStatus, setNotifStatus] = useState<string>('unknown');
+  const [tokenRegistered, setTokenRegistered] = useState<'unknown' | 'ok' | 'error'>('unknown');
+  const [isSendingTest, setIsSendingTest] = useState(false);
+  const [testResult, setTestResult] = useState<{ ok: boolean; msg: string } | null>(null);
 
   // Security tab
   const [pwNew, setPwNew] = useState('');
@@ -93,11 +96,44 @@ export default function SettingsScreen() {
       setNotifEnabled(status === 'granted');
       setNotifStatus(status);
       if (status === 'granted') {
-        await registerForPushNotifications();
+        await handleRegisterToken();
       }
     } else {
       setNotifEnabled(false);
       setNotifStatus('denied');
+    }
+  }
+
+  async function handleRegisterToken() {
+    try {
+      await registerForPushNotifications();
+      setTokenRegistered('ok');
+    } catch {
+      setTokenRegistered('error');
+    }
+  }
+
+  async function handleSendTestNotification() {
+    setIsSendingTest(true);
+    setTestResult(null);
+    try {
+      const res = await apiFetch('/api/push/test', { method: 'POST' }) as { ok?: boolean; error?: string };
+      if (res?.ok) {
+        setTestResult({ ok: true, msg: 'Test notification sent! Check your notifications.' });
+      } else {
+        setTestResult({ ok: false, msg: res?.error ?? 'Test failed' });
+      }
+    } catch (err: any) {
+      const msg = err?.message ?? 'Could not reach server';
+      // If no subscription registered, guide user
+      if (msg.includes('No push subscription')) {
+        setTokenRegistered('error');
+        setTestResult({ ok: false, msg: 'Token not registered with server. Tap "Re-register" below.' });
+      } else {
+        setTestResult({ ok: false, msg });
+      }
+    } finally {
+      setIsSendingTest(false);
     }
   }
 
@@ -106,7 +142,7 @@ export default function SettingsScreen() {
     if (status === 'granted') {
       setNotifEnabled(true);
       setNotifStatus('granted');
-      await registerForPushNotifications();
+      await handleRegisterToken();
     } else {
       // Permission was previously denied — guide user to system Settings
       Alert.alert(
@@ -461,7 +497,8 @@ export default function SettingsScreen() {
                 />
               </View>
             </View>
-            {!notifEnabled && (
+
+            {!notifEnabled ? (
               <>
                 <Text style={[styles.hintText, { color: subText }]}>
                   Enable notifications to receive task reminders 15 minutes before they're due.
@@ -473,6 +510,62 @@ export default function SettingsScreen() {
                 >
                   <Ionicons name="notifications-outline" size={16} color="#fff" />
                   <Text style={styles.enableNotifBtnText}>Enable Notifications</Text>
+                </TouchableOpacity>
+              </>
+            ) : (
+              <>
+                {/* Server registration status */}
+                <View style={[styles.section, { backgroundColor: sectionBg, borderColor, marginTop: 16 }]}>
+                  <View style={styles.switchRow}>
+                    <View style={styles.switchRowLeft}>
+                      <View style={[styles.rowIcon, { backgroundColor: tokenRegistered === 'ok' ? 'rgba(16,185,129,0.15)' : tokenRegistered === 'error' ? 'rgba(239,68,68,0.15)' : 'rgba(107,114,128,0.15)' }]}>
+                        <Ionicons
+                          name={tokenRegistered === 'ok' ? 'checkmark-circle-outline' : tokenRegistered === 'error' ? 'alert-circle-outline' : 'radio-outline'}
+                          size={18}
+                          color={tokenRegistered === 'ok' ? '#10b981' : tokenRegistered === 'error' ? '#ef4444' : '#6b7280'}
+                        />
+                      </View>
+                      <View>
+                        <Text style={[styles.rowLabel, { color: textColor }]}>Server Registration</Text>
+                        <Text style={[styles.rowSub, { color: tokenRegistered === 'ok' ? '#10b981' : tokenRegistered === 'error' ? '#ef4444' : subText }]}>
+                          {tokenRegistered === 'ok' ? 'Token registered' : tokenRegistered === 'error' ? 'Registration failed — tap Re-register' : 'Unknown'}
+                        </Text>
+                      </View>
+                    </View>
+                  </View>
+                </View>
+
+                {/* Test notification button */}
+                <Text style={[styles.hintText, { color: subText }]}>
+                  Reminders fire 15 min before each task's scheduled time. Use the test button to confirm the full pipeline is working.
+                </Text>
+                <TouchableOpacity
+                  onPress={handleSendTestNotification}
+                  disabled={isSendingTest}
+                  activeOpacity={0.8}
+                  style={[styles.enableNotifBtn, { backgroundColor: '#6b21a8' }]}
+                >
+                  {isSendingTest
+                    ? <ActivityIndicator size="small" color="#fff" />
+                    : <Ionicons name="paper-plane-outline" size={16} color="#fff" />}
+                  <Text style={styles.enableNotifBtnText}>{isSendingTest ? 'Sending…' : 'Send Test Notification'}</Text>
+                </TouchableOpacity>
+
+                {testResult && (
+                  <View style={[styles.hintText, { backgroundColor: testResult.ok ? 'rgba(16,185,129,0.1)' : 'rgba(239,68,68,0.1)', borderRadius: 8, padding: 10, marginTop: 8 }]}>
+                    <Text style={{ color: testResult.ok ? '#10b981' : '#ef4444', fontSize: 13 }}>
+                      {testResult.ok ? '✓ ' : '✗ '}{testResult.msg}
+                    </Text>
+                  </View>
+                )}
+
+                <TouchableOpacity
+                  onPress={handleRegisterToken}
+                  activeOpacity={0.8}
+                  style={[styles.enableNotifBtn, { backgroundColor: 'transparent', borderWidth: 1, borderColor: '#ec5b13', marginTop: 8 }]}
+                >
+                  <Ionicons name="refresh-outline" size={16} color="#ec5b13" />
+                  <Text style={[styles.enableNotifBtnText, { color: '#ec5b13' }]}>Re-register with Server</Text>
                 </TouchableOpacity>
               </>
             )}

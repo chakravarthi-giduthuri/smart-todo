@@ -77,8 +77,9 @@ export async function registerForPushNotifications() {
     await apiFetch('/api/push/register-expo', {
       method: 'POST',
       body: JSON.stringify({ expo_token: token.data }),
-    }).catch(() => {
-      // endpoint may not exist yet — that's ok
+    }).catch((err) => {
+      console.error('[push] backend registration failed:', err);
+      throw err; // re-throw so callers can detect failure
     });
   } catch (err) {
     console.log('[push] token error:', err);
